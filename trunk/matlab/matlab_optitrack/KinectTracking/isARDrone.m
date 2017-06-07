@@ -5,8 +5,11 @@ function out = isARDrone(index, centers)
 
 % these are the pixel distance ranges for the circles of an ARDrone on the
 % ground
-cornersRange = [40, 50];
-diagRange = [61, 71];
+% cornersRange = [40, 50];
+% diagRange = [61, 71];
+% ^^ are original values. The following are Nate's attempt.
+cornersRange = [50, 60];
+diagRange = [71, 81];
 
 % if values in this range are found, they are added to corners or diag
 corners = [];

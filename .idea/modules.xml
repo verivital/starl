@@ -2,21 +2,24 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/trunk/android/DistributedSearch/DistributedSearch.iml" filepath="$PROJECT_DIR$/trunk/android/DistributedSearch/DistributedSearch.iml" />
-      <module fileurl="file://$PROJECT_DIR$/trunk/android/FlockingApp/FlockingApp.iml" filepath="$PROJECT_DIR$/trunk/android/FlockingApp/FlockingApp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/trunk/android/FollowApp/FollowApp.iml" filepath="$PROJECT_DIR$/trunk/android/FollowApp/FollowApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/android/StarLApps/FlockingApp/FlockingApp.iml" filepath="$PROJECT_DIR$/trunk/android/StarLApps/FlockingApp/FlockingApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/android/StarLApps/FollowApp/FollowApp.iml" filepath="$PROJECT_DIR$/trunk/android/StarLApps/FollowApp/FollowApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/android/StarLApps/FormationApp/FormationApp.iml" filepath="$PROJECT_DIR$/trunk/android/StarLApps/FormationApp/FormationApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/android/StarLApps/LeaderElectApp/LeaderElectApp.iml" filepath="$PROJECT_DIR$/trunk/android/StarLApps/LeaderElectApp/LeaderElectApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/android/LightPaintAndroidApp/LightPaintAndroidApp.iml" filepath="$PROJECT_DIR$/trunk/android/LightPaintAndroidApp/LightPaintAndroidApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/trunk/android/LightPaintApp/LightPaintApp.iml" filepath="$PROJECT_DIR$/trunk/android/LightPaintApp/LightPaintApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/trunk/android/LightPaintLibrary/LightPaintLibrary.iml" filepath="$PROJECT_DIR$/trunk/android/LightPaintLibrary/LightPaintLibrary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/trunk/android/LightPaintNew/LightPaintNew.iml" filepath="$PROJECT_DIR$/trunk/android/LightPaintNew/LightPaintNew.iml" />
-      <module fileurl="file://$PROJECT_DIR$/trunk/android/MazeApp/MazeApp.iml" filepath="$PROJECT_DIR$/trunk/android/MazeApp/MazeApp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/trunk/android/ProjectApp/ProjectApp.iml" filepath="$PROJECT_DIR$/trunk/android/ProjectApp/ProjectApp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/trunk/android/NumAdd/NumAdd.iml" filepath="$PROJECT_DIR$/trunk/android/NumAdd/NumAdd.iml" />
-      <module fileurl="file://$PROJECT_DIR$/trunk/android/RaceApp/RaceApp.iml" filepath="$PROJECT_DIR$/trunk/android/RaceApp/RaceApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/android/StarLApps/MazeApp/MazeApp.iml" filepath="$PROJECT_DIR$/trunk/android/StarLApps/MazeApp/MazeApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/android/StarLApps/NumAdd/NumAdd.iml" filepath="$PROJECT_DIR$/trunk/android/StarLApps/NumAdd/NumAdd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/android/StarLApps/ProjectApp/ProjectApp.iml" filepath="$PROJECT_DIR$/trunk/android/StarLApps/ProjectApp/ProjectApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/android/StarLApps/RaceApp/RaceApp.iml" filepath="$PROJECT_DIR$/trunk/android/StarLApps/RaceApp/RaceApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/android/StarLApps/SearchApp/SearchApp.iml" filepath="$PROJECT_DIR$/trunk/android/StarLApps/SearchApp/SearchApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/android/StarLApps/SimTemplate/SimTemplate.iml" filepath="$PROJECT_DIR$/trunk/android/StarLApps/SimTemplate/SimTemplate.iml" />
       <module fileurl="file://$PROJECT_DIR$/trunk/android/StarLSim/StarLSim.iml" filepath="$PROJECT_DIR$/trunk/android/StarLSim/StarLSim.iml" />
       <module fileurl="file://$PROJECT_DIR$/trunk/android/StarLib/StarLib.iml" filepath="$PROJECT_DIR$/trunk/android/StarLib/StarLib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/trunk/android/StarlTemplate/StarlTemplate.iml" filepath="$PROJECT_DIR$/trunk/android/StarlTemplate/StarlTemplate.iml" />
-      <module fileurl="file://$PROJECT_DIR$/trunk/android/TrafficSign/TrafficSign.iml" filepath="$PROJECT_DIR$/trunk/android/TrafficSign/TrafficSign.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/android/StarlAndroidTemplate/StarlAndroidTemplate.iml" filepath="$PROJECT_DIR$/trunk/android/StarlAndroidTemplate/StarlAndroidTemplate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/android/StarLApps/TrafficSignApp/TrafficSignApp.iml" filepath="$PROJECT_DIR$/trunk/android/StarLApps/TrafficSignApp/TrafficSignApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trunk/matlab/matlab_lightpaint/matlab_lightpaint.iml" filepath="$PROJECT_DIR$/trunk/matlab/matlab_lightpaint/matlab_lightpaint.iml" />
     </modules>
   </component>
 </project>
-

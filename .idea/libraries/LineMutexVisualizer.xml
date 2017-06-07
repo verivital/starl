@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="LineMutexVisualizer">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/trunk/matlab/matlab_lightpaint/LineMutexVisualizer.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

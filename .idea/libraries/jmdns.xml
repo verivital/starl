@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="jmdns">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/trunk/android/StarLib/lib/jmdns.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

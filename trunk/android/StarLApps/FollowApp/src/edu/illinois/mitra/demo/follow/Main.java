@@ -9,8 +9,8 @@ public class Main {
 		SimSettings.Builder settings = new SimSettings.Builder();
         settings.N_IROBOTS(3);
 		settings.TIC_TIME_RATE(2);
-        settings.WAYPOINT_FILE("square.wpt");
-		//settings.WAYPOINT_FILE(System.getProperty("user.dir")+"\\trunk\\android\\RaceApp\\waypoints\\four1.wpt");
+        settings.WAYPOINT_FILE("more.wpt");
+		//settings.WAYPOINT_FILE(System.getProperty("user.dir")+"\\trunk\\android\\StarLApps\\FollowApp\\waypoints\\four1.wpt");
 		settings.DRAW_WAYPOINTS(false);
 		settings.DRAW_WAYPOINT_NAMES(false);
 		settings.DRAWER(new FollowDrawer());

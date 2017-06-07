@@ -46,7 +46,7 @@ public class RobotGroup {
         rf = 750;
 
 
-        System.out.println("This robot is "+id+ " and it is assigned to group number "+ getGroupNum().toString()+" and ts theta is "+ theta.toString());
+        System.out.println("This robot is "+id+ " and it is assigned to group number "+ getGroupNum().toString()+" and its theta is "+ theta.toString());
     }
 
     public Integer getGroupNum(){

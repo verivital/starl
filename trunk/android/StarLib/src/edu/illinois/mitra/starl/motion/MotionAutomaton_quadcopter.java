@@ -151,7 +151,7 @@ public class MotionAutomaton_quadcopter extends RobotMotion {
 						}
 						break;
 					case HOVER:
-						setControlInput(0,0,0, 0);
+						setControlInput(0,0,0,0);
 						// do nothing
 						break;
 					case TAKEOFF:

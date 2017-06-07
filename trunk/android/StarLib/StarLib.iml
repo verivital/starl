@@ -3,7 +3,7 @@
   <component name="FacetManager">
     <facet type="android" name="Android">
       <configuration>
-        <option name="LIBRARY_PROJECT" value="true" />
+        <option name="PROJECT_TYPE" value="1" />
       </configuration>
     </facet>
   </component>
@@ -13,17 +13,10 @@
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="kd" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="libs" level="project" />
     <orderEntry type="library" name="android-support-v4" level="project" />
-    <orderEntry type="library" name="jmdns" level="project" />
-    <orderEntry type="library" name="libARCommands" level="project" />
-    <orderEntry type="library" name="libARDiscovery" level="project" />
-    <orderEntry type="library" name="libARNetwork" level="project" />
-    <orderEntry type="library" name="libARNetworkAL" level="project" />
-    <orderEntry type="library" name="libjson" level="project" />
-    <orderEntry type="library" name="libARSAL" level="project" />
   </component>
 </module>
-
