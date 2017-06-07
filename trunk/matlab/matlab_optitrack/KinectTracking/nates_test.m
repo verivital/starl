@@ -6,10 +6,12 @@
 % Some global variables needed for Kinect
 % Matlab didn't like them being in the Kinect if statement below
 % They aren't needed when using Optitrack except for the robot types
-% MINIDRONE, CREATE2, ARDRONE
+% MINIDRONE, CREATE2, ARDRONE, THREEDR, GHOST2, MAVIKPRO, PHANTOM3,
+% and PHANTOM4
 global numCreates
 global numDrones
 global numARDrones
+
 global imgColorAll
 global mm_per_pixel
 global camDistToFloor
@@ -19,11 +21,21 @@ global hysteresis
 global MINIDRONE
 global CREATE2
 global ARDRONE
+global THREEDR
+global GHOST2
+global MAVIKPRO
+global PHANTOM3
+global PHANTOM4
 MINIDRONE = 100;
 CREATE2 = 101;
 ARDRONE = 102;
+THREEDR = 103;
+GHOST2 = 104;
+MAVIKPRO = 105;
+PHANTOM3 = 106;
+PHANTOM4 = 107;
 
-%variables
+%variables that will be changed frequently
 numCreates = 0;
 numDrones = 3; %minidrones
 numARDrones = 0;

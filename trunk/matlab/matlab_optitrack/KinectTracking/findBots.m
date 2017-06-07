@@ -6,6 +6,11 @@ global botArray
 global MINIDRONE
 global CREATE2
 global ARDRONE
+global THREEDR
+global GHOST2
+global MAVIKPRO
+global PHANTOM3
+global PHANTOM4
 % this function calls imfindcircles on whole image to find all robots
 % if not enough circles found, it returns false
 
