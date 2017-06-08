@@ -2,17 +2,25 @@ function found = findBots(imgColor, imgDepth)
 global numDrones
 global numARDrones
 global numCreates
+global num3DRDrones
+global numGhostDrones
+global numMavicDrones
+global numPhant3Drones
+global numPhant4Drones
 global botArray
 global MINIDRONE
 global CREATE2
 global ARDRONE
 global THREEDR
 global GHOST2
-global MAVIKPRO
+global MAVICPRO
 global PHANTOM3
 global PHANTOM4
 % this function calls imfindcircles on whole image to find all robots
 % if not enough circles found, it returns false
+
+% The sorting and identification of robots occurs in order of increasing radius
+% Robots with smallest search circles are found first
 
 % find any drones
 if numDrones + numARDrones > 0
@@ -118,8 +126,7 @@ end
 
 % find any creates
 if numCreates > 0
-    rmin = 25;
-    rmax = 35;
+    [rmin, rmax] = findRadiusRange(depth, CREATE2);
     [centers, radii, metrics] = imfindcircles(imgColor, [rmin,rmax], ...
         'ObjectPolarity', 'dark', 'Sensitivity', 0.92);
     
