@@ -2,11 +2,13 @@ function out = mmPerPixel(radius, type)
 % this function gives the number of mm in one pixel for the drones
 % the radius of the minidrone is ~115 mm
 % the radius of one of the ARDrone circles is ~125 mm
-% the radius of the 3DR drone circle is ~_mm
+% the radius of one of the 3DR drone circles is ~_mm
 % the radius of one of the GhostDrone2.0 circles is ~_mm
-% the radius of the Mavic Pro drone circle is ~_mm
-% the radius of the Phantom3 drone circle is ~_mm
-% the radius of the Phantom4 drone circle is ~_mm
+% the radius of one of the _ circles is ~_mm
+% the radius of one of the _ circles is ~_mm
+% the radius of one of the _ circles is ~_mm
+% the radius of one of the _ circles is ~_mm
+% the radius of one of the _ circles is ~_mm
 global MINIDRONE
 global ARDRONE
 global THREEDR

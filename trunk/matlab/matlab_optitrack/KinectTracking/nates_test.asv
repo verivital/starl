@@ -45,7 +45,7 @@ numCreates = 0;
 numDrones = 0; %minidrones
 numARDrones = 1;
 num3DRDrones = 0;
-numGhostDrones = 0;
+numGhostDrones = 1;
 numMavicDrones = 0;
 numPhant3Drones = 0;
 numPhant4Drones = 0;
@@ -117,24 +117,13 @@ hold on
 viscircles(centers, radii);
 hold off
 
-% % show the 5 smallest circles
-% [radii_sorted, I] = sort(radii);
-% centers_sorted = [];
-% for k = 1:length(radii)
-%     centers_sorted(k,:) = centers(I(k),:);
-% end
-% radii_sorted_cut = zeros(5,1);
-% centers_sorted_cut = zeros(5,2);
-% for i = 1:5
-%     radii_sorted_cut(i) = radii_sorted(i);
-%     centers_sorted_cut(i,:) = centers_sorted(i,:);
-% end
-% figure();
-% image(imgColor)
-% hold on
-% viscircles(centers_sorted_cut, radii_sorted_cut);
-% hold off
-
+% show the 5 smallest circles
+[radii_sorted, I] = sort(radii);
+centers_sorted = [];
+for k = 1:length(radii)
+    centers_sorted(k,:) = centers(I(k),:);
+end
+radii_sorted_cut = radii(1:5);
 
 %now that the Kinect is setup, find the robots
 trigger([vid vid2])

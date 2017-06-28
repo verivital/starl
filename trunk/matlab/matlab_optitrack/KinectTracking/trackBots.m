@@ -22,7 +22,7 @@ metrics = [];
 if botArray(index).type == MINIDRONE
     % get depth and rmin, rmax
     depth = findDepth(depthFrame);
-    [rmin, rmax] = findRadiusRange(depth);
+    [rmin, rmax] = findRadiusRange(depth, MINIDRONE);
     % find circles
     [centers, radii, metrics] = imfindcircles(frame, [rmin,rmax], ...
         'ObjectPolarity', 'dark', 'Sensitivity', 0.92);
@@ -34,12 +34,17 @@ elseif botArray(index).type == CREATE2
         'ObjectPolarity', 'dark', 'Sensitivity', 0.96);
 elseif botArray(index).type == ARDRONE
     depth = findDepth(depthFrame);
-    [rmin, rmax] = findRadiusRange(depth);
+    [rmin, rmax] = findRadiusRange(depth, ARDRONE);
     % find circles
     [centers, radii, metrics] = imfindcircles(frame, [rmin,rmax], ...
         'ObjectPolarity', 'dark', 'Sensitivity', 0.92);
     % not enough circles found, clear centers so function will return below
     if length(centers) < 4
+%         figure();
+%         image(frame);
+%         hold on
+%         viscircles(centers, radii);
+%         hold off
         centers = [];
     else
         centers = centers(1:4,:);
@@ -51,6 +56,32 @@ elseif botArray(index).type == ARDRONE
             radii(4)];
         centers = mean(ARCenters);
         radii = mean(ARRadii);  
+        metrics = 1;
+    end
+elseif botArray(index).type == GHOST2
+    depth = findDepth(depthFrame);
+    [rmin, rmax] = findRadiusRange(depth, GHOST2);
+    % find circles
+    [centers, radii, metrics] = imfindcircles(frame, [rmin,rmax], ...
+        'ObjectPolarity', 'dark', 'Sensitivity', 0.92);
+    % not enough circles found, clear centers so function will return below
+    if length(centers) < 4
+%         figure();
+%         image(frame);
+%         hold on
+%         viscircles(centers, radii);
+%         hold off
+        centers = [];
+    else
+        centers = centers(1:4,:);
+        % find mean of 4 circles to get center 
+        GhostCenters = [centers(1,:);centers(2,:); ...
+            centers(3,:); centers(4,:)];
+        % find an average radius value
+        GhostRadii = [radii(1), radii(2), radii(3), ...
+            radii(4)];
+        centers = mean(GhostCenters);
+        radii = mean(GhostRadii);  
         metrics = 1;
     end
 end

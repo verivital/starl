@@ -3,10 +3,15 @@ function  angle  = findYaw( imgColor, BBox, yaw, center, radius, type)
 global MINIDRONE
 global CREATE2
 global ARDRONE
+global THREEDR
+global GHOST2
+global MAVICPRO
+global PHANTOM3
+global PHANTOM4
 
-% if type is ardrone, use a tight bouding box since blacking out pixels
+% if type is ardrone, use a tight bounding box since blacking out pixels
 % doesn't work with drone made up of four circles
-if type == ARDRONE
+if type == ARDRONE || type == GHOST2
     BBox = getBBoxTight(center, radius, type);
 end
 % take only pixels in bounding box
@@ -75,9 +80,9 @@ if ~isempty(mag_props) && ~isempty(yel_props)
     
     A = yel_center - mag_center;
     
-    if type == MINIDRONE || type == ARDRONE
+    if isAerialDrone(type) == 1
         B = [1,0];
-    elseif type == CREATE2
+    elseif isGroundRobot(type) == 1
         B = [0,1];
     end
     

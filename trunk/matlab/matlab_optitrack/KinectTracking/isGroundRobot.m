@@ -5,4 +5,11 @@ function ans = isGroundRobot(type)
 global CREATE2
 
 % if the type is a match, then the function will return true
-return (type == CREATE2);
+if (type == CREATE2)
+    ans = 1;
+
+else
+    ans = 0;
+end
+
+return;

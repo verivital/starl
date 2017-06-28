@@ -11,5 +11,10 @@ global PHANTOM3
 global PHANTOM4
 
 % if the type is a match, then the function will return true
-return ((type == MINIDRONE) | (type == ARDRONE) | (type == THREEDR) | (type == GHOST2) ...
-		| (type == MAVICPRO) | (type == PHANTOM3) | (type == PHANTOM4));
+if ((type == MINIDRONE) || (type == ARDRONE) || (type == THREEDR) || (type == GHOST2) ...
+		|| (type == MAVICPRO) || (type == PHANTOM3) || (type == PHANTOM4))
+    ans = 1;
+else
+    ans = 0;
+end
+return;

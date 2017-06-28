@@ -22,9 +22,9 @@ y = coordinates(1,2);
 
 % get a millimeter per pixel value. If drone call mmPerPixel, if iRobot use
 % constant value
-if isAerialDrone(type) == 1
+if isAerialDrone(
     mmpp = mmPerPixel(radius, type);
-elseif isGroundRobot(type) == 1
+elseif type == CREATE2
     mmpp = mm_per_pixel;
 end
     

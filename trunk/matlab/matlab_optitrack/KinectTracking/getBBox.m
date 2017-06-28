@@ -14,7 +14,7 @@ global PHANTOM4
 
 % if ARDrone, bbox needs to be 4 times radius, since there are 2 circles
 % per side
-if type == ARDRONE
+if type == ARDRONE || type == GHOST2
     x = 4;
     y = 2;
 else

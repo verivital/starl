@@ -27,7 +27,7 @@ if numDrones + numARDrones > 0
     % find depth
     depth = 2900;
     % find circles
-    [rmin, rmax] = findRadiusRange(depth);
+    [rmin, rmax] = findRadiusRange(depth, ARDRONE);
     [centers, radii, metrics] = imfindcircles(imgColor, [rmin,rmax], ...
         'ObjectPolarity', 'dark', 'Sensitivity', 0.92);
     

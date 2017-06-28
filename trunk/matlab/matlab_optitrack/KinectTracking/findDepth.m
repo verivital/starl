@@ -8,7 +8,9 @@ end
 if isempty(depth_pixels)
     depth = 2900;
 else
-    depth = median(depth_pixels);
+    % depth = median(depth_pixels);
+    % Nate trying something
+    depth = min(depth_pixels);
 end
 
 % idea: threshold image, then call [r,c,v] = find(X), which should return

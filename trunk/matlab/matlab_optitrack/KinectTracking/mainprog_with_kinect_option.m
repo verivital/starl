@@ -13,13 +13,19 @@ OPTITRACK = 1;
 KINECT = 2;
 opt_system = KINECT;
 
-% Some global variables needed for Kinect
 % Matlab didn't like them being in the Kinect if statement below
 % They aren't needed when using Optitrack except for the robot types
-% MINIDRONE, CREATE2, ARDRONE
+% MINIDRONE, CREATE2, ARDRONE, THREEDR, GHOST2, MAVICPRO, PHANTOM3,
+% and PHANTOM4
 global numCreates
 global numDrones
 global numARDrones
+global num3DRDrones
+global numGhostDrones
+global numMavicDrones
+global numPhant3Drones
+global numPhant4Drones
+
 global imgColorAll
 global mm_per_pixel
 global camDistToFloor
@@ -29,9 +35,19 @@ global hysteresis
 global MINIDRONE
 global CREATE2
 global ARDRONE
+global THREEDR
+global GHOST2
+global MAVICPRO
+global PHANTOM3
+global PHANTOM4
 MINIDRONE = 100;
 CREATE2 = 101;
 ARDRONE = 102;
+THREEDR = 103;
+GHOST2 = 104;
+MAVICPRO = 105;
+PHANTOM3 = 106;
+PHANTOM4 = 107;
 
 ip_prefix = '10.255.24.';
 ip_broadcast = [ip_prefix, '255'];
@@ -39,9 +55,14 @@ ip_broadcast = [ip_prefix, '255'];
 % If using Kinect, modify these as necessary
 if opt_system == KINECT
     numCreates =0;
-    numDrones = 1; %minidrones
+    numDrones = 0; %minidrones
     numARDrones = 0;
-    BBoxFactor = 1.5;
+    num3DRDrones = 0;
+    numGhostDrones = 1;
+    numMavicDrones = 0;
+    numPhant3Drones = 0;
+    numPhant4Drones = 0;
+    BBoxFactor = 2;
     hysteresis = 10; % number of consecutive frames bot must be lost for auto-shutdown
     
     % Other things needed for Kinect tracking
@@ -50,7 +71,7 @@ if opt_system == KINECT
     imgColorAll = zeros(480,640,3,num_frames,'uint8'); % stores all captured imgs
     mm_per_pixel = 5.663295322; % mm in one pixel at ground level
     found = false;
-    robot_count = numDrones + numCreates + numARDrones;
+    robot_count = numCreates + numDrones + numARDrones + num3DRDrones + numGhostDrones + numMavicDrones + numPhant3Drones + numPhant4Drones;
     camDistToFloor = 3058; % in mm, as measured with Kinect
     robot_names = cell(1,robot_count);
     botArray = Robot.empty(robot_count,0);
@@ -73,6 +94,9 @@ elseif opt_system == KINECT
     if exist('vid', 'var') && exist('vid2', 'var')
         stop([vid vid2]);
         clear vid vid2;
+    elseif exist('vid1', 'var') && exist('vid2', 'var')
+        stop([vid1 vid2]);
+        clear vid1 vid2;
     end
     
     vid = videoinput('kinect',1); %color 
@@ -137,7 +161,7 @@ if opt_system == KINECT
         [imgColor, ts_color, metaData_Color] = getdata(vid);
         [imgDepth, ts_depth, metaData_Depth] = getdata(vid2);
         % make this function modify botArray, instead of return so many things
-        found = findBots(imgColor, imgDepth);
+        found = findBotsNateTest(imgColor, imgDepth); %HEY CHANGE THIS!!!
         if found == true
             for j = 1:robot_count
                 bots(j).type = botArray(j).type;
@@ -149,7 +173,7 @@ if opt_system == KINECT
                 elseif botArray(j).color == 'b'
                     bots(j).name = 'bot2';
                 elseif botArray(j).color == 'w'
-                    bots(j).name = 'bot3';
+                    bots(j).name = 'bot3'; %quick fix since matlab wasnt picking up red drone as bot0
                 end
             end
         end
@@ -242,18 +266,21 @@ while 1
             bots(i).pitch = 0;
             bots(i).visible = 1;
             % if bot hasn't been found for hysteresis frames, shutdown StarL 
-            if botArray(i).hyst >= hysteresis
-                disp('Exiting...');
-                close all;
-                shutdown_track = 0;
-                judp('SEND',4000,ip_broadcast,int8('ABORT'));
-                break;
+            if botArray(i).hyst >= hysteresis 
+               disp('Exiting...'); 
+               close all; 
+               shutdown_track = 0; 
+               judp('SEND',4000,ip_broadcast,int8('ABORT')); 
+               % And show the last frame recorded to see exactly where the robot was lost 
+               figure(); %figure(2); 
+               frame = getPixelsInBB(imgColor, botArray(i).BBox); 
+               image(frame) 
+               figure(); %figure(3); 
+               image(imgColor) 
+               hold on 
+               viscircles(botArray(i).center, botArray(i).radius); 
+               break; 
             end
-            
-%             figure(2);
-%             image(imgColor)
-%             hold on
-%             viscircles(botArray(i).center, botArray(i).radius);
             
             %may want to add the history stuff from above here
         end

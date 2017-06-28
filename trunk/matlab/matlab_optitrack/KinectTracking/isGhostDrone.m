@@ -1,15 +1,12 @@
-function out = isARDrone(index, centers)
-% this function returns the index if centers(index) does not belong to an
-% ARdrone
+function out = isGhostDrone(index, centers, rmin, rmax)
+% this function returns the index if centers(index) does not belong to a
+% GhostDrone 2.0
 % it returns the index and three other circles making the drone otherwise
 
 % these are the pixel distance ranges for the circles of an ARDrone on the
 % ground
-% cornersRange = [40, 50];
-% diagRange = [61, 71];
-% ^^ are original values. The following are Nate's attempt.
-cornersRange = [45, 55];
-diagRange = [65, 75];
+cornersRange = [rmin*1.9, rmax*2.1];
+diagRange = sqrt(2)*[rmin*1.9, rmax*2.1];
 
 % if values in this range are found, they are added to corners or diag
 corners = [];
@@ -29,9 +26,3 @@ if length(corners) == 2 && length(diag) == 1
 else
     out = index;
 end
-    
-
-
-
-
-
