@@ -631,17 +631,20 @@ public class Simulation {
 		}
 
 		// Wait until all result values are available
-		for(Future<List<Object>> f : results) {
-			try {
-				List<Object> res = f.get();
-				if(res != null && !res.isEmpty())
-					resultsList.add(res);
-			} catch(CancellationException e) {
-				// If the executor timed out, the result is cancelled
-				System.err.println("Simulation timed out! Execution reached " + settings.TIMEOUT + " sec duration. Aborting.");
-				break;
-			} catch(Exception e) {
-				e.printStackTrace();
+		if (results != null) {
+			for (Future<List<Object>> f : results) {
+				try {
+					List<Object> res = f.get();
+					if (res != null && !res.isEmpty())
+						resultsList.add(res);
+				} catch (CancellationException e) {
+					// If the executor timed out, the result is cancelled
+					System.err.println("Simulation timed out! Execution reached "
+							+ settings.TIMEOUT + " sec duration. Aborting.");
+					break;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 

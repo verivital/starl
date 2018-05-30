@@ -6,14 +6,10 @@ package edu.illinois.mitra.starl.motion;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
-
-import java.io.File;
-import java.util.List;
 
 import dji.common.error.DJIError;
 import dji.common.error.DJISDKError;
@@ -31,11 +27,7 @@ import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
-import edu.illinois.mitra.starl.interfaces.RobotEventListener;
 import edu.illinois.mitra.starl.objects.HandlerMessage;
-import dji.sdk.camera.*;
-import dji.sdk.gimbal.*;
-import dji.common.gimbal.*;
 
 public class DjiController {
 

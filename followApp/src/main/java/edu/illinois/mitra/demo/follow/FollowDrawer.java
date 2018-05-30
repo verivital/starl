@@ -12,7 +12,7 @@ import edu.illinois.mitra.starlSim.draw.Drawer;
 public class FollowDrawer extends Drawer {
 
 	private Stroke stroke = new BasicStroke(8);
-	private Color selectColor = new Color(0,0,255,100);
+	private final Color selectColor = new Color(0,0,255,100);
 	
 	@Override
 	public void draw(LogicThread lt, Graphics2D g) {

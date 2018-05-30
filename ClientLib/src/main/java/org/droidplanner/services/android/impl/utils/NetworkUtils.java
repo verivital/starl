@@ -62,6 +62,7 @@ public class NetworkUtils {
         return ssid != null && ssid.startsWith(SoloComp.SOLO_LINK_WIFI_PREFIX);
     }
 
+    @TargetApi(21)
     public static void bindSocketToNetwork(Bundle extras, Socket socket) throws IOException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Network network = extras == null
@@ -76,36 +77,27 @@ public class NetworkUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (network != null && socket != null) {
                 Timber.d("Binding socket to network %s", network);
-                network.bindSocket(socket);
+                network.bindSocket(socket); // method added in API level 21
             }
         }
     }
 
+    @TargetApi(22)
     public static void bindSocketToNetwork(Bundle extras, DatagramSocket socket) throws IOException {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Network network = extras == null
-                ? null
-                : (Network) extras.getParcelable(MavLinkConnection.EXTRA_NETWORK);
+                    ? null
+                    : (Network) extras.getParcelable(MavLinkConnection.EXTRA_NETWORK);
             bindSocketToNetwork(network, socket);
         }
     }
 
-    @TargetApi(21)
+    @TargetApi(22)
     public static void bindSocketToNetwork(Network network, DatagramSocket socket) throws IOException {
-        if (network != null && socket != null) {
-            Timber.d("Binding datagram socket to network %s", network);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                network.bindSocket(socket);
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                // Can be accessed through reflection.
-                try {
-                    Method bindSocketMethod = Network.class.getMethod("bindSocket", DatagramSocket.class);
-                    bindSocketMethod.invoke(network, socket);
-                } catch (NoSuchMethodException | IllegalAccessException e) {
-                    Timber.e(e, "Unable to access Network#bindSocket(DatagramSocket).");
-                } catch (InvocationTargetException e) {
-                    Timber.e(e, "Unable to invoke Network#bindSocket(DatagramSocket).");
-                }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (network != null && socket != null) {
+                Timber.d("Binding datagram socket to network %s", network);
+                network.bindSocket(socket); // method added in API level 22
             }
         }
     }

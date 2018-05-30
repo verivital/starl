@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 27
+    //buildToolsVersion "27.1.1"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 27
     }
 
     buildTypes {
@@ -19,8 +19,12 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':dJISDKLIB')
-    compile project(':ClientLib')
-    compile files('libs/EHangAndroidSDK2.0.5.jar')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':dJISDKLIB')
+    implementation project(':ClientLib')
+    api files('libs/EHangAndroidSDK2.0.5.jar') // expose API to modules using this
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    // for dji code
+    implementation 'com.dji:dji-sdk:4.5.1'
+    compileOnly 'com.dji:dji-sdk-provided:4.5.1'
 }

@@ -4,17 +4,18 @@ buildscript {
     ext {
         play_services_version = '10.2.6'
 
-        android_build_sdk_version = 25
-        android_build_tools_version = '25.0.3'
-        android_build_target_sdk_version = 25
+        android_build_sdk_version = 27
+        //android_build_tools_version = '27.1.1'
+        android_build_target_sdk_version = 27
         android_build_min_sdk_version = 19
     }
 
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.1.2'
 
         //Dexcount gradle plugin
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.4'

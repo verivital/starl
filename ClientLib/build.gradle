@@ -27,7 +27,7 @@ def logLevelAssert = 7;
 
 android {
     compileSdkVersion android_build_sdk_version
-    buildToolsVersion android_build_tools_version
+    //buildToolsVersion android_build_tools_version
 
     dexOptions {
         javaMaxHeapSize "4g"
@@ -62,10 +62,13 @@ android {
     }
 
     android.libraryVariants.all { variant ->
-        variant.outputs.each { output ->
-            def file = output.outputFile
-            if (file != null && file.name.endsWith('.aar')) {
-                output.outputFile = new File(file.parent, "${PUBLISH_ARTIFACT_ID}.${PUBLISH_VERSION}.aar")
+        variant.outputs.all { output ->
+            def file = output.outputFileName
+            if (file != null && file.endsWith('.aar')) {
+                //output.outputFileName = new File(output.outputFile.parent,
+                //        "${PUBLISH_ARTIFACT_ID}.${PUBLISH_VERSION}.aar")
+                output.outputFileName = output.outputFileName.replace(".aar",
+                        "${PUBLISH_ARTIFACT_ID}.${PUBLISH_VERSION}.aar")
             }
         }
     }
@@ -89,26 +92,30 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
-    buildToolsVersion '25.0.3'
 }
 
 dependencies {
-    compile 'com.jakewharton.timber:timber:3.1.0'
-    compile "com.google.android.gms:play-services-base:${play_services_version}"
-    compile "com.google.android.gms:play-services-location:${play_services_version}"
-    //Java semver library
-    compile 'com.github.zafarkhaja:java-semver:0.9.0'
-    compile 'com.jcraft:jsch:0.1.51'
-    //MP4 generation library
-    compile 'com.googlecode.mp4parser:isoparser:1.1.7'
-    compile 'org.droidplanner.android:usb-serial-android:0.1.0'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    debugCompile project(':Mavlink')
+    // 'compile' is obsolete and has been replaced with 'implementation' and 'api'.
+    // Use 'api' for dependencies that are part of the API exposed by the project,
+    // not for internal use only.
+    implementation 'com.jakewharton.timber:timber:3.1.0'
+    implementation "com.google.android.gms:play-services-base:${play_services_version}"
+    implementation "com.google.android.gms:play-services-location:${play_services_version}"
+
+    // Java semver library
+    implementation 'com.github.zafarkhaja:java-semver:0.9.0'
+    implementation 'com.jcraft:jsch:0.1.51'
+
+    // MP4 generation library
+    implementation 'com.googlecode.mp4parser:isoparser:1.1.7'
+    implementation 'org.droidplanner.android:usb-serial-android:0.1.0'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    debugImplementation project(':Mavlink')
     //    sitlCompile project(':Mavlink')
-    compile files('libs/Mavlink.jar')
-    compile files('libs/d2xx.jar')
-    androidTestCompile 'junit:junit:4.12'
-    androidTestCompile 'org.robolectric:robolectric:3.0'
+    implementation files('libs/Mavlink.jar')
+    implementation files('libs/d2xx.jar')
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'org.robolectric:robolectric:3.0'
 }
 
 def getSoloLinkIp() {
@@ -118,7 +125,7 @@ def getSoloLinkIp() {
 def getLocalIp() {
     try {
         return '\"' + InetAddress.getLocalHost().getCanonicalHostName() + '\"'
-    }catch(Exception e){
+    }catch(Exception e) {
         return '\"\"'
     }
 }

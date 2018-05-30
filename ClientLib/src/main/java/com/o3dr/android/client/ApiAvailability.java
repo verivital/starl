@@ -49,8 +49,8 @@ class ApiAvailability {
         //Check if an instance of the services library is up and running.
         final Intent serviceIntent = new Intent(SERVICES_CLAZZ_NAME);
         final List<ResolveInfo> serviceInfos = pm.queryIntentServices(serviceIntent, PackageManager.GET_META_DATA);
-        if(serviceInfos != null && !serviceInfos.isEmpty()){
-            for(ResolveInfo serviceInfo : serviceInfos) {
+        if(serviceInfos != null && !serviceInfos.isEmpty()) {
+            for (ResolveInfo serviceInfo : serviceInfos) {
                 final Bundle metaData = serviceInfo.serviceInfo.metaData;
                 if (metaData == null)
                     continue;
