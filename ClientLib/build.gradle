@@ -27,7 +27,7 @@ def logLevelAssert = 7;
 
 android {
     compileSdkVersion android_build_sdk_version
-    //buildToolsVersion android_build_tools_version
+    buildToolsVersion android_build_tools_version
 
     dexOptions {
         javaMaxHeapSize "4g"

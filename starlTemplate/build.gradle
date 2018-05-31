@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 android {
-    compileSdkVersion 27
-    //buildToolsVersion '27.1.1'
+    compileSdkVersion android_build_sdk_version
+    buildToolsVersion android_build_tools_version
     defaultConfig {
 
         applicationId "edu.illinois.mitra.template"
-        minSdkVersion 19
-        targetSdkVersion 27
+        minSdkVersion android_build_min_sdk_version
+        targetSdkVersion android_build_target_sdk_version
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -31,7 +31,7 @@ dependencies {
     implementation project(':dJISDKLIB')
     implementation project(':ClientLib')
     implementation project(':starLib')
-    implementation project(':followApp')
-
+    // add the appropriate project for your app here:
+    implementation project(':raceApp')
 }
 

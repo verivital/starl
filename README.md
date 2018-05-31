@@ -23,7 +23,7 @@ in the `build.gradle` of starlTemplate.
 ```gradle
 dependencies {
     ...
-    compile project(':followApp')
+    implementation project(':followApp')
 }
 ```
 ### Setting the Tablet and Drone Info
@@ -109,8 +109,7 @@ and runs the simulation.
 It is important for every new StarL application to have the appropriate dependencies. The `build.gradle` should contain the following:
 ```gradle
 dependencies {
-    compile project(':starLib')
-    compile project(':starLSim')
+    implementation project(':starLSim')
 }
 ```
 ## Features to be Implemented

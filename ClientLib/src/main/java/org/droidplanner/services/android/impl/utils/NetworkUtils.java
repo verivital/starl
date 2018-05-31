@@ -16,8 +16,6 @@ import org.droidplanner.services.android.impl.core.MAVLink.connection.MavLinkCon
 import org.droidplanner.services.android.impl.core.drone.autopilot.apm.solo.SoloComp;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.DatagramSocket;
 import java.net.Socket;
 

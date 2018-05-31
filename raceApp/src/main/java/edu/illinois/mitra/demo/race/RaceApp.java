@@ -1,7 +1,5 @@
 package edu.illinois.mitra.demo.race;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
