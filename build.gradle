@@ -9,8 +9,8 @@ buildscript {
         android_build_target_sdk_version = 27
         android_build_min_sdk_version = 19
 
-        android_build_target_compatibility = '1.7'
-        android_build_source_compatibility = '1.7'
+        android_build_target_compatibility = '1.8'
+        android_build_source_compatibility = '1.8'
     }
 
     repositories {
@@ -111,8 +111,6 @@ allprojects {
         // applied on all projects
         sourceCompatibility = android_build_source_compatibility
         targetCompatibility = android_build_target_compatibility
-
-        options.bootstrapClasspath = files("$JAVA_HOME/jre/lib/rt.jar")
     }
 
     repositories {
