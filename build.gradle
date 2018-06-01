@@ -25,11 +25,11 @@ buildscript {
     }
 }
 
-def computeVersionCode(int versionMajor, int versionMinor, int versionPatch, int versionBuild = 0){
+static def computeVersionCode(int versionMajor, int versionMinor, int versionPatch, int versionBuild = 0){
     return versionMajor * 100000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
 }
 
-def generateVersionName(String versionPrefix, int versionMajor, int versionMinor, int versionPatch, String versionSuffix = ""){
+static def generateVersionName(String versionPrefix, int versionMajor, int versionMinor, int versionPatch, String versionSuffix = ""){
     def versionName = "${versionPrefix}${versionMajor}.${versionMinor}.${versionPatch}"
 
     if(versionSuffix != null && !versionSuffix.isEmpty() && versionSuffix != "release"){
@@ -39,7 +39,7 @@ def generateVersionName(String versionPrefix, int versionMajor, int versionMinor
     return versionName
 }
 
-def generateVersionNameSuffix(int versionBuild, String releaseType, boolean includeHash = false){
+static def generateVersionNameSuffix(int versionBuild, String releaseType, boolean includeHash = false){
     def versionNameSuffix = "${releaseType}.${versionBuild}"
     if(includeHash){
         versionNameSuffix += " (${getGitShortHash()})"
@@ -50,7 +50,7 @@ def generateVersionNameSuffix(int versionBuild, String releaseType, boolean incl
 /**
  * @return The most recent git tag to be used as version name for the app.
  */
-def getGitVersion() {
+static def getGitVersion() {
     def cmd = "git describe --tag"
     try {
         def proc = cmd.execute()
@@ -61,7 +61,7 @@ def getGitVersion() {
     }
 }
 
-def getGitShortHash(){
+static def getGitShortHash() {
     def cmd = "git rev-parse --short HEAD"
     try{
         def proc = cmd.execute()
@@ -111,6 +111,16 @@ allprojects {
         // applied on all projects
         sourceCompatibility = android_build_source_compatibility
         targetCompatibility = android_build_target_compatibility
+
+        // Add javac compiler arguments here:
+
+        // Enable (nonstandard) warnings
+        // options.compilerArgs << "-Xlint:all"
+
+        options.compilerArgs << "-verbose"
+
+        // THIS IS THE KEY - CERTAIN PARTS OF STARL NEED ACCESS TO THE JAVA 1.7 RUNTIME LIBRARY, rt.jar
+        options.compilerArgs << "-bootclasspath" << "/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home/jre/lib/rt.jar"
     }
 
     repositories {

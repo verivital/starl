@@ -110,8 +110,11 @@ dependencies {
     implementation 'com.googlecode.mp4parser:isoparser:1.1.7'
     implementation 'org.droidplanner.android:usb-serial-android:0.1.0'
     implementation 'com.android.support:appcompat-v7:27.1.1'
+    // the following are needed to silence a complaint about different library versions
+    implementation 'com.android.support:support-media-compat:27.1.1'
+    implementation 'com.android.support:support-v4:27.1.1'
+
     debugImplementation project(':Mavlink')
-    //    sitlCompile project(':Mavlink')
     implementation files('libs/Mavlink.jar')
     implementation files('libs/d2xx.jar')
     androidTestImplementation 'junit:junit:4.12'
