@@ -20,7 +20,3 @@ android {
 dependencies {
     implementation project(':starLSim')
 }
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs << "-bootclasspath" << "/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home/jre/lib/rt.jar"
-}
