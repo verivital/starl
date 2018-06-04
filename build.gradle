@@ -119,8 +119,8 @@ allprojects {
 
         options.compilerArgs << "-verbose"
 
-        // THIS IS THE KEY - CERTAIN PARTS OF STARL NEED ACCESS TO THE JAVA 1.7 RUNTIME LIBRARY, rt.jar
-        options.compilerArgs << "-bootclasspath" << "/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home/jre/lib/rt.jar"
+        // IMPORTANT - CERTAIN PARTS OF STARL NEED ACCESS TO THE JAVA 1.7 RUNTIME LIBRARY
+        options.compilerArgs << "-bootclasspath" << "rt-1.7.jar"
     }
 
     repositories {
