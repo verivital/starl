@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion android_build_sdk_version
-    buildToolsVersion android_build_tools_version
+    //buildToolsVersion android_build_tools_version
 
     defaultConfig {
         minSdkVersion android_build_min_sdk_version
@@ -27,4 +27,6 @@ dependencies {
     // for dji code
     implementation 'com.dji:dji-sdk:4.5.1'
     compileOnly 'com.dji:dji-sdk-provided:4.5.1'
+
+    //implementation files('../android.jar') // YAYYYYYY
 }

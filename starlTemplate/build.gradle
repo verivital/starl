@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 android {
     compileSdkVersion android_build_sdk_version
-    buildToolsVersion android_build_tools_version
+    //buildToolsVersion android_build_tools_version
     defaultConfig {
 
         applicationId "edu.illinois.mitra.template"
@@ -33,5 +33,7 @@ dependencies {
     implementation project(':starLib')
     // add the appropriate project for your app here:
     implementation project(':raceApp')
+
+    //implementation files('../android.jar') // YAYYYYYY
 }
 

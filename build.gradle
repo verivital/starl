@@ -7,21 +7,21 @@ buildscript {
         android_build_sdk_version = 27
         android_build_tools_version = '28.0.0 rc2'
         android_build_target_sdk_version = 27
-        android_build_min_sdk_version = 19
+        android_build_min_sdk_version = 21
 
         android_build_target_compatibility = '1.8'
         android_build_source_compatibility = '1.8'
     }
 
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
 
         //Dexcount gradle plugin
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.4'
+        //classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.4'
     }
 }
 
@@ -113,17 +113,16 @@ allprojects {
         targetCompatibility = android_build_target_compatibility
 
         // Add javac compiler arguments here:
-
-        // Enable (nonstandard) warnings
-        // options.compilerArgs << "-Xlint:all"
-
+        // ----------------------------------
+        //options.compilerArgs << "-Xlint:all" // Enable (nonstandard) warnings
         options.compilerArgs << "-verbose"
-
         // IMPORTANT - CERTAIN PARTS OF STARL NEED ACCESS TO THE JAVA 1.7 RUNTIME LIBRARY
         options.compilerArgs << "-bootclasspath" << "rt-1.7.jar"
+        options.compilerArgs << "-bootclasspath" << "android.jar"
     }
 
     repositories {
+        google()
         jcenter()
 
         maven {
