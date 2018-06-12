@@ -24,9 +24,18 @@ dependencies {
     implementation project(':ClientLib')
     api files('libs/EHangAndroidSDK2.0.5.jar') // expose API to modules using this
     implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.google.code.gson:gson:2.2.2'
     // for dji code
     implementation 'com.dji:dji-sdk:4.5.1'
     compileOnly 'com.dji:dji-sdk-provided:4.5.1'
 
-    //implementation files('../android.jar') // YAYYYYYY
+    implementation files('../android.jar') // YAYYYYYY
+
+    // previously, the following were .jar files in the libs directory
+    implementation 'org.jmdns:jmdns:3.5.4'
+    implementation 'com.parrot:libARCommands:3.9.0'
+    implementation 'com.parrot:libARDiscovery:3.12.6'
+    implementation 'com.parrot:libARNetwork:3.12.2'
+    implementation 'com.parrot:libARSAL:3.11.0'
 }
