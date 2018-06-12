@@ -14,5 +14,5 @@ dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.google.code.gson:gson:2.2.2'
 
-    //implementation files('../android.jar') // YAYYYYYY
+    implementation files('../android.jar') // YAYYYYYY
 }
