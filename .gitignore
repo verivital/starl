@@ -1,12 +1,13 @@
 *.iml
-/.gradle
-/gradle
-/local.properties
+.gradle
+gradle
+local.properties
 .idea/caches/
 .idea/codeStyles
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
+.idea/**/misc.xml
 .idea/**/dictionaries
 .idea/**/shelf
 
