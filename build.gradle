@@ -9,8 +9,8 @@ buildscript {
         android_build_target_sdk_version = 27
         android_build_min_sdk_version = 21
 
-        android_build_target_compatibility = '1.8'
-        android_build_source_compatibility = '1.8'
+        android_build_target_compatibility = JavaVersion.VERSION_1_8
+        android_build_source_compatibility = JavaVersion.VERSION_1_8
     }
 
     repositories {
