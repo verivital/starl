@@ -1,7 +1,7 @@
 *.iml
-/.gradle
-/gradle
-/local.properties
+.gradle
+gradle
+local.properties
 .idea/caches/
 .idea/codeStyles
 # User-specific stuff
