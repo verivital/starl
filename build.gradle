@@ -7,10 +7,20 @@ buildscript {
         android_build_sdk_version = 27
         android_build_tools_version = '28.0.0 rc2'
         android_build_target_sdk_version = 27
-        android_build_min_sdk_version = 21
+        android_build_min_sdk_version = 24
 
         android_build_target_compatibility = JavaVersion.VERSION_1_8
         android_build_source_compatibility = JavaVersion.VERSION_1_8
+
+        // use ANDROID_HOME environment variable
+        android_home = System.getenv('ANDROID_HOME')
+        android_classpath = ''
+        if (android_home != null) {
+            android_classpath = "${android_home}/platforms/android-${android_build_sdk_version}/android.jar"
+            println "Adding $android_classpath to classpath."
+        } else {
+            println "ANDROID_HOME environment variable not set."
+        }
     }
 
     repositories {

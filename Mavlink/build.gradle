@@ -2,13 +2,18 @@ apply plugin: 'java'
 
 sourceSets {
     main {
-        java.srcDirs = ['src']
+        java {
+            srcDirs = ['src']
+        }
     }
 
     test {
-        java.srcDirs = ['test']
+        java {
+            srcDirs = ['test']
+        }
     }
 }
+
 
 jar {
     destinationDir (new File("${rootDir}/ClientLib/libs"))

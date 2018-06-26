@@ -100,13 +100,13 @@ dependencies {
     // 'compile' is obsolete and has been replaced with 'implementation' and 'api'.
     // Use 'api' for dependencies that are part of the API exposed by the project,
     // not for internal use only.
+
+    // include the Android SDK, relies on ANDROID_HOME environment variable
+    implementation files("$android_classpath")
+
     implementation 'com.jakewharton.timber:timber:3.1.0'
     implementation "com.google.android.gms:play-services-base:${play_services_version}"
     implementation "com.google.android.gms:play-services-location:${play_services_version}"
-
-    // TODO
-    implementation 'com.google.android:android:4.1.1.4'
-    //implementation files('../android.jar') // YAYYYYYY
 
     // Java semver library
     implementation 'com.github.zafarkhaja:java-semver:0.9.0'
@@ -121,8 +121,7 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
 
     debugImplementation project(':Mavlink')
-    implementation files('libs/Mavlink.jar')
-    implementation files('libs/d2xx.jar')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation 'org.robolectric:robolectric:3.0'
 }

@@ -23,17 +23,22 @@ android {
 
 }
 dependencies {
+    // include the Android SDK, relies on ANDROID_HOME environment variable
+    implementation files("$android_classpath")
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:multidex:1.0.3'
+
     implementation project(':dJISDKLIB')
     implementation project(':ClientLib')
     implementation project(':starLib')
     // add the appropriate project for your app here:
     implementation project(':raceApp')
 
-    implementation files('../android.jar') // YAYYYYYY
+
 }
 
