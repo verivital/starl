@@ -3,6 +3,6 @@
 include ':starLib', ':ClientLib', ':Mavlink'
 include ':starlTemplate'
 include ':followApp'
-include ':dJISDKLIB'
+//include ':dJISDKLIB'
 include ':starLSim'
 include ':raceApp'

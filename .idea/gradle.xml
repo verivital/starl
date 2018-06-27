@@ -10,7 +10,6 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/ClientLib" />
             <option value="$PROJECT_DIR$/Mavlink" />
-            <option value="$PROJECT_DIR$/dJISDKLIB" />
             <option value="$PROJECT_DIR$/followApp" />
             <option value="$PROJECT_DIR$/raceApp" />
             <option value="$PROJECT_DIR$/starLSim" />

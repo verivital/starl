@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion android_build_sdk_version
-    //buildToolsVersion android_build_tools_version
+
 
     defaultConfig {
         minSdkVersion android_build_min_sdk_version
@@ -16,6 +16,10 @@ android {
         }
     }
 
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
+
 }
 
 dependencies {
@@ -25,7 +29,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], exclude: ['EHangAndroidSDK2.0.5.jar'], dir: 'libs')
     api fileTree(include: 'EHangAndroidSDK2.0.5.jar', dir: 'libs') // expose API to modules using this
 
-    implementation project(':dJISDKLIB')
+    //implementation project(':dJISDKLIB')
     implementation project(':ClientLib')
 
 
@@ -37,7 +41,7 @@ dependencies {
     compileOnly 'com.dji:dji-sdk-provided:4.5.1'
 
     // previously, the following were .jar files in the libs directory
-    implementation 'org.jmdns:jmdns:3.5.4'
+    //implementation 'org.jmdns:jmdns:3.5.4'
     implementation 'com.parrot:libARCommands:3.9.0'
     implementation 'com.parrot:libARDiscovery:3.12.6'
     implementation 'com.parrot:libARNetwork:3.12.2'
