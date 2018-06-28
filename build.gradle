@@ -24,11 +24,11 @@ buildscript {
         android_classpath = { ->
             android_home = ''
             try {
-                properties = new Properties()
-                properties.load(project.rootProject.file('local.properties').newDataInputStream())
-                android_home = properties.getProperty('sdk.dir')
+                prop = new Properties()
+                prop.load(project.rootProject.file('local.properties').newDataInputStream())
+                android_home = prop.getProperty('sdk.dir')
             } catch (Exception e) {
-                logger.info('sdk.dir property in local.properties not found, using env variable instead. '
+                logger.warn('sdk.dir property in local.properties not found, using env variable instead. '
                         + e)
                 android_home = System.getenv('ANDROID_HOME')
             }
