@@ -48,9 +48,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.3'
-
-        //Dexcount gradle plugin
-        //classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.4'
     }
 }
 
@@ -141,14 +138,46 @@ allprojects {
         sourceCompatibility = android_build_source_compatibility
         targetCompatibility = android_build_target_compatibility
 
-        // Add javac compiler arguments here:
-        // ----------------------------------
-
-        //options.compilerArgs << "-Xlint:all" // Enable (nonstandard) warnings
-        //options.compilerArgs << "-verbose"
-
         // Certain parts of StarL need access to the Java 1.7 runtime library.
         options.compilerArgs << "-bootclasspath" << "rt-1.7.jar"
+
+        /**
+         * Add additional javac compiler arguments here:
+         * ----------------------------------
+         */
+
+        //options.compilerArgs << "-verbose" // log each class loaded and source file compiled
+        //options.compilerArgs << "-g" // generate all debugging information
+        //options.compilerArgs << "-g:none" // generate no debugging information
+
+        /**
+         * The following enable (or disable with -Xlint:-<name>) nonstandard warnings:
+         */
+        //options.compilerArgs << "-Xlint" // enable recommended warnings
+        //options.compilerArgs << "-Xlint:all" // enable all warnings
+
+        //options.compilerArgs << "-Xlint:cast"
+        //options.compilerArgs << "-Xlint:classfile"
+        //options.compilerArgs << "-Xlint:deprecation"
+        //options.compilerArgs << "-Xlint:dep-ann"
+        //options.compilerArgs << "-Xlint:divzero"
+        //options.compilerArgs << "-Xlint:empty"
+        //options.compilerArgs << "-Xlint:fallthrough"
+        //options.compilerArgs << "-Xlint:finally"
+        //options.compilerArgs << "-Xlint:options"
+        //options.compilerArgs << "-Xlint:overrides"
+        //options.compilerArgs << "-Xlint:path"
+        //options.compilerArgs << "-Xlint:processing"
+        //options.compilerArgs << "-Xlint:rawtypes"
+        //options.compilerArgs << "-Xlint:serial"
+        //options.compilerArgs << "-Xlint:static"
+        //options.compilerArgs << "-Xlint:try"
+        //options.compilerArgs << "-Xlint:unchecked"
+        //options.compilerArgs << "-Xlint:varargs"
+
+        //options.compilerArgs << "-Xmaxerrors" << "<number>"
+        //options.compilerArgs << "-Xmaxwarns" << "<number>"
+        //options.compilerArgs << "-Xstdout" << "<filename>"
     }
 
     repositories {

@@ -26,16 +26,17 @@ dependencies {
     // include the Android SDK, relies on ANDROID_HOME environment variable
     implementation files("$android_classpath")
 
+    // include all .jar files in the libs directory, expose EHangAndroidSDK to other modules using this one
     implementation fileTree(include: ['*.jar'], exclude: ['EHangAndroidSDK2.0.5.jar'], dir: 'libs')
-    api fileTree(include: 'EHangAndroidSDK2.0.5.jar', dir: 'libs') // expose API to modules using this
+    api fileTree(include: 'EHangAndroidSDK2.0.5.jar', dir: 'libs')
 
-    //implementation project(':dJISDKLIB')
     implementation project(':ClientLib')
 
 
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:support-v4:27.1.1'
-    implementation 'com.google.code.gson:gson:2.2.2'
+    implementation 'com.google.code.gson:gson:2.8.2'
+
     // for dji code
     implementation 'com.dji:dji-sdk:4.5.1'
     compileOnly 'com.dji:dji-sdk-provided:4.5.1'
@@ -45,6 +46,6 @@ dependencies {
     implementation 'com.parrot:libARCommands:3.9.0'
     implementation 'com.parrot:libARDiscovery:3.12.6'
     implementation 'com.parrot:libARNetwork:3.12.2'
-    implementation 'com.parrot:libARSAL:3.11.0'
+    implementation 'com.parrot:libARSAL:3.12.6'
 
 }

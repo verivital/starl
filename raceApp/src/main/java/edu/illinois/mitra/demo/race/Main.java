@@ -24,7 +24,7 @@ public class Main {
 		settings.DRAWER(new RaceDrawer());
 		settings.DRAW_TRACE(true);
 		settings.DRAW__ROBOT_TYPE(true);
-		//
+
 		Simulation sim = new Simulation(RaceApp.class, settings.build());
 		sim.start();
 	}
