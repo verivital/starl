@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion android_build_sdk_version
-    //buildToolsVersion android_build_tools_version
+
 
     defaultConfig {
         minSdkVersion android_build_min_sdk_version
@@ -12,7 +12,5 @@ android {
 dependencies {
     api project(':starLib')
     api fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.code.gson:gson:2.2.2'
-
-    implementation files('../android.jar') // YAYYYYYY
+    implementation 'com.google.code.gson:gson:2.8.2'
 }

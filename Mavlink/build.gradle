@@ -11,6 +11,7 @@ sourceSets {
 }
 
 jar {
+    // use the output jar as a dependency for ClientLib
     destinationDir (new File("${rootDir}/ClientLib/libs"))
 }
 
