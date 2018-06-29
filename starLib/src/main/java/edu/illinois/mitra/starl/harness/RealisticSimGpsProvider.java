@@ -1,7 +1,5 @@
 package edu.illinois.mitra.starl.harness;
 
-import android.util.Log;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -16,8 +14,6 @@ import edu.illinois.mitra.starl.models.Model_Mavic;
 import edu.illinois.mitra.starl.models.Model_Phantom;
 import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starl.models.Model_quadcopter;
-import edu.illinois.mitra.starl.models.Model_3DR;
-import edu.illinois.mitra.starl.objects.Common;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Obstacles;
@@ -505,9 +501,9 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 					else{
 						nextpoint = currobs.obstacle.get(j+1);
 					}
-					Point3d closeP = currobs.getClosestPointOnSegment(curpoint.x, curpoint.y, nextpoint.x, nextpoint.y, bot.x, bot.y);
-					wall.setPos(closeP.x, closeP.y, 0);
-					double distance = Math.sqrt(Math.pow(closeP.x - bot.x, 2) + Math.pow(closeP.y - bot.y, 2)) ;
+					Point3d closeP = currobs.getClosestPointOnSegment(curpoint.x(), curpoint.y(), nextpoint.x(), nextpoint.y(), bot.x(), bot.y());
+					wall.set(closeP.x(), closeP.y(), 0);
+					double distance = Math.sqrt(Math.pow(closeP.x() - bot.x(), 2) + Math.pow(closeP.y() - bot.y(), 2)) ;
 					
 					//need to modify some conditions of bump sensors, we have left and right bump sensor for now
 					if(distance < myRadius){

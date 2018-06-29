@@ -80,8 +80,8 @@ public class ObstacleList {
 	* This method is used for checking if the line alone destination and current has any intersection with any obstacles
 	*/
 	public boolean badPath(RRTNode destinationNode, RRTNode currentNode){
-		ItemPosition destination = new ItemPosition("NodeToIPDes", destinationNode.position.x, destinationNode.position.y, 0);
-		ItemPosition current = new ItemPosition("NodeToIPCurrt", currentNode.position.x, currentNode.position.y, 0);
+		ItemPosition destination = new ItemPosition("NodeToIPDes", destinationNode.position.x(), destinationNode.position.y(), 0);
+		ItemPosition current = new ItemPosition("NodeToIPCurrt", currentNode.position.x(), currentNode.position.y(), 0);
 		boolean check = false;
 		for(int i=0; i< ObList.size() && ObList.elementAt(i) != null; i++){
 			if(ObList.elementAt(i).checkCross(destination, current)){
@@ -229,7 +229,7 @@ public class ObstacleList {
 
 		}
 		if(uncontained){
-			Obstacles newObs = new Obstacles(blocker.x, blocker.y);
+			Obstacles newObs = new Obstacles(blocker.x(), blocker.y());
 			ObList.addElement(newObs);
 			ObList.lastElement().ToGrid(detect_Precision * de_Radius);
 		}

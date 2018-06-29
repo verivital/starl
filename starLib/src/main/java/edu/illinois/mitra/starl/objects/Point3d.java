@@ -13,134 +13,108 @@ import edu.illinois.mitra.starl.interfaces.Traceable;
  */
 
 public class Point3d implements Traceable {
-//	private static final String TAG = "Point3d";
-//	private static final String ERR = "Critical Error";
 
-	public int x;
-	public int y;
-	public int z;
-	
+	private int x;
+	private int y;
+	private int z;
+
+	/**
+	 * Construct a Point3d with default value (0, 0, 0).
+	 */
 	public Point3d(){
-		x = 0;
-		y = 0;
-		z = 0;
-	}
-	
-	/**
-	 * Construct an Point3d from a name, X, and Y positions, With Z= 0 as default
-	 * 
-	 * @param name The name of the new position
-	 * @param x X position
-	 * @param y Y position
-	 */
-	
-	public Point3d(int x, int y) {
-		//constructor for calculation temp point
-		this.x = x;
-		this.y = y;
-		this.z = 0;
-	}
-	
-	/**
-	 * Construct an Point3d from a name, X, Y and Z positions
-	 * 
-	 * @param name The name of the new position
-	 * @param x X position
-	 * @param y Y position
-	 * @param z Z position
-	 */
-	 
-	public Point3d(int x, int y, int z) {
-		//constructor for calculation temp point
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-	
-	/**
-	 * Construct an Point3d by cloning another
-	 * Do not use this method to clone robots, it will only clone name, position and heading
-	 * @param other The Point3d to clone
-	 */
-	
-	public Point3d(Point3d other) {
-		this(other.x, other.y, other.z);
-	}
-	
-	
-	@Override 
-	public String toString() {
-		return "Point3d" + ": " + x + ", " + y + ", " + z;
+		set(0, 0, 0);
 	}
 
-	public void setPos(int x, int y, int z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	/**
+	 * Construct a Point3d with the given x and y values, setting z to 0.
+	 */
+	public Point3d(int x, int y) {
+		set(x, y, 0);
 	}
-	
-	public <T extends Point3d> void setPos(T other) {
-		this.x = other.x;
-		this.y = other.y;
-		this.z = other.z;
+
+	/**
+	 * Construct a Point3d with the given x, y, and z values.
+	 */
+	public Point3d(int x, int y, int z) {
+		set(x, y, z);
+	}
+
+	/**
+	 * Construct a Point3d with the values of other.
+	 * @param other Another Point3d instance.
+	 */
+	public Point3d(Point3d other) {
+		set(other.x(), other.y(), other.z());
+	}
+
+	/**
+	 * Set the Point3d's values to the given values.
+	 * @return a reference to this
+	 */
+	public Point3d set(int x, int y, int z) {
+		this.x(x);
+		this.y(y);
+		this.z(z);
+		return this;
+	}
+
+	/**
+	 * Add vec to this.
+	 * @return a reference to this
+	 */
+	public Point3d add(Vector3d vec) {
+		return set(x + vec.x(), y + vec.y(), z + vec.z());
+	}
+
+	/**
+	 * Subtract vec from this.
+	 * @return a reference to this
+	 */
+	public Point3d subtract(Vector3d vec) {
+		return set(x - vec.x(), y - vec.y(), z - vec.z());
+	}
+
+	public Vector3d subtract(Point3d point) {
+		return new Vector3d(x - point.x, y - point.y, z - point.z);
 	}
 	
 	/**
 	 * @param other The Point3d to measure against
 	 * @return Euclidean distance to Point3d other
 	 */
-	public int distanceTo(Point3d other) {
-		if(other == null) {
-			return 0;
-		}
-		return (int) Math.sqrt(Math.pow(x - other.x, 2) + Math.pow(this.y - other.y, 2) + Math.pow(this.z - other.z, 2));
+	public double distanceTo(Point3d other) {
+		return subtract(other).magnitude();
 	}
 
-    public int distanceTo2D(Point3d other) {
-        return (int) Math.sqrt(Math.pow(x - other.x, 2) + Math.pow(this.y - other.y, 2));
+    public double distanceTo2D(Point3d other) {
+        return subtract(other).magnitude2d();
     }
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		return true;
+		if (obj != null && obj instanceof Point3d) {
+			Point3d point = (Point3d)obj;
+			return x() == point.x() && y() == point.y() && z() == point.z();
+		}
+		return false;
 	}
-	
-	public String toMessage() {
-		return x + "," + y + "," + z;
-	}
-	
-	/**
-	 * Construct an Point3d from a received GPS broadcast message
-	 * 
-	 * Sub class should override this method
-	 * 
-	 * @param received GPS broadcast received 
-	 * @throws ItemFormattingException
-	 * 
-	 */
 
-	public Point3d(String received) throws ItemFormattingException {
-		throw new ItemFormattingException("No implmentation provided, must override in subclass");
+	@Override
+	public String toString() {
+		return "Point3d: " + x() + ", " + y() + ", " + z();
 	}
 
 	@Override
 	public HashMap<String, Object> getXML() {
 		HashMap<String, Object> retval = new HashMap<String,Object>();
 		retval.put("name", ' ');
-		retval.put("x", x);
-		retval.put("y", y);
-		retval.put("z",z);
+		retval.put("x", x());
+		retval.put("y", y());
+		retval.put("z", z());
 		return retval;
 	}
 	
 	// Hashing and equals checks are done only against the position's name. Position names are unique!
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -149,16 +123,27 @@ public class Point3d implements Traceable {
 		return result;
 	}
 	
-	public int getX(){
+	public int x(){
 		return x;
 	}
 	
-	public int getY(){
+	public int y(){
 		return y;
 	}
-	public int getZ(){
+	public int z(){
 		return z;
 	}
 
+	public void x(int x) {
+		this.x = x;
+	}
+
+	public void y(int y) {
+		this.y = y;
+	}
+
+	public void z(int z) {
+		this.z = z;
+	}
 }
 

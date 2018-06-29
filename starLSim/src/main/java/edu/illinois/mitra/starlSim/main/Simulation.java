@@ -22,12 +22,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 
-import edu.illinois.mitra.starl.harness.IdealSimGpsProvider;
 import edu.illinois.mitra.starl.harness.RealisticSimGpsProvider;
 import edu.illinois.mitra.starl.harness.SimGpsProvider;
 import edu.illinois.mitra.starl.harness.SimulationEngine;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
-import edu.illinois.mitra.starl.interfaces.TrackedRobot;
 import edu.illinois.mitra.starl.models.Model_3DR;
 import edu.illinois.mitra.starl.models.Model_GhostAerial;
 import edu.illinois.mitra.starl.models.Model_Mavic;
@@ -415,39 +413,39 @@ public class Simulation {
 
 								Model_iRobot ip = (Model_iRobot) targetList.get(i);
 								if (i < 12) {
-									RobotData nextBot = new RobotData(ip.name, ip.x, ip.y, ip.angle, c[i-settings.N_GHOSTS-settings.N_o3DR], views.elementAt(i-settings.N_GHOSTS-settings.N_o3DR), ip.leftbump, ip.rightbump);
+									RobotData nextBot = new RobotData(ip.name, ip.x(), ip.y(), ip.angle, c[i-settings.N_GHOSTS-settings.N_o3DR], views.elementAt(i-settings.N_GHOSTS-settings.N_o3DR), ip.leftbump, ip.rightbump);
 									nextBot.radius = settings.BOT_RADIUS;
 									nextBot.type = ip.type;
 									rd.add(nextBot);
 								} else {
-									RobotData nextBot = new RobotData(ip.name, ip.x, ip.y, ip.angle, c[0], views.elementAt(iiRobot), ip.leftbump, ip.rightbump);
+									RobotData nextBot = new RobotData(ip.name, ip.x(), ip.y(), ip.angle, c[0], views.elementAt(iiRobot), ip.leftbump, ip.rightbump);
 									nextBot.radius = settings.BOT_RADIUS;
 									rd.add(nextBot);
 								}
 								iiRobot++;
 							} else if (targetList.get(i) instanceof Model_quadcopter) {
 								Model_quadcopter ip = (Model_quadcopter) targetList.get(i);
-								RobotData nextBot = new RobotData(ip.name, ip.x, ip.y, ip.z, ip.yaw, ip.pitch, ip.roll, ip.receivedTime);
+								RobotData nextBot = new RobotData(ip.name, ip.x(), ip.y(), ip.z(), ip.yaw, ip.pitch, ip.roll, ip.receivedTime);
 								nextBot.radius = settings.BOT_RADIUS;
 								rd.add(nextBot);
 							} else if (targetList.get(i) instanceof Model_GhostAerial) {
 								Model_GhostAerial ip = (Model_GhostAerial) targetList.get(i);
-								RobotData nextBot = new RobotData(ip.name, ip.x, ip.y, ip.z, ip.yaw, ip.pitch, ip.roll, ip.receivedTime);
+								RobotData nextBot = new RobotData(ip.name, ip.x(), ip.y(), ip.z(), ip.yaw, ip.pitch, ip.roll, ip.receivedTime);
 								nextBot.radius = settings.BOT_RADIUS;
 								rd.add(nextBot);
 							}else if (targetList.get(i) instanceof Model_Mavic) {
 								Model_Mavic ip = (Model_Mavic) targetList.get(i);
-								RobotData nextBot = new RobotData(ip.name, ip.x, ip.y, ip.z, ip.yaw, ip.pitch, ip.roll, ip.receivedTime);
+								RobotData nextBot = new RobotData(ip.name, ip.x(), ip.y(), ip.z(), ip.yaw, ip.pitch, ip.roll, ip.receivedTime);
 								nextBot.radius = settings.BOT_RADIUS;
 								rd.add(nextBot);
 							}else if (targetList.get(i) instanceof Model_Phantom) {
 								Model_Phantom ip = (Model_Phantom) targetList.get(i);
-								RobotData nextBot = new RobotData(ip.name, ip.x, ip.y, ip.z, ip.yaw, ip.pitch, ip.roll, ip.receivedTime);
+								RobotData nextBot = new RobotData(ip.name, ip.x(), ip.y(), ip.z(), ip.yaw, ip.pitch, ip.roll, ip.receivedTime);
 								nextBot.radius = settings.BOT_RADIUS;
 								rd.add(nextBot);
 							}else if (targetList.get(i) instanceof Model_3DR) {
 								Model_3DR ip = (Model_3DR) targetList.get(i);
-								RobotData nextBot = new RobotData(ip.name, ip.x, ip.y, ip.z, ip.yaw, ip.pitch, ip.roll, ip.receivedTime);
+								RobotData nextBot = new RobotData(ip.name, ip.x(), ip.y(), ip.z(), ip.yaw, ip.pitch, ip.roll, ip.receivedTime);
 								nextBot.radius = settings.BOT_RADIUS;
 								rd.add(nextBot);
 							}
@@ -456,7 +454,7 @@ public class Simulation {
 					// Add waypoints
 					if (settings.DRAW_WAYPOINTS) {
 						for (ItemPosition ip : gps.getWaypointPositions().getList()) {
-							RobotData waypoint = new RobotData((settings.DRAW_WAYPOINT_NAMES ? ip.name : ""), ip.x, ip.y, ip.index);
+							RobotData waypoint = new RobotData((settings.DRAW_WAYPOINT_NAMES ? ip.name : ""), ip.x(), ip.y(), ip.index);
 							waypoint.radius = 5;
 							waypoint.c = new Color(255, 0, 0);
 							rd.add(waypoint);
@@ -545,37 +543,37 @@ public class Simulation {
                 for(ItemPosition ip : pos) {
                     if(ip instanceof Model_iRobot) {
                         Model_iRobot m = (Model_iRobot) ip;
-                        RobotData nextBot = new RobotData(m.name, m.x, m.y, m.angle, ip.receivedTime);
+                        RobotData nextBot = new RobotData(m.name, m.x(), m.y(), m.angle, ip.receivedTime);
                         nextBot.radius = settings.BOT_RADIUS;
                         rd.add(nextBot);
                     }
                     else if(ip instanceof Model_quadcopter) {
                         Model_quadcopter m = (Model_quadcopter) ip;
-                        RobotData nextBot = new RobotData(ip.name, m.x, m.y, m.z, m.yaw, m.pitch, m.roll, m.receivedTime);
+                        RobotData nextBot = new RobotData(ip.name, m.x(), m.y(), m.z(), m.yaw, m.pitch, m.roll, m.receivedTime);
                         nextBot.radius = settings.BOT_RADIUS;
                         rd.add(nextBot);
                     }
                     else if(ip instanceof Model_GhostAerial) {
 						Model_GhostAerial m = (Model_GhostAerial) ip;
-						RobotData nextBot = new RobotData(ip.name, m.x, m.y, m.z, m.yaw, m.pitch, m.roll, m.receivedTime);
+						RobotData nextBot = new RobotData(ip.name, m.x(), m.y(), m.z(), m.yaw, m.pitch, m.roll, m.receivedTime);
 						nextBot.radius = settings.BOT_RADIUS;
 						rd.add(nextBot);
 					}
                     else if(ip instanceof Model_Mavic) {
                         Model_Mavic m = (Model_Mavic) ip;
-                        RobotData nextBot = new RobotData(ip.name, m.x, m.y, m.z, m.yaw, m.pitch, m.roll, m.receivedTime);
+                        RobotData nextBot = new RobotData(ip.name, m.x(), m.y(), m.z(), m.yaw, m.pitch, m.roll, m.receivedTime);
                         nextBot.radius = settings.BOT_RADIUS;
                         rd.add(nextBot);
                     }
 					else if(ip instanceof Model_Phantom) {
 						Model_Phantom m = (Model_Phantom) ip;
-						RobotData nextBot = new RobotData(ip.name, m.x, m.y, m.z, m.yaw, m.pitch, m.roll, m.receivedTime);
+						RobotData nextBot = new RobotData(ip.name, m.x(), m.y(), m.z(), m.yaw, m.pitch, m.roll, m.receivedTime);
 						nextBot.radius = settings.BOT_RADIUS;
 						rd.add(nextBot);
 					}
 					else if(ip instanceof Model_3DR) {
 						Model_3DR m = (Model_3DR) ip;
-						RobotData nextBot = new RobotData(ip.name, m.x, m.y, m.z, m.yaw, m.pitch, m.roll, m.receivedTime);
+						RobotData nextBot = new RobotData(ip.name, m.x(), m.y(), m.z(), m.yaw, m.pitch, m.roll, m.receivedTime);
 						nextBot.radius = settings.BOT_RADIUS;
 						rd.add(nextBot);
 					}

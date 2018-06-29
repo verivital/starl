@@ -88,8 +88,8 @@ public class MotionAutomatonMiniDrone extends RobotMotion {
 
     public void goTo(ItemPosition dest) {
         if((inMotion && !this.destination.equals(dest)) || !inMotion) {
-            this.destination = new ItemPosition(dest.name,dest.x,dest.y,0);
-            gvh.log.d(TAG, "Going to X: " + Integer.toString(dest.x) + ", Y: " + Integer.toString(dest.y));
+            this.destination = new ItemPosition(dest.name, dest.x(), dest.y(),0);
+            gvh.log.d(TAG, "Going to X: " + Integer.toString(dest.x()) + ", Y: " + Integer.toString(dest.y()));
       //      Log.d(TAG, "Going to X: " + Integer.toString(dest.x) + ", Y: " + Integer.toString(dest.y));
             //this.destination = dest;
             this.mode = OPMODE.GO_TO;
@@ -144,8 +144,8 @@ public class MotionAutomatonMiniDrone extends RobotMotion {
                                 next = STAGE.GOAL;
                             }
                             else{
-                                double rollCommand = PID_x.getCommand(mypos.x, destination.x);
-                                double pitchCommand = PID_y.getCommand(mypos.y, destination.y);
+                                double rollCommand = PID_x.getCommand(mypos.x(), destination.x());
+                                double pitchCommand = PID_y.getCommand(mypos.y(), destination.y());
                                 double yawCommand = calculateYaw();
                                 double gazCommand = 0;
                                 setControlInput(yawCommand, pitchCommand, rollCommand, gazCommand);
@@ -160,8 +160,8 @@ public class MotionAutomatonMiniDrone extends RobotMotion {
                                 setControlInput(yawCommand, 0, 0, 0);
                             }
                             else{
-                                double rollCommand = PID_x.getCommand(mypos.x, destination.x);
-                                double pitchCommand = PID_y.getCommand(mypos.y, destination.y);
+                                double rollCommand = PID_x.getCommand(mypos.x(), destination.x());
+                                double pitchCommand = PID_y.getCommand(mypos.y(), destination.y());
                                 double yawCommand = calculateYaw();
                                 double gazCommand = 0;
                                 setControlInput(yawCommand, pitchCommand, rollCommand, gazCommand);

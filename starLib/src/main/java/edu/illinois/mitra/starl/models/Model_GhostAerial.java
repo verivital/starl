@@ -23,7 +23,7 @@ public class Model_GhostAerial extends ItemPosition implements TrackedRobot {
     public double gaz;
     public int radius;
     // mass in kilograms
-    public double mass;
+    private double mass;
     public int height;
 
     public double v_x;
@@ -84,9 +84,9 @@ public class Model_GhostAerial extends ItemPosition implements TrackedRobot {
         String[] parts = received.replace(",", "").split("\\|");
         if(parts.length == 9) {
             this.name = parts[1];
-            this.x = Integer.parseInt(parts[2]);
-            this.y = Integer.parseInt(parts[3]);
-            this.z = Integer.parseInt(parts[4]);
+            this.x(Integer.parseInt(parts[2]));
+            this.y(Integer.parseInt(parts[3]));
+            this.z(Integer.parseInt(parts[4]));
             this.yaw = Integer.parseInt(parts[5]);
             this.pitch = Integer.parseInt(parts[6]);
             this.roll = Integer.parseInt(parts[7]);
@@ -122,13 +122,13 @@ public class Model_GhostAerial extends ItemPosition implements TrackedRobot {
 
 
     public Model_GhostAerial(ItemPosition t_pos) {
-        super(t_pos.name, t_pos.x, t_pos.y, t_pos.z);
+        super(t_pos.name, t_pos.x(), t_pos.y(), t_pos.z());
         initial_helper();
     }
 
     @Override
     public String toString() {
-        return name + ": " + x + ", " + y + ", " + z + "; yaw, pitch, roll, gaz: " + yaw + ", " + pitch + ", " + roll + " ," + gaz;
+        return name + ": " + x() + ", " + y() + ", " + z() + "; yaw, pitch, roll, gaz: " + yaw + ", " + pitch + ", " + roll + " ," + gaz;
     }
 
     /**
@@ -221,13 +221,13 @@ public <T extends Point3d> int angleTo(T other) {
     return  Math.round(retAngle);
 }
 
-public void setPos(int x, int y, int angle) {
+public void set(int x, int y, int angle) {
     this.x = x;
     this.y = y;
     this.angle = angle;
 }
 
-public void setPos(Model_Quadcopter other) {
+public void set(Model_Quadcopter other) {
     this.x = other.x;
     this.y = other.y;
     this.angle = other.angle;
@@ -256,7 +256,7 @@ public void setPos(Model_Quadcopter other) {
     public Point3d predict(double[] noises, double timeSinceUpdate) {
         if(noises.length != 3){
             System.out.println("Incorrect number of noises parameters passed in, please pass in x, y, z, yaw, pitch, roll noises");
-            return new Point3d(x,y,z);
+            return new Point3d(x(), y(), z());
         }
         v_yaw += (v_yawR - v_yaw)*timeSinceUpdate;
         pitch += (pitchR - pitch)*timeSinceUpdate;
@@ -287,9 +287,9 @@ public void setPos(Model_Quadcopter other) {
         int dY= (int) (yNoise +  v_y*timeSinceUpdate + windyNoise);
         int dZ= (int) (zNoise +  gaz*timeSinceUpdate);
 
-        x_p = x+dX;
-        y_p = y+dY;
-        z_p = z+dZ;
+        x_p = x() +dX;
+        y_p = y() +dY;
+        z_p = z() +dZ;
 
         double thrust;
         if((mass * Math.cos(Math.toRadians(roll)) * Math.cos(Math.toRadians(pitch))) != 0){
@@ -329,9 +329,9 @@ public void setPos(Model_Quadcopter other) {
     @Override
     public void updatePos(boolean followPredict) {
         if(followPredict){
-            x = x_p;
-            y = y_p;
-            z = z_p;
+            x(x_p);
+            y(y_p);
+            z(z_p);
 
             yaw = yaw_p;
             //		pitch = pitch_p;
@@ -345,15 +345,15 @@ public void setPos(Model_Quadcopter other) {
             v_z = v_z_p;
         }
         else{
-            z = z_p;
+            z(z_p);
             v_z = v_z_p;
-            if(z < 20){
+            if(z() < 20){
                 roll = 0;
                 pitch = 0;
             }
         }
-        if(z < 0){
-            z = 0;
+        if(z() < 0){
+            z(0);
             v_z = 0;
         }
     }

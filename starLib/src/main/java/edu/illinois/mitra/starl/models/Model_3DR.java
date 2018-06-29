@@ -4,8 +4,6 @@ package edu.illinois.mitra.starl.models;
  * Created by yangy14 on 6/2/2017.
  */
 
-import com.o3dr.android.client.*;
-
 import java.util.Random;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
@@ -17,8 +15,6 @@ import edu.illinois.mitra.starl.objects.PositionList;
 
 public class Model_3DR extends ItemPosition implements TrackedRobot {
 
-    public Drone drone;
-
     // for default values, see initial_helper()
     public double yaw;
     public double pitch;
@@ -27,14 +23,14 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
     public double gaz;
     public int radius;
     // mass in kilograms
-    public double mass;
+    private double mass;
     public int height;
 
     public double v_x;
     public double v_y;
     public double v_z;
 
-    public double v_yaw;
+    private double v_yaw;
     // angular speed
     //	public double v_pitch;
     //	public double v_roll;
@@ -70,11 +66,11 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
     public double max_gaz = 1000; // millimeter/s 200 to 2000
     public double max_pitch_roll = 20;  // in degrees
     public double max_yaw_speed = 200;  // degrees/s
-    public double windx = 0;   // millimeter/s
-    public double windy = 0;
-    public double windt = 0;
-    public double windxNoise;
-    public double windyNoise;
+    private double windx = 0;   // millimeter/s
+    private double windy = 0;
+    private double windt = 0;
+    private double windxNoise;
+    private double windyNoise;
 
     public Model_3DR(String received) throws ItemFormattingException{
         initial_helper();
@@ -82,9 +78,9 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
                 split("\\|");
         if(parts.length == 9) {
             this.name = parts[1];
-            this.x = Integer.parseInt(parts[2]);
-            this.y = Integer.parseInt(parts[3]);
-            this.z = Integer.parseInt(parts[4]);
+            this.x(Integer.parseInt(parts[2]));
+            this.y(Integer.parseInt(parts[3]));
+            this.z(Integer.parseInt(parts[4]));
             this.yaw = Integer.parseInt(parts[5]);
             this.pitch = Integer.parseInt(parts[6]);
             this.roll = Integer.parseInt(parts[7]);
@@ -120,7 +116,7 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
 
 
     public Model_3DR(ItemPosition t_pos) {
-        super(t_pos.name, t_pos.x, t_pos.y, t_pos.z);
+        super(t_pos.name, t_pos.x(), t_pos.y(), t_pos.z());
         initial_helper();
     }
 
@@ -143,14 +139,14 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
 
     @Override
     public String toString() {
-        return name + ": " + x + ", " + y + ", " + z + "; yaw, pitch, roll, gaz: " + yaw + ", " + pitch + ", " + roll + " ," + gaz;
+        return name + ": " + x() + ", " + y() + ", " + z() + "; yaw, pitch, roll, gaz: " + yaw + ", " + pitch + ", " + roll + " ," + gaz;
     }
 
     @Override
     public Point3d predict(double[] noises, double timeSinceUpdate) {
         if(noises.length != 3){
             System.out.println("Incorrect number of noises parameters passed in, please pass in x, y, z, yaw, pitch, roll noises");
-            return new Point3d(x,y,z);
+            return new Point3d(x(), y(), z());
         }
         v_yaw += (v_yawR - v_yaw)*timeSinceUpdate;
         pitch += (pitchR - pitch)*timeSinceUpdate;
@@ -181,9 +177,9 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
         int dY= (int) (yNoise +  v_y*timeSinceUpdate + windyNoise);
         int dZ= (int) (zNoise +  gaz*timeSinceUpdate);
 
-        x_p = x+dX;
-        y_p = y+dY;
-        z_p = z+dZ;
+        x_p = x() +dX;
+        y_p = y() +dY;
+        z_p = z() +dZ;
 
         double thrust;
         if((mass * Math.cos(Math.toRadians(roll)) * Math.cos(Math.toRadians(pitch))) != 0){
@@ -223,9 +219,9 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
     @Override
     public void updatePos(boolean followPredict) {
         if(followPredict){
-            x = x_p;
-            y = y_p;
-            z = z_p;
+            x(x_p);
+            y(y_p);
+            z(z_p);
 
             yaw = yaw_p;
             //		pitch = pitch_p;
@@ -239,15 +235,15 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
             v_z = v_z_p;
         }
         else{
-            z = z_p;
+            z(z_p);
             v_z = v_z_p;
-            if(z < 20){
+            if(z() < 20){
                 roll = 0;
                 pitch = 0;
             }
         }
-        if(z < 0){
-            z = 0;
+        if(z() < 0){
+            z(0);
             v_z = 0;
         }
     }

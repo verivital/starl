@@ -110,6 +110,7 @@ It is important for every new StarL application to have the appropriate dependen
 ```gradle
 dependencies {
     implementation project(':starLSim')
+    implementation project(':starLib')
 }
 ```
 ## Features to be Implemented

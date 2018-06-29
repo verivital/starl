@@ -20,13 +20,13 @@ public class FollowDrawer extends Drawer {
 
 		g.setColor(Color.RED);
 		for(ItemPosition dest : app.destinations.values()) {
-			g.fillRect(dest.getX() - 13, dest.getY() - 13, 26, 26);
+			g.fillRect(dest.x() - 13, dest.y() - 13, 26, 26);
 		}
 
 		g.setColor(selectColor);
 		g.setStroke(stroke);
 		if(app.currentDestination != null)
-			g.drawOval(app.currentDestination.getX() - 20, app.currentDestination.getY() - 20, 40, 40);
+			g.drawOval(app.currentDestination.x() - 20, app.currentDestination.y() - 20, 40, 40);
 	}
 
 }

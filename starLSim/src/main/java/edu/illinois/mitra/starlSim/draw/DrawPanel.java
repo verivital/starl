@@ -155,14 +155,14 @@ public class DrawPanel extends ZoomablePanel
 			for(int j = 0; j < currobs.obstacle.size() -1 ; j++){
 			curpoint = currobs.obstacle.get(j);
 			nextpoint = currobs.obstacle.get(j+1);
-			g.drawLine(curpoint.x, curpoint.y, nextpoint.x, nextpoint.y);
-			xs[j] = curpoint.x;
-			ys[j] = curpoint.y;
+			g.drawLine(curpoint.x(), curpoint.y(), nextpoint.x(), nextpoint.y());
+			xs[j] = curpoint.x();
+			ys[j] = curpoint.y();
 			}
-			xs[currobs.obstacle.size()-1] = nextpoint.x;
-			ys[currobs.obstacle.size()-1] = nextpoint.y;
+			xs[currobs.obstacle.size()-1] = nextpoint.x();
+			ys[currobs.obstacle.size()-1] = nextpoint.y();
 			
-			g.drawLine(nextpoint.x, nextpoint.y, currobs.obstacle.firstElement().x, currobs.obstacle.firstElement().y);
+			g.drawLine(nextpoint.x(), nextpoint.y(), currobs.obstacle.firstElement().x(), currobs.obstacle.firstElement().y());
 			g.fillPolygon(xs,ys,currobs.obstacle.size());
 		}
 

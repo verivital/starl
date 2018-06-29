@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 
 import edu.illinois.mitra.starl.interfaces.LogicThread;
-import edu.illinois.mitra.starl.motion.RRTNode;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Obstacles;
@@ -28,10 +27,10 @@ public class RaceDrawer extends Drawer {
 		int i = 0;
 		for(ItemPosition dest : app.destinationsHistory) {
 			i++;
-			g.fillRect(dest.getX() - 13, dest.getY() - 13, 26, 26);
-			g.drawString(dest.name, dest.getX() + 30, dest.getY() - 20);
+			g.fillRect(dest.x() - 13, dest.y() - 13, 26, 26);
+			g.drawString(dest.name, dest.x() + 30, dest.y() - 20);
 	//		if(!app.destinations.containsKey(dest.name)){
-	//			g.drawString(" has been reached", dest.getX() + 20, dest.getY() - 100);
+	//			g.drawString(" has been reached", dest.x() + 20, dest.y() - 100);
 	//		}
 			
 		}
@@ -62,21 +61,21 @@ public class RaceDrawer extends Drawer {
 			for(int j = 0; j < currobs.obstacle.size() -1 ; j++){
 			curpoint = currobs.obstacle.get(j);
 			nextpoint = currobs.obstacle.get(j+1);
-			g.drawLine(curpoint.x, curpoint.y, nextpoint.x, nextpoint.y);
-			xs[j] = curpoint.x;
-			ys[j] = curpoint.y;
+			g.drawLine(curpoint.x(), curpoint.y(), nextpoint.x(), nextpoint.y());
+			xs[j] = curpoint.x();
+			ys[j] = curpoint.y();
 			}
-			xs[currobs.obstacle.size()-1] = nextpoint.x;
-			ys[currobs.obstacle.size()-1] = nextpoint.y;
+			xs[currobs.obstacle.size()-1] = nextpoint.x();
+			ys[currobs.obstacle.size()-1] = nextpoint.y();
 			
-			g.drawLine(nextpoint.x, nextpoint.y, currobs.obstacle.firstElement().x, currobs.obstacle.firstElement().y);
+			g.drawLine(nextpoint.x(), nextpoint.y(), currobs.obstacle.firstElement().x(), currobs.obstacle.firstElement().y());
 			g.fillPolygon(xs,ys,currobs.obstacle.size());
 		}
 		
 		g.setColor(selectColor);
 		g.setStroke(stroke);
 		if(app.currentDestination != null)
-			g.drawOval(app.currentDestination.getX() - 20, app.currentDestination.getY() - 20, 40, 40);
+			g.drawOval(app.currentDestination.x() - 20, app.currentDestination.y() - 20, 40, 40);
 		g.setColor(Color.BLACK);
 		//for(ItemPosition cur: app.doReachavoidCalls){
 		//	g.drawRect(cur.x -10, cur.y - 10, 20, 20);

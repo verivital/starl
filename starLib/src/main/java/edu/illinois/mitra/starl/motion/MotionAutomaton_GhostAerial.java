@@ -91,8 +91,8 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
     public void goTo(ItemPosition dest) {
         if(!inMotion || !this.destination.equals(dest)) {
             done = false;
-            this.destination = new ItemPosition(dest.name,dest.x,dest.y,dest.z);
-            gvh.log.d(TAG, "Going to X: " + Integer.toString(dest.x) + ", Y: " + Integer.toString(dest.y));
+            this.destination = new ItemPosition(dest.name, dest.x(), dest.y(), dest.z());
+            gvh.log.d(TAG, "Going to X: " + Integer.toString(dest.x()) + ", Y: " + Integer.toString(dest.y()));
             //this.destination = dest;
             this.mode = OPMODE.GO_TO;
             startMotion();
@@ -113,8 +113,8 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
             //			gvh.gps.getObspointPositions().updateObs();
             if(running) {
                 mypos = (Model_GhostAerial)gvh.gps.getMyPosition();
-                System.out.printf("mypos (%d, %d) \n", mypos.x, mypos.y);
-                System.out.printf("destination (%d, %d) \n", destination.x, destination.y);
+                System.out.printf("mypos (%d, %d) \n", mypos.x(), mypos.y());
+                System.out.printf("destination (%d, %d) \n", destination.x(), destination.y());
                 //int distance = (int) Math.sqrt(Math.pow((mypos.x - destination.x),2) + Math.pow((mypos.y - destination.y), 2));
                 int distance = mypos.distanceTo2D(destination);
                 System.out.println("distance:" + distance);
@@ -131,7 +131,7 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
                                 PID_x.reset();
                                 PID_y.reset();
                                 //setMaxTilt(5);
-                                if(mypos.z < safeHeight || landed){
+                                if(mypos.z() < safeHeight || landed){
                                     // just a safe distance from ground
                                     next = STAGE.TAKEOFF;
                                 }
@@ -147,7 +147,7 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
                             }
                             break;
                         case MOVE:
-                            if(mypos.z < safeHeight){
+                            if(mypos.z() < safeHeight){
                                 // just a safe distance from ground
                                 takeOff();
                                 next = STAGE.TAKEOFF;
@@ -179,8 +179,8 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
                                         rescale(Math.toDegrees(Rpitch)%360, mypos.max_pitch_roll),
                                         rescale(Math.toDegrees(Rroll)%360, mypos.max_pitch_roll),
                                         rescale(Rvs, mypos.max_gaz));*/
-                                double rollCommand = PID_x.getCommand(mypos.x, destination.x)*-1;
-                                double pitchCommand = PID_y.getCommand(mypos.y, destination.y)*-1;
+                                double rollCommand = PID_x.getCommand(mypos.x(), destination.x())*-1;
+                                double pitchCommand = PID_y.getCommand(mypos.y(), destination.y())*-1;
                                 double yawCommand = calculateYaw();
                                 double gazCommand = 0;
                                 setControlInputRescale(yawCommand, pitchCommand, rollCommand, gazCommand);
@@ -199,8 +199,8 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
                                 setControlInput(yawCommand, 0, 0, 0);
                             }
                             else{
-                                double rollCommand = PID_x.getCommand(mypos.x, destination.x);
-                                double pitchCommand = PID_y.getCommand(mypos.y, destination.y);
+                                double rollCommand = PID_x.getCommand(mypos.x(), destination.x());
+                                double pitchCommand = PID_y.getCommand(mypos.y(), destination.y());
                                 double yawCommand = calculateYaw();
                                 double gazCommand = 0;
                                 setControlInput(yawCommand, pitchCommand, rollCommand, gazCommand);
@@ -209,7 +209,7 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
                         case TAKEOFF:
                             takeOff();
                             landed = false;
-                            switch(mypos.z/(safeHeight/2)){
+                            switch(mypos.z() /(safeHeight/2)){
                                 case 0:// 0 - 1/2 safeHeight
                                     setControlInput(0,0,0,1);
                                     break;

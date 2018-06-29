@@ -6,7 +6,6 @@ import java.util.Observer;
 import java.util.Random;
 import java.util.Vector;
 
-import edu.illinois.mitra.starl.interfaces.TrackedRobot;
 import edu.illinois.mitra.starl.models.Model_GhostAerial;
 import edu.illinois.mitra.starl.models.Model_Mavic;
 import edu.illinois.mitra.starl.models.Model_Phantom;
@@ -230,8 +229,8 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 				}
 				else
 				{
-					int deltaX = dest.x-start.x;
-					int deltaY = dest.y-start.y;
+					int deltaX = dest.x() - start.x();
+					int deltaY = dest.y() - start.y();
 					motAngle = Math.atan2(deltaY, deltaX);
 					
 					vX = (Math.cos(motAngle) * velocity);
@@ -242,7 +241,7 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 				}
 				
 				if(angleNoise != 0) aNoise = rand.nextInt(angleNoise*2)-angleNoise;
-				pos.setPos(start.x, start.y, angle+aNoise);
+				pos.set(start.x(), start.y(), angle+aNoise);
 				newdest = false;
 			} else if(dest != null) {
 				// Calculate noise
@@ -258,7 +257,7 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 				if(totalTimeInMotion < totalMotionTime) {
 					int dX = (int)(vX * totalTimeInMotion)/1000;
 					int dY = (int)(vY * totalTimeInMotion)/1000;
-					pos.setPos(start.x+dX+xNoise, start.y+dY+yNoise, (int)Math.toDegrees(motAngle));
+					pos.set(start.x() +dX+xNoise, start.y() +dY+yNoise, (int)Math.toDegrees(motAngle));
 					pos.velocity = velocity;
 				} else {
 					
@@ -271,7 +270,7 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 					if (pos==null )
 						throw new RuntimeException("pos is null");
 					
-					pos.setPos(dest.x+xNoise, dest.y+yNoise, (int)pos.angle+aNoise);
+					pos.set(dest.x() +xNoise, dest.y() +yNoise, (int)pos.angle+aNoise);
 					
 					dest = null;
 					reportpos = true;

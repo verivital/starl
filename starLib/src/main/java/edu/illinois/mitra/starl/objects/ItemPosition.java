@@ -67,9 +67,9 @@ public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
 		String[] parts = received.replace(",", "").split("\\|");
 		if(parts.length == 7) {
 			this.name = parts[1];
-			this.x = Integer.parseInt(parts[2]);
-			this.y = Integer.parseInt(parts[3]);
-			this.z = Integer.parseInt(parts[4]);
+			this.x(Integer.parseInt(parts[2]));
+			this.y(Integer.parseInt(parts[3]));
+			this.z(Integer.parseInt(parts[4]));
 			this.index = Integer.parseInt(parts[5]);
 		} else {
 			throw new ItemFormattingException("Should be length 7, is length " + parts.length);
@@ -79,7 +79,7 @@ public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
 	
 	@Override 
 	public String toString() {
-		return name + ": " + x + ", " + y + ", " + z + ". index " + index;
+		return name + ": " + x() + ", " + y() + ", " + z() + ". index " + index;
 	}
 	
 	// Hashing and equals checks are done only against the position's name. Position names are unique!
@@ -101,7 +101,7 @@ public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
 		if (getClass() != obj.getClass())
 			return false;
 		ItemPosition other = (ItemPosition) obj;
-		if(other.x != this.x || other.y != this.y ||other.z != this.z ){
+		if(other.x() != this.x() || other.y() != this.y() || other.z() != this.z()){
 			return false;
 		}
 		if (name == null) {
@@ -116,14 +116,14 @@ public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
 	public HashMap<String, Object> getXML() {
 		HashMap<String, Object> retval = new HashMap<String,Object>();
 		retval.put("name", name);
-		retval.put("x", x);
-		retval.put("y", y);
-		retval.put("z",z);
+		retval.put("x", x());
+		retval.put("y", y());
+		retval.put("z", z());
 		return retval;
 	}
 	
 	public String toMessage() {
-		return x + "," + y + "," + z + "," + name +","+index;
+		return x() + "," + y() + "," + z() + "," + name +","+index;
 	}
 	
 

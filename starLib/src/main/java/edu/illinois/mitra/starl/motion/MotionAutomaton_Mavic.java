@@ -7,11 +7,8 @@ import java.util.Arrays;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener.Event;
 import edu.illinois.mitra.starl.models.Model_Mavic;
-import edu.illinois.mitra.starl.models.Model_quadcopter;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
-import dji.sdk.gimbal.*;
-import dji.common.gimbal.*;
 
 //import edu.illinois.mitra.starl.models.Model_quadcopter;
 
@@ -89,8 +86,8 @@ public class MotionAutomaton_Mavic extends RobotMotion {
 
     public void goTo(ItemPosition dest) {
         if((inMotion && !this.destination.equals(dest)) || !inMotion) {
-            this.destination = new ItemPosition(dest.name,dest.x,dest.y,dest.z);
-            gvh.log.d(TAG, "Going to X: " + Integer.toString(dest.x) + ", Y: " + Integer.toString(dest.y));
+            this.destination = new ItemPosition(dest.name, dest.x(), dest.y(), dest.z());
+            gvh.log.d(TAG, "Going to X: " + Integer.toString(dest.x()) + ", Y: " + Integer.toString(dest.y()));
       //      Log.d(TAG, "Going to X: " + Integer.toString(dest.x) + ", Y: " + Integer.toString(dest.y));
             //this.destination = dest;
             this.mode = OPMODE.GO_TO;
@@ -227,7 +224,7 @@ public class MotionAutomaton_Mavic extends RobotMotion {
             if(running) {
                 mypos = (Model_Mavic) gvh.plat.getModel();
 //				System.out.println(mypos.toString());
-                int distance = (int) Math.sqrt(Math.pow((mypos.x - destination.x),2) + Math.pow((mypos.y - destination.y), 2));
+                int distance = (int) Math.sqrt(Math.pow((mypos.x() - destination.x()),2) + Math.pow((mypos.y() - destination.y()), 2));
                 //int distance = mypos.distanceTo(destination);
                 if(mypos.gaz < -50){
                     //		System.out.println("going down");
@@ -238,7 +235,7 @@ public class MotionAutomaton_Mavic extends RobotMotion {
                     switch(stage) {
                         case INIT:
                             if(mode == MotionAutomaton_Mavic.OPMODE.GO_TO) {
-                                if(mypos.z < safeHeight){
+                                if(mypos.z() < safeHeight){
                                     // just a safe distance from ground
                                     takeOff();
                                     next = MotionAutomaton_Mavic.STAGE.TAKEOFF;
@@ -254,7 +251,7 @@ public class MotionAutomaton_Mavic extends RobotMotion {
                             }
                             break;
                         case MOVE:
-                            if(mypos.z < safeHeight){
+                            if(mypos.z() < safeHeight){
                                 // just a safe distance from ground
                                 takeOff();
                                 next = MotionAutomaton_Mavic.STAGE.TAKEOFF;
@@ -267,14 +264,14 @@ public class MotionAutomaton_Mavic extends RobotMotion {
                                 double Ax_d, Ay_d = 0.0;
                                 double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
                                 //		System.out.println(destination.x - mypos.x + " , " + mypos.v_x);
-                                Ax_d = (kpx * (destination.x - mypos.x) - kdx * mypos.v_x) ;
-                                Ay_d = (kpy * (destination.y - mypos.y) - kdy * mypos.v_y) ;
-                                Ryaw = Math.atan2(destination.y - mypos.y, destination.x - mypos.x);
+                                Ax_d = (kpx * (destination.x() - mypos.x()) - kdx * mypos.v_x) ;
+                                Ay_d = (kpy * (destination.y() - mypos.y()) - kdy * mypos.v_y) ;
+                                Ryaw = Math.atan2(destination.y() - mypos.y(), destination.x() - mypos.x());
                                 //Ryaw = Math.atan2((destination.y - mypos.x), (destination.x - mypos.y));
                                 Ryawsp = kpz * ((Ryaw - Math.toRadians(mypos.yaw)));
                                 Rroll = Math.asin((Ay_d * Math.cos(Math.toRadians(mypos.yaw)) - Ax_d * Math.sin(Math.toRadians(mypos.yaw))) %1);
                                 Rpitch = Math.asin( (-Ay_d * Math.sin(Math.toRadians(mypos.yaw)) - Ax_d * Math.cos(Math.toRadians(mypos.yaw))) / (Math.cos(Rroll)) %1);
-                                Rvs = (kpz * (destination.z - mypos.z) - kdz * mypos.v_z);
+                                Rvs = (kpz * (destination.z() - mypos.z()) - kdz * mypos.v_z);
                                 //	System.out.println(Ryaw + " , " + Ryawsp + " , " +  Rroll  + " , " +  Rpitch + " , " + Rvs);
 
                                 setControlInputRescale(Math.toDegrees(Ryawsp),Math.toDegrees(Rpitch)%360,Math.toDegrees(Rroll)%360,Rvs);
@@ -287,7 +284,7 @@ public class MotionAutomaton_Mavic extends RobotMotion {
                             // do nothing
                             break;
                         case TAKEOFF:
-                            switch(mypos.z/(safeHeight/2)){
+                            switch(mypos.z() /(safeHeight/2)){
                                 case 0:// 0 - 1/2 safeHeight
                                     setControlInput(0,0,0,1);
                                     break;
@@ -306,7 +303,7 @@ public class MotionAutomaton_Mavic extends RobotMotion {
                             }
                             break;
                         case LAND:
-                            switch(mypos.z/(safeHeight/2)){
+                            switch(mypos.z() /(safeHeight/2)){
                                 case 0:// 0 - 1/2 safeHeight
                                     setControlInput(0,0,0,0);
                                     next = MotionAutomaton_Mavic.STAGE.STOP;

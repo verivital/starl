@@ -23,25 +23,25 @@ public class RRTNode {
 //	public LinkedList<ItemPosition> pathList = new LinkedList<ItemPosition>();
 
 	public double [] getValue(){
-		double [] toReturn = {position.x,position.y}; 
+		double [] toReturn = {position.x(), position.y()};
 		return toReturn;
 	}
 
 	public RRTNode(){
-		position.x = 0;
-		position.y = 0;
+		position.x(0);
+		position.y(0);
 		parent = null;
 	}
 	
 	public RRTNode(int x, int y){
-		position.x = x;
-		position.y = y;
+		position.x(x);
+		position.y(y);
 		parent = null;
 	}
 
 	public RRTNode(RRTNode copy){
-		position.x = copy.position.x;
-		position.y = copy.position.y;
+		position.x(copy.position.x());
+		position.y(copy.position.y());
 		parent = copy.parent;
 	}
 
@@ -74,9 +74,9 @@ public class RRTNode {
 			return null;
 		}
     	kd = new KDTree<RRTNode>(2);
-    	double [] root = {position.x,position.y};
-    	final RRTNode rootNode = new RRTNode(position.x,position.y);
-    	final RRTNode destNode = new RRTNode(destination.x, destination.y);
+    	double [] root = {position.x(), position.y()};
+    	final RRTNode rootNode = new RRTNode(position.x(), position.y());
+    	final RRTNode destNode = new RRTNode(destination.x(), destination.y());
     	
     	try{
     		kd.insert(root, rootNode);
@@ -114,14 +114,14 @@ public class RRTNode {
     		while(!validRandom){
 				xRandom = (int) Math.round((Math.random() * ((xUpper - xLower))));
 				yRandom = (int) Math.round((Math.random() * ((yUpper - yLower))));
-				sampledPos.x = xRandom + xLower;
-				sampledPos.y = yRandom + yLower;
-				validRandom = ((sampledPos.x >= xLower && sampledPos.x <= xUpper) && (sampledPos.y >= yLower && sampledPos.y <= yUpper));
+				sampledPos.x(xRandom + xLower);
+				sampledPos.y(yRandom + yLower);
+				validRandom = ((sampledPos.x() >= xLower && sampledPos.x() <= xUpper) && (sampledPos.y() >= yLower && sampledPos.y() <= yUpper));
 				validRandom = validRandom && obsList.validstarts(sampledPos, radius);
 				if(validRandom){
                     // added a check to see if sampledPos is already in tree
                     boolean notInTree = true;
-                    RRTNode possibleNode = new RRTNode(sampledPos.x, sampledPos.y);
+                    RRTNode possibleNode = new RRTNode(sampledPos.x(), sampledPos.y());
                     try {
                         if(kd.search(possibleNode.getValue()) != null) {
                             notInTree = false;
@@ -132,7 +132,7 @@ public class RRTNode {
                     validRandom = (validRandom && notInTree);
                 }
 			}
-    		RRTNode sampledNode = new RRTNode(sampledPos.x, sampledPos.y);
+    		RRTNode sampledNode = new RRTNode(sampledPos.x(), sampledPos.y());
     		// with a valid random sampled Point3d, we find it's nearest neighbor in the tree, set it as current Node
     		try{
     		currentNode = kd.nearest(sampledNode.getValue());
@@ -163,7 +163,7 @@ public class RRTNode {
       	RRTNode curNode = destNode;  	
 		Stack<ItemPosition> pathStack= new Stack<ItemPosition>();
 		while(curNode != null){
-			ItemPosition ToGo= new ItemPosition("midpoint", curNode.position.x, curNode.position.y);
+			ItemPosition ToGo= new ItemPosition("midpoint", curNode.position.x(), curNode.position.y());
 			pathStack.push(ToGo);
 			curNode = curNode.parent;
 		}
@@ -198,8 +198,8 @@ public class RRTNode {
 		// smaller tries might make integer casting loop forever
 		while((!obsList.validPath(toggleNode, currentNode, radius)) && (tries < 20)){
 			//move 1/4 toward current
-			toggleNode.position.x = (int) ((toggleNode.position.x + currentNode.position.x)/(1.5));
-			toggleNode.position.y = (int) ((toggleNode.position.y + currentNode.position.y)/(1.5));
+			toggleNode.position.x((int) ((toggleNode.position.x() + currentNode.position.x())/(1.5)));
+			toggleNode.position.y((int) ((toggleNode.position.y() + currentNode.position.y())/(1.5)));
 			tries ++;
 		}
 		//return currentNode if toggle failed

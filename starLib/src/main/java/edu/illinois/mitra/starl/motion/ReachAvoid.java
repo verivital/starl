@@ -104,14 +104,14 @@ public class ReachAvoid extends Thread implements Cancellable {
 				break;
 			case PLAN:
 				double magic = .0011;
-				int xRange = Math.abs(start.x - dest.x);
-				int yRange = Math.abs(start.y - dest.y);
-				xLower = Math.min(start.x, dest.x) - (int)((xRange+radius)*(counter+1)*radius*magic);
-				xUpper = Math.max(start.x, dest.x) + (int)((xRange+radius)*(counter+1)*radius*magic);
-				yLower = Math.min(start.y, dest.y) - (int)((yRange+radius)*(counter+1)*radius*magic);
-				yUpper = Math.max(start.y, dest.y) + (int)((yRange+radius)*(counter+1)*radius*magic);
+				int xRange = Math.abs(start.x() - dest.x());
+				int yRange = Math.abs(start.y() - dest.y());
+				xLower = Math.min(start.x(), dest.x()) - (int)((xRange+radius)*(counter+1)*radius*magic);
+				xUpper = Math.max(start.x(), dest.x()) + (int)((xRange+radius)*(counter+1)*radius*magic);
+				yLower = Math.min(start.y(), dest.y()) - (int)((yRange+radius)*(counter+1)*radius*magic);
+				yUpper = Math.max(start.y(), dest.y()) + (int)((yRange+radius)*(counter+1)*radius*magic);
 				
-				RRTNode path = new RRTNode(start.x, start.y);
+				RRTNode path = new RRTNode(start.x(), start.y());
 				System.out.println("Getting pathStack from " + start  + " to " + dest);
 				pathStack = path.findRoute(dest, 1000, planObs, xLower, xUpper, yLower,yUpper, start, radius);
 				if(pathStack == null){

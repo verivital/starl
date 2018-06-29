@@ -5,7 +5,6 @@ package edu.illinois.mitra.starl.motion;
 import java.util.Arrays;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
-import edu.illinois.mitra.starl.interfaces.MessageListener;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener.Event;
 import edu.illinois.mitra.starl.models.Model_Phantom;
 import edu.illinois.mitra.starl.objects.HandlerMessage;
@@ -96,8 +95,8 @@ public class MotionAutomaton_Phantom extends RobotMotion {
     public void goTo(ItemPosition dest) {
         if(!inMotion || !this.destination.equals(dest)) {
             done = false;
-            this.destination = new ItemPosition(dest.name,dest.x,dest.y,0); //Todo(TIM) add dest.z?
-            gvh.log.d(TAG, "Going to X: " + Integer.toString(dest.x) + ", Y: " + Integer.toString(dest.y));
+            this.destination = new ItemPosition(dest.name, dest.x(), dest.y(),0); //Todo(TIM) add dest.z?
+            gvh.log.d(TAG, "Going to X: " + Integer.toString(dest.x()) + ", Y: " + Integer.toString(dest.y()));
             //      Log.d(TAG, "Going to X: " + Integer.toString(dest.x) + ", Y: " + Integer.toString(dest.y));
             //this.destination = dest;
             this.mode = OPMODE.GO_TO;
@@ -127,8 +126,8 @@ public class MotionAutomaton_Phantom extends RobotMotion {
                 // if you change to 3D waypoints, use distanceTo instead of distanceTo2D
                 int distance = mypos.distanceTo2D(destination);
                 colliding = false;
-                debugmsg += "My position: " + mypos.x + ", " + mypos.y + "\n";
-                debugmsg += "Destination: " + destination.x + ", " + destination.y + "\n";
+                debugmsg += "My position: " + mypos.x() + ", " + mypos.y() + "\n";
+                debugmsg += "Destination: " + destination.x() + ", " + destination.y() + "\n";
                 if(!colliding && stage != null) {
                     if(stage != prev)
                         gvh.log.e(TAG, "Stage is: " + stage.toString());
@@ -163,12 +162,12 @@ public class MotionAutomaton_Phantom extends RobotMotion {
                                 next = STAGE.GOAL;
                             }
                             else{
-                                double rollCommand = PID_x.getCommand(mypos.x, destination.x);
-                                double pitchCommand = PID_y.getCommand(mypos.y, destination.y);
+                                double rollCommand = PID_x.getCommand(mypos.x(), destination.x());
+                                double pitchCommand = PID_y.getCommand(mypos.y(), destination.y());
                                 double yawCommand = calculateYaw();
                                 double gazCommand = 0;
-                                gvh.log.d("POSITION DEBUG", "My Position: " + mypos.x + " " + mypos.y);
-                                gvh.log.d("POSITION DEBUG", "Destination: " + destination.x + " " + destination.y);
+                                gvh.log.d("POSITION DEBUG", "My Position: " + mypos.x() + " " + mypos.y());
+                                gvh.log.d("POSITION DEBUG", "Destination: " + destination.x() + " " + destination.y());
 
                                 setControlInputRescale(yawCommand, pitchCommand, rollCommand, gazCommand);
                                 debugmsg += "Yaw, pitch, roll, throttle:\n";
@@ -190,8 +189,8 @@ public class MotionAutomaton_Phantom extends RobotMotion {
                                 hover();
                             }
                             else{
-                                double rollCommand = PID_x.getCommand(mypos.x, destination.x);
-                                double pitchCommand = PID_y.getCommand(mypos.y, destination.y);
+                                double rollCommand = PID_x.getCommand(mypos.x(), destination.x());
+                                double pitchCommand = PID_y.getCommand(mypos.y(), destination.y());
                                 double yawCommand = calculateYaw();
                                 double gazCommand = 0;
                                 setControlInputRescale(yawCommand, pitchCommand, rollCommand, gazCommand);

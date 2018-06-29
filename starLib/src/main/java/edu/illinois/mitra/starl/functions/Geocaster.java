@@ -73,7 +73,7 @@ public class Geocaster implements MessageListener {
 			
 			ItemPosition mypos = gvh.gps.getMyPosition();
 			
-			if(Common.inRange(mypos.x, minX, maxX) && Common.inRange(mypos.y, minY, maxY)) {
+			if(Common.inRange(mypos.x(), minX, maxX) && Common.inRange(mypos.y(), minY, maxY)) {
 				int MID = Integer.parseInt(contents.get(5));
 				MessageContents receiveContents = new MessageContents();
 				receiveContents.append(contents.subList(6, contents.size()));
