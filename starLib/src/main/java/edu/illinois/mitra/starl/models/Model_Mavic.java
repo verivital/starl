@@ -1,7 +1,5 @@
 package edu.illinois.mitra.starl.models;
 
-import java.util.Random;
-
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
@@ -34,11 +32,6 @@ public class Model_Mavic extends Model_Drone {
 	//	private double a_yaw;
 	//	private double a_pitch;
 	//	private double a_roll;
-
-	public double v_yawR = 0;;
-	public double pitchR = 0;
-	public double rollR = 0;
-	public double gazR = 0;
 
 	private int x_p = 0;
 	private int y_p = 0;
@@ -75,9 +68,9 @@ public class Model_Mavic extends Model_Drone {
 		String[] parts = received.replace(",", "").split("\\|");
 		if(parts.length == 9) {
 			this.name = parts[1];
-			this.x(Integer.parseInt(parts[2]));
-			this.y(Integer.parseInt(parts[3]));
-			this.z(Integer.parseInt(parts[4]));
+			this.setX(Integer.parseInt(parts[2]));
+			this.setY(Integer.parseInt(parts[3]));
+			this.setZ(Integer.parseInt(parts[4]));
 			this.yaw = Integer.parseInt(parts[5]);
 			this.pitch = Integer.parseInt(parts[6]);
 			this.roll = Integer.parseInt(parts[7]);
@@ -112,30 +105,30 @@ public class Model_Mavic extends Model_Drone {
 
 
 	public Model_Mavic(ItemPosition t_pos) {
-		super(t_pos.name, t_pos.x(), t_pos.y(), t_pos.z());
+		super(t_pos.name, t_pos.getX(), t_pos.getY(), t_pos.getZ());
 		initial_helper();
 	}
 
-	@Override 
+	@Override
 	public String toString() {
-		return name + ": " + x() + ", " + y() + ", " + z() + "; yaw, pitch, roll, gaz: " + yaw + ", " + pitch + ", " + roll + " ," + gaz;
+		return name + ": " + getX() + ", " + getY() + ", " + getZ() + "; yaw, pitch, roll, gaz: " + yaw + ", " + pitch + ", " + roll + " ," + gaz;
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @return true if one robot is facing another robot/point
 	 */
 	/*
-	public boolean isFacing(Point3d other) { 
+	public boolean isFacing(Point3d other) {
 		if(other == null) {
 			return false;
 		}
-		if(other.x == this.x && other.y == this.y){
+		if(other.getX == this.getX && other.getY == this.getY){
 			return true;
 		}
-    	double angleT = Math.toDegrees(Math.atan2((other.y - this.y) , (other.x - this.x)));
+    	double angleT = Math.toDegrees(Math.atan2((other.getY - this.getY) , (other.getX - this.getX)));
     	if(angleT  == 90){
-    		if(this.y < other.y)
+    		if(this.getY < other.getY)
     			angleT = angleT + 90;
     		double temp = this.angle % 360;
     		if(temp > 0)
@@ -181,7 +174,7 @@ public class Model_Mavic extends Model_Drone {
 	}
 	 */
 
-	/** 
+	/**
 	 * @param //other The ItemPosition to measure against
 	 * @return Number of degrees this position must rotate to face position other
 	 */
@@ -191,8 +184,8 @@ public class Model_Mavic extends Model_Drone {
 			return 0;
 		}
 
-		int delta_x = other.x - this.x;
-		int delta_y = other.y - this.y;
+		int delta_x = other.getX - this.getX;
+		int delta_y = other.getY - this.getY;
 		double angle = this.angle;
 		int otherAngle = (int) Math.toDegrees(Math.atan2(delta_y,delta_x));
 		if(angle > 180) {
@@ -212,15 +205,15 @@ public class Model_Mavic extends Model_Drone {
 		return  Math.round(retAngle);
 	}
 
-	public void set(int x, int y, int angle) {
-		this.x = x;
-		this.y = y;
+	public void set(int getX, int getY, int angle) {
+		this.getX = getX;
+		this.getY = getY;
 		this.angle = angle;
 	}
 
 	public void set(Model_Quadcopter other) {
-		this.x = other.x;
-		this.y = other.y;
+		this.getX = other.getX;
+		this.getY = other.getY;
 		this.angle = other.angle;
 	}
 	 */
@@ -245,59 +238,47 @@ public class Model_Mavic extends Model_Drone {
 	}
 
 	@Override
-	public double max_gaz() {
-		return 1000;
-	}
+	public int radius() { return 340; }
 
 	@Override
-	public double max_pitch_roll() {
-		return 20;
-	}
+	public double height() { return 50; }
 
 	@Override
-	public double max_yaw_speed() {
-		return 200;
-	}
+	public double mass() { return .734; }	// Mavic drone mass is 734g with battery without gimbal cover | 743g with cover
 
 	@Override
-	public double mass() {
-		return 0.734; // Mavic drone mass is 734g with battery without gimbal cover | 743g with cover
-	}
+	public double max_gaz() { return 1000; }
 
 	@Override
-	public double height() {
-		return 50;
-	}
+	public double max_pitch_roll() { return 20; }
 
 	@Override
-	public int radius() {
-		return 340;
-	}
+	public double max_yaw_speed() { return 200; }
 
 	@Override
 	public Point3d predict(double[] noises, double timeSinceUpdate) {
 		if(noises.length != 3){
-			System.out.println("Incorrect number of noises parameters passed in, please pass in x, y, z, yaw, pitch, roll noises");
-			return new Point3d(x(), y(), z());
+			System.out.println("Incorrect number of noises parameters passed in, please pass in getX, getY, getZ, yaw, pitch, roll noises");
+			return new Point3d(getX(), getY(), getZ());
 		}
 		v_yaw += (v_yawR - v_yaw)*timeSinceUpdate;
 		pitch += (pitchR - pitch)*timeSinceUpdate;
 		roll += (rollR-roll)*timeSinceUpdate;
 		gaz += (gazR-gaz)*timeSinceUpdate;
 
-		double xNoise = (rand()*2*noises[0]) - noises[0];
-		double yNoise = (rand()*2*noises[0]) - noises[0];
-		double zNoise = (rand()*2*noises[0]) - noises[0];
-		double yawNoise = (rand()*2*noises[1]) - noises[1];
+		double xNoise = (getRand()*2*noises[0]) - noises[0];
+		double yNoise = (getRand()*2*noises[0]) - noises[0];
+		double zNoise = (getRand()*2*noises[0]) - noises[0];
+		double yawNoise = (getRand()*2*noises[1]) - noises[1];
 
 		windt += timeSinceUpdate;
 		windxNoise =  xNoise + windx*Math.sin(windt);
 		windyNoise =  yNoise + windy*Math.sin(windt);
 
 
-		//	double yawNoise = (rand()*2*noises[3]) - noises[3];
-		//double pitchNoise = (rand()*2*noises[4]) - noises[4];
-		//double rollNoise = (rand()*2*noises[5]) - noises[5];
+		//	double yawNoise = (getRand()*2*noises[3]) - noises[3];
+		//double pitchNoise = (getRand()*2*noises[4]) - noises[4];
+		//double rollNoise = (getRand()*2*noises[5]) - noises[5];
 
 		//TODO: correct the model
 
@@ -309,9 +290,9 @@ public class Model_Mavic extends Model_Drone {
 		int dY= (int) (yNoise +  v_y*timeSinceUpdate + windyNoise);
 		int dZ= (int) (zNoise +  gaz*timeSinceUpdate);
 
-		x_p = x() +dX;
-		y_p = y() +dY;
-		z_p = z() +dZ;
+		x_p = getX() +dX;
+		y_p = getY() +dY;
+		z_p = getZ() +dZ;
 
 		double thrust;
 		if((mass() * Math.cos(Math.toRadians(roll)) * Math.cos(Math.toRadians(pitch))) != 0){
@@ -330,7 +311,7 @@ public class Model_Mavic extends Model_Drone {
 		v_z_p = gaz;
 
 		double dYaw = (v_yaw*timeSinceUpdate);
-		yaw_p = (yaw + dYaw) %360;	
+		yaw_p = (yaw + dYaw) %360;
 
 		return new Point3d(x_p, y_p, z_p);
 	}
@@ -349,9 +330,9 @@ public class Model_Mavic extends Model_Drone {
 	@Override
 	public void updatePos(boolean followPredict) {
 		if(followPredict){
-			x(x_p);
-			y(y_p);
-			z(z_p);
+			setX(x_p);
+			setY(y_p);
+			setZ(z_p);
 
 			yaw = yaw_p;
 			//		pitch = pitch_p;
@@ -362,18 +343,18 @@ public class Model_Mavic extends Model_Drone {
 
 			v_x = v_x_p;
 			v_y = v_y_p;
-			v_z = v_z_p;	
+			v_z = v_z_p;
 		}
 		else{
-			z(z_p);
+			setZ(z_p);
 			v_z = v_z_p;
-			if(z() < 20){
+			if(getZ() < 20){
 				roll = 0;
 				pitch = 0;
 			}
 		}
-		if(z() < 0){
-			z(0);
+		if(getZ() < 0){
+			setZ(0);
 			v_z = 0;
 		}
 	}

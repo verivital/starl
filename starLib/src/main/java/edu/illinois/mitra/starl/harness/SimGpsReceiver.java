@@ -56,24 +56,24 @@ public class SimGpsReceiver implements GpsReceiver {
 
         if(gvh.gps.getMyPosition() instanceof Model_iRobot){
             Model_iRobot log_p = (Model_iRobot) gvh.gps.getMyPosition();
-            gvh.log.i("POSITION", log_p.name + " " + log_p.x() + " " + log_p.y() + " " + log_p.z() + " " +log_p.angle);
+            gvh.log.i("POSITION", log_p.name + " " + log_p.getX() + " " + log_p.getY() + " " + log_p.getZ() + " " +log_p.angle);
         }
         else if(gvh.gps.getMyPosition() instanceof Model_quadcopter){
 			Model_quadcopter log_p = (Model_quadcopter) gvh.gps.getMyPosition();
-			gvh.log.i("POSITION", log_p.name + " " + log_p.x() + " " + log_p.y() + " " + log_p.z() + " " +log_p.yaw  + " " +log_p.pitch  + " " +log_p.roll  + " " +log_p.gaz);
+			gvh.log.i("POSITION", log_p.name + " " + log_p.getX() + " " + log_p.getY() + " " + log_p.getZ() + " " +log_p.yaw  + " " +log_p.pitch  + " " +log_p.roll  + " " +log_p.gaz);
 		}
 
 		else if(gvh.gps.getMyPosition() instanceof Model_GhostAerial){
 			Model_GhostAerial log_p = (Model_GhostAerial) gvh.gps.getMyPosition();
-			gvh.log.i("POSITION", log_p.name + " " + log_p.x() + " " + log_p.y() + " " + log_p.z() + " " +log_p.yaw  + " " +log_p.pitch  + " " +log_p.roll  + " " +log_p.gaz);
+			gvh.log.i("POSITION", log_p.name + " " + log_p.getX() + " " + log_p.getY() + " " + log_p.getZ() + " " +log_p.yaw  + " " +log_p.pitch  + " " +log_p.roll  + " " +log_p.gaz);
 		}
 		else if(gvh.gps.getMyPosition() instanceof Model_Mavic){
 			Model_Mavic log_p = (Model_Mavic) gvh.gps.getMyPosition();
-			gvh.log.i("POSITION", log_p.name + " " + log_p.x() + " " + log_p.y() + " " + log_p.z() + " " +log_p.yaw  + " " +log_p.pitch  + " " +log_p.roll  + " " +log_p.gaz);
+			gvh.log.i("POSITION", log_p.name + " " + log_p.getX() + " " + log_p.getY() + " " + log_p.getZ() + " " +log_p.yaw  + " " +log_p.pitch  + " " +log_p.roll  + " " +log_p.gaz);
 		}
 		else if(gvh.gps.getMyPosition() instanceof Model_3DR){
 			Model_3DR log_p = (Model_3DR) gvh.gps.getMyPosition();
-			gvh.log.i("POSITION", log_p.name + " " + log_p.x() + " " + log_p.y() + " " + log_p.z() + " " +log_p.yaw  + " " +log_p.pitch  + " " +log_p.roll  + " " +log_p.gaz);
+			gvh.log.i("POSITION", log_p.name + " " + log_p.getX() + " " + log_p.getY() + " " + log_p.getZ() + " " +log_p.yaw  + " " +log_p.pitch  + " " +log_p.roll  + " " +log_p.gaz);
 		}
 	}
 

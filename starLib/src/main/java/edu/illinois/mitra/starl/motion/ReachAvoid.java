@@ -4,12 +4,7 @@ import java.util.Stack;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.Cancellable;
 import edu.illinois.mitra.starl.models.Model;
-import edu.illinois.mitra.starl.models.Model_3DR;
-import edu.illinois.mitra.starl.models.Model_GhostAerial;
-import edu.illinois.mitra.starl.models.Model_Mavic;
-import edu.illinois.mitra.starl.models.Model_Phantom;
-import edu.illinois.mitra.starl.models.Model_iRobot;
-import edu.illinois.mitra.starl.models.Model_quadcopter;
+import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 
@@ -43,7 +38,13 @@ public class ReachAvoid extends Thread implements Cancellable {
 		this.gvh = gvh;
 		stage = STAGE_R.IDLE;
 		Model model = gvh.plat.model;
-		radius = model.radius();
+
+		if (model instanceof Model_Drone) {
+		    radius = 110 + model.radius(); // increase radius of airborne models
+        } else {
+		    radius = model.radius();
+        }
+
 		activeFlag = false;
 		doneFlag = failFlag = false;
 	}
@@ -87,14 +88,14 @@ public class ReachAvoid extends Thread implements Cancellable {
 				break;
 			case PLAN:
 				double magic = .0011;
-				int xRange = Math.abs(start.x() - dest.x());
-				int yRange = Math.abs(start.y() - dest.y());
-				xLower = Math.min(start.x(), dest.x()) - (int)((xRange+radius)*(counter+1)*radius*magic);
-				xUpper = Math.max(start.x(), dest.x()) + (int)((xRange+radius)*(counter+1)*radius*magic);
-				yLower = Math.min(start.y(), dest.y()) - (int)((yRange+radius)*(counter+1)*radius*magic);
-				yUpper = Math.max(start.y(), dest.y()) + (int)((yRange+radius)*(counter+1)*radius*magic);
+				int xRange = Math.abs(start.getX() - dest.getX());
+				int yRange = Math.abs(start.getY() - dest.getY());
+				xLower = Math.min(start.getX(), dest.getX()) - (int)((xRange+radius)*(counter+1)*radius*magic);
+				xUpper = Math.max(start.getX(), dest.getX()) + (int)((xRange+radius)*(counter+1)*radius*magic);
+				yLower = Math.min(start.getY(), dest.getY()) - (int)((yRange+radius)*(counter+1)*radius*magic);
+				yUpper = Math.max(start.getY(), dest.getY()) + (int)((yRange+radius)*(counter+1)*radius*magic);
 				
-				RRTNode path = new RRTNode(start.x(), start.y());
+				RRTNode path = new RRTNode(start.getX(), start.getY());
 				System.out.println("Getting pathStack from " + start  + " to " + dest);
 				pathStack = path.findRoute(dest, 1000, planObs, xLower, xUpper, yLower,yUpper, start, radius);
 				if(pathStack == null){

@@ -55,10 +55,10 @@ public class RaceApp extends LogicThread {
 	public List<Object> callStarL() {
 		while(true) {
 			///Model_quadcopter log_p = (Model_quadcopter) gvh.gps.getMyPosition();
-			///gvh.log.i("POSITION", log_p.name + " " + log_p.x  + " " +log_p.y  + " " +log_p.z  + " " +log_p.yaw  + " " +log_p.pitch  + " " +log_p.roll  + " " +log_p.gaz);
+			///gvh.log.i("POSITION", log_p.name + " " + log_p.getX  + " " +log_p.getY  + " " +log_p.getZ  + " " +log_p.yaw  + " " +log_p.pitch  + " " +log_p.roll  + " " +log_p.gaz);
 			//gvh.log.i("POSITION", gvh.gps.getMyPosition().toString());
 			//	Model_iRobot log_p = (Model_iRobot) gvh.gps.getMyPosition();
-			//	gvh.log.i("POSITION", log_p.name + " " + log_p.x  + " " +log_p.y  + " " +log_p.z  + " " +log_p.angle);
+			//	gvh.log.i("POSITION", log_p.name + " " + log_p.getX  + " " +log_p.getY  + " " +log_p.getZ  + " " +log_p.angle);
 
 			if(gvh.plat.model instanceof Model_quadcopter){
 				gvh.log.i("WIND", ((Model_quadcopter)gvh.plat.model).windxNoise + " " +  ((Model_quadcopter)gvh.plat.model).windyNoise);
@@ -74,8 +74,8 @@ public class RaceApp extends LogicThread {
 						currentDestination = getRandomElement(destinations);
 						gvh.plat.reachAvoid.doReachAvoid(gvh.gps.getMyPosition(), currentDestination, obs);
 						kdTree = gvh.plat.reachAvoid.kdTree;
-						gvh.log.i("DoReachAvoid", currentDestination.x() + " " + currentDestination.y());
-						doReachavoidCalls.update(new ItemPosition(name + "'s " + "doReachAvoid Call to destination: " + currentDestination.name, gvh.gps.getMyPosition().x(), gvh.gps.getMyPosition().y()));
+						gvh.log.i("DoReachAvoid", currentDestination.getX() + " " + currentDestination.getY());
+						doReachavoidCalls.update(new ItemPosition(name + "'s " + "doReachAvoid Call to destination: " + currentDestination.name, gvh.gps.getMyPosition().getX(), gvh.gps.getMyPosition().getY()));
 						System.out.println(name + " going to " + currentDestination.getName());
 						stage = Stage.GO;
 					}

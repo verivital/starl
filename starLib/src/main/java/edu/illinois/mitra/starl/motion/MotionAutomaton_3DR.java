@@ -90,7 +90,7 @@ public class MotionAutomaton_3DR extends RobotMotion {
     public void goTo(ItemPosition dest) {
         if((inMotion && !this.destination.equals(dest)) || !inMotion) {
             done = false;
-            this.destination = new ItemPosition(dest.name, dest.x(), dest.y(), dest.z());
+            this.destination = new ItemPosition(dest.name, dest.getX(), dest.getY(), dest.getZ());
             //this.destination = dest;
             this.mode = OPMODE.GO_TO;
             startMotion();
@@ -116,9 +116,9 @@ public class MotionAutomaton_3DR extends RobotMotion {
             if(running) {
                 mypos = (Model_3DR)gvh.plat.getModel();
 //				System.out.println(mypos.toString());
-                System.out.printf("mypos (%d, %d) \n", mypos.x(), mypos.y());
-                System.out.printf("destination (%d, %d) \n", destination.x(), destination.y());
-                int distance = (int) Math.sqrt(Math.pow((mypos.x() - destination.x()),2) + Math.pow((mypos.y() - destination.y()), 2));
+                System.out.printf("mypos (%d, %d) \n", mypos.getX(), mypos.getY());
+                System.out.printf("destination (%d, %d) \n", destination.getX(), destination.getY());
+                int distance = (int) Math.sqrt(Math.pow((mypos.getX() - destination.getX()),2) + Math.pow((mypos.getY() - destination.getY()), 2));
                 System.out.println("distance:" + distance);
                 //int distance = mypos.distanceTo(destination);
                 if(mypos.gaz < -50){
@@ -130,7 +130,7 @@ public class MotionAutomaton_3DR extends RobotMotion {
                     switch(stage) {
                         case INIT:
                             if(mode == OPMODE.GO_TO) {
-                                if(mypos.z() < safeHeight){
+                                if(mypos.getZ() < safeHeight){
                                     // just a safe distance from ground
                                     takeOff();
                                     next = STAGE.TAKEOFF;
@@ -147,7 +147,7 @@ public class MotionAutomaton_3DR extends RobotMotion {
                             }
                             break;
                         case MOVE:
-                            if(mypos.z() < safeHeight){
+                            if(mypos.getZ() < safeHeight){
                                 // just a safe distance from ground
                                 takeOff();
                                 next = STAGE.TAKEOFF;
@@ -160,15 +160,15 @@ public class MotionAutomaton_3DR extends RobotMotion {
                             else{
                                 double Ax_d, Ay_d = 0.0;
                                 double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
-                                //		System.out.println(destination.x - mypos.x + " , " + mypos.v_x);
-                                Ax_d = (kpx * (destination.x() - mypos.x()) - kdx * mypos.v_x) ;
-                                Ay_d = (kpy * (destination.y() - mypos.y()) - kdy * mypos.v_y) ;
-                                Ryaw = Math.atan2(destination.y() - mypos.y(), destination.x() - mypos.x());
-                                //Ryaw = Math.atan2((destination.y - mypos.x), (destination.x - mypos.y));
+                                //		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
+                                Ax_d = (kpx * (destination.getX() - mypos.getX()) - kdx * mypos.v_x) ;
+                                Ay_d = (kpy * (destination.getY() - mypos.getY()) - kdy * mypos.v_y) ;
+                                Ryaw = Math.atan2(destination.getY() - mypos.getY(), destination.getX() - mypos.getX());
+                                //Ryaw = Math.atan2((destination.getY - mypos.getX), (destination.getX - mypos.getY));
                                 Ryawsp = kpz * ((Ryaw - Math.toRadians(mypos.yaw)));
                                 Rroll = Math.asin((Ay_d * Math.cos(Math.toRadians(mypos.yaw)) - Ax_d * Math.sin(Math.toRadians(mypos.yaw))) %1);
                                 Rpitch = Math.asin( (-Ay_d * Math.sin(Math.toRadians(mypos.yaw)) - Ax_d * Math.cos(Math.toRadians(mypos.yaw))) / (Math.cos(Rroll)) %1);
-                                Rvs = (kpz * (destination.z() - mypos.z()) - kdz * mypos.v_z);
+                                Rvs = (kpz * (destination.getZ() - mypos.getZ()) - kdz * mypos.v_z);
                                 //	System.out.println(Ryaw + " , " + Ryawsp + " , " +  Rroll  + " , " +  Rpitch + " , " + Rvs);
 
                                 setControlInputRescale(Math.toDegrees(Ryawsp),Math.toDegrees(Rpitch)%360,Math.toDegrees(Rroll)%360,Rvs);
@@ -181,7 +181,7 @@ public class MotionAutomaton_3DR extends RobotMotion {
                             // do nothing
                             break;
                         case TAKEOFF:
-                            switch(mypos.z() /(safeHeight/2)){
+                            switch(mypos.getZ() /(safeHeight/2)){
                                 case 0:// 0 - 1/2 safeHeight
                                     setControlInput(0,0,0,1);
                                     break;
@@ -200,7 +200,7 @@ public class MotionAutomaton_3DR extends RobotMotion {
                             }
                             break;
                         case LAND:
-                            switch(mypos.z() /(safeHeight/2)){
+                            switch(mypos.getZ() /(safeHeight/2)){
                                 case 0:// 0 - 1/2 safeHeight
                                     setControlInput(0,0,0,0);
                                     next = STAGE.STOP;
@@ -276,17 +276,17 @@ public class MotionAutomaton_3DR extends RobotMotion {
 =======
     @Override
 >>>>>>> a46592728b3e054fe8a3d11ec7511018c2934dd1
-    public void rotateGimbal(float y) {
+    public void rotateGimbal(float getY) {
 
     }
 
     @Override
-    public void rotateGimbal(float p, float y) {
+    public void rotateGimbal(float p, float getY) {
 
     }
 
     @Override
-    public void rotateGimbal(float p, float y, float r) {
+    public void rotateGimbal(float p, float getY, float r) {
 
     }
 

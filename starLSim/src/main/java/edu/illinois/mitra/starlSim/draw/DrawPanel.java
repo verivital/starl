@@ -155,14 +155,14 @@ public class DrawPanel extends ZoomablePanel
 			for(int j = 0; j < currobs.obstacle.size() -1 ; j++){
 			curpoint = currobs.obstacle.get(j);
 			nextpoint = currobs.obstacle.get(j+1);
-			g.drawLine(curpoint.x(), curpoint.y(), nextpoint.x(), nextpoint.y());
-			xs[j] = curpoint.x();
-			ys[j] = curpoint.y();
+			g.drawLine(curpoint.getX(), curpoint.getY(), nextpoint.getX(), nextpoint.getY());
+			xs[j] = curpoint.getX();
+			ys[j] = curpoint.getY();
 			}
-			xs[currobs.obstacle.size()-1] = nextpoint.x();
-			ys[currobs.obstacle.size()-1] = nextpoint.y();
+			xs[currobs.obstacle.size()-1] = nextpoint.getX();
+			ys[currobs.obstacle.size()-1] = nextpoint.getY();
 			
-			g.drawLine(nextpoint.x(), nextpoint.y(), currobs.obstacle.firstElement().x(), currobs.obstacle.firstElement().y());
+			g.drawLine(nextpoint.getX(), nextpoint.getY(), currobs.obstacle.firstElement().getX(), currobs.obstacle.firstElement().getY());
 			g.fillPolygon(xs,ys,currobs.obstacle.size());
 		}
 
@@ -336,55 +336,55 @@ public class DrawPanel extends ZoomablePanel
 			int outerRadius = (int)Math.round((Math.sqrt(2)-1)*rd.radius);
 			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
 			g.drawRect(rd.x-offset/2, rd.y-offset/2, offset, offset);
-			//g.drawOval(rd.x - radius, rd.y - radius, radius*2, radius*2);
+			//g.drawOval(rd.getX - radius, rd.getY - radius, radius*2, radius*2);
 			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("z: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100, rd.x - 55, rd.y + rd.radius + 130);
+			g.drawString("getZ: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100, rd.x - 55, rd.y + rd.radius + 130);
 		}else if(rd.name.contains(settings.GHOST_NAME)) {
 			int outerRadius = (int)Math.round((Math.sqrt(2)-1)*rd.radius);
 			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
 			g.drawRect(rd.x-offset/2, rd.y-offset/2, offset, offset);
-			//g.drawOval(rd.x - radius, rd.y - radius, radius*2, radius*2);
+			//g.drawOval(rd.getX - radius, rd.getY - radius, radius*2, radius*2);
 			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("z: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100, rd.x - 55, rd.y + rd.radius + 130);
+			g.drawString("getZ: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100, rd.x - 55, rd.y + rd.radius + 130);
 		}
 		else if(rd.name.contains(settings.MAVIC_NAME)){
 			int outerRadius = (int)Math.round((Math.sqrt(2)-1)*rd.radius);
 			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
 			g.drawRect(rd.x-offset/2, rd.y-offset/2, offset, offset);
-			//g.drawOval(rd.x - radius, rd.y - radius, radius*2, radius*2);
+			//g.drawOval(rd.getX - radius, rd.getY - radius, radius*2, radius*2);
 			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("z: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100 + ", yaw: " + rd.yaw, rd.x - 55, rd.y + rd.radius + 130);
+			g.drawString("getZ: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100 + ", yaw: " + rd.yaw, rd.x - 55, rd.y + rd.radius + 130);
 		}
 		else if(rd.name.contains(settings.PHANTOM_NAME)){
 			int outerRadius = (int)Math.round((Math.sqrt(2)-1)*rd.radius);
 			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
 			g.drawRect(rd.x-offset/2, rd.y-offset/2, offset, offset);
-			//g.drawOval(rd.x - radius, rd.y - radius, radius*2, radius*2);
+			//g.drawOval(rd.getX - radius, rd.getY - radius, radius*2, radius*2);
 			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("z: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100 + ", yaw: " + rd.yaw, rd.x - 55, rd.y + rd.radius + 130);
+			g.drawString("getZ: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100 + ", yaw: " + rd.yaw, rd.x - 55, rd.y + rd.radius + 130);
 		}
 		else if(rd.name.contains(settings.o3DR_NAME)){
 			int outerRadius = (int)Math.round((Math.sqrt(2)-1)*rd.radius);
 			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
 			g.drawRect(rd.x-offset/2, rd.y-offset/2, offset, offset);
-			//g.drawOval(rd.x - radius, rd.y - radius, radius*2, radius*2);
+			//g.drawOval(rd.getX - radius, rd.getY - radius, radius*2, radius*2);
 			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
 			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("z: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100, rd.x - 55, rd.y + rd.radius + 130);
+			g.drawString("getZ: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100, rd.x - 55, rd.y + rd.radius + 130);
 		}
 		else if(rd.name.contains(settings.IROBOT_NAME)){
 			g.drawOval(rd.x - radius, rd.y - radius, radius*2, radius*2);
@@ -408,16 +408,8 @@ public class DrawPanel extends ZoomablePanel
 			
 		if (drawId)
 		{
-			String botType = "default";
-			if(rd.type == 0){
-				botType =  "goal";
-			}
-			if(rd.type ==1){
-				botType = "discovery";
-			}
-			if(rd.type ==2){
-				botType = "moving obstacle";
-			}
+			// using enum for type
+			String botType = rd.type.name().toLowerCase();
 			// write name to the right of the robot
 			g.drawString(rd.name+" "+ botType , rd.x - 55, rd.y + radius + 50);
 		}

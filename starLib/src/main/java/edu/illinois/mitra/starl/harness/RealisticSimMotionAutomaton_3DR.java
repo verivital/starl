@@ -30,7 +30,7 @@ public class RealisticSimMotionAutomaton_3DR extends MotionAutomaton_3DR {
         if(gaz > 1 || gaz < -1){
             throw new IllegalArgumentException("gaz, vertical speed must be between -1 to 1");
         }
-        gpsp.setControlInput3DR(name, yaw_v*my_model.max_yaw_speed, pitch*my_model.max_pitch_roll, roll*my_model.max_pitch_roll, gaz*my_model.max_gaz);
+        //gpsp.setControlInput3DR(name, yaw_v*my_model.max_yaw_speed, pitch*my_model.max_pitch_roll, roll*my_model.max_pitch_roll, gaz*my_model.max_gaz);
     }
 
     /**

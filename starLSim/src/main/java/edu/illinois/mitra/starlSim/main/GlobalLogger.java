@@ -38,8 +38,8 @@ public class GlobalLogger {
 
         try {
             writer = new CsvWriter("test5.csv", "N Robots",
-                    "Execution duration", "Robot ID", "x",
-                    "y", "Pose", "Local time");
+                    "Execution duration", "Robot ID", "getX",
+                    "getY", "Pose", "Local time");
         } catch (IOException e) {
             e.printStackTrace();
         }

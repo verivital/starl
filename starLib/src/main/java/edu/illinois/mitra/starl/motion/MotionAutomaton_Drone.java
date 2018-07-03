@@ -5,7 +5,6 @@ import java.util.*;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener.Event;
 import edu.illinois.mitra.starl.models.Model_Drone;
-import edu.illinois.mitra.starl.models.Model_quadcopter;
 import edu.illinois.mitra.starl.objects.*;
 
 /**
@@ -119,7 +118,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
                             }
                             break;
                         case MOVE:
-                            if(mypos.z() < safeHeight){
+                            if(mypos.getZ() < safeHeight){
                                 // just a safe distance from ground
                                 takeOff();
                                 next = STAGE.TAKEOFF;
@@ -132,11 +131,11 @@ public class MotionAutomaton_Drone extends RobotMotion {
                             else{
                                 double Ax_d, Ay_d = 0.0;
                                 double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
-                                //		System.out.println(destination.x - mypos.x + " , " + mypos.v_x);
+                                //		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
                                 Ax_d = (kpx * (destination.x - mypos.x) - kdx * mypos.v_x) ;
                                 Ay_d = (kpy * (destination.y - mypos.y) - kdy * mypos.v_y) ;
                                 Ryaw = Math.atan2(destination.y - mypos.y, destination.x - mypos.x);
-                                //Ryaw = Math.atan2((destination.y - mypos.x), (destination.x - mypos.y));
+                                //Ryaw = Math.atan2((destination.getY - mypos.getX), (destination.getX - mypos.getY));
                                 Ryawsp = kpz * ((Ryaw - Math.toRadians(mypos.yaw)));
                                 Rroll = Math.asin((Ay_d * Math.cos(Math.toRadians(mypos.yaw)) - Ax_d * Math.sin(Math.toRadians(mypos.yaw))) %1);
                                 Rpitch = Math.asin( (-Ay_d * Math.sin(Math.toRadians(mypos.yaw)) - Ax_d * Math.cos(Math.toRadians(mypos.yaw))) / (Math.cos(Rroll)) %1);

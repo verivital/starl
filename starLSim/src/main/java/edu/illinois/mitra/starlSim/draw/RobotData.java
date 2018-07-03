@@ -3,6 +3,7 @@ package edu.illinois.mitra.starlSim.draw;
 import java.awt.Color;
 
 import edu.illinois.mitra.starl.objects.ObstacleList;
+import edu.illinois.mitra.starl.models.Model_iRobot; // for Model_iRobot.Type
 
 public class RobotData
 {
@@ -21,7 +22,7 @@ public class RobotData
 	public int radius;
 	public Color c;
 	public ObstacleList world;
-	public int type;
+	public Model_iRobot.Type type;
 	public boolean leftbump;
 	public boolean rightbump;
 	

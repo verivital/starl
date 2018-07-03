@@ -101,7 +101,7 @@ public class Geometry
 			
 			if (m1 == Double.POSITIVE_INFINITY || m1 == Double.NEGATIVE_INFINITY)
 			{
-				// one is a vertical line, use its x value and solve for y
+				// one is a vertical line, use its getX value and solve for getY
 				double b2 = getYIntercept(two);
 				
 				double x = one.x1;
@@ -111,7 +111,7 @@ public class Geometry
 			}
 			else if (m2 == Double.POSITIVE_INFINITY || m2 == Double.NEGATIVE_INFINITY)
 			{
-				// two is a vertical line, use its x value and solve for y
+				// two is a vertical line, use its getX value and solve for getY
 				double b1 = getYIntercept(one);
 				
 				double x = two.x1;

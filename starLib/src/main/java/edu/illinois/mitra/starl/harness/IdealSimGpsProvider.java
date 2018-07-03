@@ -29,7 +29,7 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 	
 	private ObstacleList obspoint_positions;
 	private Vector<ObstacleList> viewsOfWorld;
-	
+
 	private long period = 100;
 	private int angleNoise = 0;
 	private int posNoise = 0;
@@ -68,10 +68,6 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 	public synchronized void halt(String name) {
 		robots.get(name).setDest(null, 1);
 	}
-	
-	public PositionList<Model_iRobot> getiRobotPositions() {
-		return robot_positions;
-	}
 
 	@Override
 	public void setWaypoints(PositionList<ItemPosition> loadedWaypoints) {
@@ -88,32 +84,6 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 		if(loadedObspoints != null) obspoint_positions = loadedObspoints;
 	}
 
-    @Override
-    public PositionList<Model_quadcopter> getQuadcopterPositions() {
-        // TD_NATHAN: resolve as necessary
-        return null;
-    }
-
-	@Override
-	public PositionList<Model_3DR> get3DRPositions() {
-		// TD_NATHAN: resolve as necessary
-		return null;
-	}
-
-	@Override
-	public PositionList<Model_GhostAerial> getGhostAerialsPositions() {
-		return null;
-	}
-
-	@Override
-	public PositionList<Model_Mavic> getMavicPositions(){
-		return null;
-	}
-
-	@Override
-	public PositionList<Model_Phantom> getPhantomPositions(){
-		return null;
-	}
 
 	@Override
     public PositionList<ItemPosition> getAllPositions() {
@@ -229,8 +199,8 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 				}
 				else
 				{
-					int deltaX = dest.x() - start.x();
-					int deltaY = dest.y() - start.y();
+					int deltaX = dest.x-start.x;
+					int deltaY = dest.y-start.y;
 					motAngle = Math.atan2(deltaY, deltaX);
 					
 					vX = (Math.cos(motAngle) * velocity);
@@ -241,7 +211,7 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 				}
 				
 				if(angleNoise != 0) aNoise = rand.nextInt(angleNoise*2)-angleNoise;
-				pos.set(start.x(), start.y(), angle+aNoise);
+				pos.setPos(start.x, start.y, angle+aNoise);
 				newdest = false;
 			} else if(dest != null) {
 				// Calculate noise
@@ -257,7 +227,7 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 				if(totalTimeInMotion < totalMotionTime) {
 					int dX = (int)(vX * totalTimeInMotion)/1000;
 					int dY = (int)(vY * totalTimeInMotion)/1000;
-					pos.set(start.x() +dX+xNoise, start.y() +dY+yNoise, (int)Math.toDegrees(motAngle));
+					pos.setPos(start.x+dX+xNoise, start.y+dY+yNoise, (int)Math.toDegrees(motAngle));
 					pos.velocity = velocity;
 				} else {
 					
@@ -270,7 +240,7 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 					if (pos==null )
 						throw new RuntimeException("pos is null");
 					
-					pos.set(dest.x() +xNoise, dest.y() +yNoise, (int)pos.angle+aNoise);
+					pos.setPos(dest.x+xNoise, dest.y+yNoise, (int)pos.angle+aNoise);
 					
 					dest = null;
 					reportpos = true;
@@ -311,7 +281,7 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 	}
 
 	@Override
-	public void setVelocity(String name, int fwd, int radial) {
+	public void setVelocity(String typeName, String name, int fwd, int radial) {
 		throw new RuntimeException("IdealSimGpsProvider does not use the setVelocity method, but the setDestination method. " +
 				"Ideal motion does not use the motion automaton something went very wrong here.");
 	}
@@ -328,7 +298,7 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 	}
 
     @Override
-    public void setControlInput(String name, double v_yaw, double pitch, double roll, double gaz) {
+    public void setControlInput(String typeName, String name, double v_yaw, double pitch, double roll, double gaz) {
         // TD_NATHAN: fix
         // TODO: replace with PID model here
         //((Model_quadcopter) quadcopters.get(name).cur).v_yawR = v_yaw;
@@ -337,17 +307,6 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
         //((Model_quadcopter) quadcopters.get(name).cur).gazR = gaz;
     }
 
-	@Override
-	public void setControlInputGA(String name, double v_yaw, double pitch, double roll, double gaz) {}
-
-	@Override
-	public void setControlInputMav(String name, double v_yaw, double pitch, double roll, double gaz) {}
-
-	@Override
-	public void setControlInputPhantom(String name, double v_yaw, double pitch, double roll, double gaz) {}
-
-	@Override
-	public void setControlInput3DR(String name, double v_yaw, double pitch, double roll, double gaz) {}
 
     /*
     // TD_NATHAN: old version
