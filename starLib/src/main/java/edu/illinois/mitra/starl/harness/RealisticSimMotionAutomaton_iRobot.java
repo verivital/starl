@@ -7,16 +7,18 @@ import edu.illinois.mitra.starl.objects.Common;
 public class RealisticSimMotionAutomaton_iRobot extends MotionAutomaton_iRobot {
 	private SimGpsProvider gpsp;
 	private String name;
+	private String typeName;
 	
 	public RealisticSimMotionAutomaton_iRobot(GlobalVarHolder gvh, SimGpsProvider gpsp) {
 		super(gvh, null);
 		name = gvh.id.getName();
+		typeName = "Model_iRobot";
 		this.gpsp = gpsp;
 	}
 
 	@Override
 	public void motion_stop() {
-		gpsp.setVelocity(name, 0, 0);
+		gpsp.setVelocity(typeName, name, 0, 0);
 		super.running = false;
 		super.stage = MotionAutomaton_iRobot.STAGE.INIT;
 		super.destination = null;
@@ -28,7 +30,7 @@ public class RealisticSimMotionAutomaton_iRobot extends MotionAutomaton_iRobot {
 		if(running) {
 			sendMotionEvent(Common.MOT_ARCING, velocity, radius);
 			// TODO: Determine if angular velocity formula works! 
-			gpsp.setVelocity(name, velocity, (int) Math.round((velocity*360.0)/(2*Math.PI*radius)));
+			gpsp.setVelocity(typeName,name, velocity, (int) Math.round((velocity*360.0)/(2*Math.PI*radius)));
 		}
 	}
 
@@ -41,7 +43,7 @@ public class RealisticSimMotionAutomaton_iRobot extends MotionAutomaton_iRobot {
 			} else {
 				sendMotionEvent(Common.MOT_STOPPED, 0);
 			}
-			gpsp.setVelocity(name, velocity, 0);
+			gpsp.setVelocity(typeName, name, velocity, 0);
 		}
 	}
 
@@ -49,7 +51,7 @@ public class RealisticSimMotionAutomaton_iRobot extends MotionAutomaton_iRobot {
 	protected void turn(int velocity, int angle) {
 		if(running) {
 			sendMotionEvent(Common.MOT_TURNING, velocity, angle);
-			gpsp.setVelocity(name, 0, (int) Math.copySign(velocity, -angle));
+			gpsp.setVelocity(typeName, name, 0, (int) Math.copySign(velocity, -angle));
 		}
 	}	
 	

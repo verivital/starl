@@ -174,7 +174,7 @@ MouseListener, MouseMotionListener, ExplicitlyDrawable
 		g2d.setColor(Color.black);
 		
 //		Font f = new Font("Tahoma", Font.PLAIN, 55); // TODO: make this configurable in SimSettings
-//		f = f.deriveFont(AffineTransform.getScaleInstance(1, -1)); // flip y back around
+//		f = f.deriveFont(AffineTransform.getScaleInstance(1, -1)); // flip getY back around
 		g2d.setFont(drawFont);
 		
 		AffineTransform preDrawersTransform = g2d.getTransform();
@@ -344,7 +344,7 @@ MouseListener, MouseMotionListener, ExplicitlyDrawable
 		// move
 		g.translate(moveX,moveY);
 
-		// flip y axis
+		// flip getY axis
 		g.scale(1,-1);
 	}
 

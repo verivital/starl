@@ -2,7 +2,6 @@ package edu.illinois.mitra.starl.objects;
 
 import java.util.HashMap;
 
-import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
 import edu.illinois.mitra.starl.interfaces.Traceable;
 
 /**
@@ -26,14 +25,14 @@ public class Point3d implements Traceable {
 	}
 
 	/**
-	 * Construct a Point3d with the given x and y values, setting z to 0.
+	 * Construct a Point3d with the given getX and getY values, setting getZ to 0.
 	 */
 	public Point3d(int x, int y) {
 		set(x, y, 0);
 	}
 
 	/**
-	 * Construct a Point3d with the given x, y, and z values.
+	 * Construct a Point3d with the given getX, getY, and getZ values.
 	 */
 	public Point3d(int x, int y, int z) {
 		set(x, y, z);
@@ -44,17 +43,17 @@ public class Point3d implements Traceable {
 	 * @param other Another Point3d instance.
 	 */
 	public Point3d(Point3d other) {
-		set(other.x(), other.y(), other.z());
+		set(other.getX(), other.getY(), other.getZ());
 	}
 
 	/**
 	 * Set the Point3d's values to the given values.
 	 * @return a reference to this
 	 */
-	private Point3d set(int x, int y, int z) {
-		this.x(x);
-		this.y(y);
-		this.z(z);
+	public final Point3d set(int x, int y, int z) {
+		this.setX(x);
+		this.setY(y);
+		this.setZ(z);
 		return this;
 	}
 
@@ -63,7 +62,7 @@ public class Point3d implements Traceable {
 	 * @return a reference to this
 	 */
 	public final Point3d add(Vector3d vec) {
-		return set(x + vec.x(), y + vec.y(), z + vec.z());
+		return set(x + vec.getX(), y + vec.getY(), z + vec.getZ());
 	}
 
 	/**
@@ -71,7 +70,7 @@ public class Point3d implements Traceable {
 	 * @return a reference to this
 	 */
 	public final Point3d subtract(Vector3d vec) {
-		return set(x - vec.x(), y - vec.y(), z - vec.z());
+		return set(x - vec.getX(), y - vec.getY(), z - vec.getZ());
 	}
 
 	/**
@@ -97,23 +96,23 @@ public class Point3d implements Traceable {
 	public boolean equals(Object obj) {
 		if (obj != null && obj instanceof Point3d) {
 			Point3d point = (Point3d)obj;
-			return x() == point.x() && y() == point.y() && z() == point.z();
+			return getX() == point.getX() && getY() == point.getY() && getZ() == point.getZ();
 		}
 		return false;
 	}
 
 	@Override
 	public String toString() {
-		return "Point3d: " + x() + ", " + y() + ", " + z();
+		return "Point3d: " + getX() + ", " + getY() + ", " + getZ();
 	}
 
 	@Override
 	public HashMap<String, Object> getXML() {
 		HashMap<String, Object> retval = new HashMap<String,Object>();
 		retval.put("name", ' ');
-		retval.put("x", x());
-		retval.put("y", y());
-		retval.put("z", z());
+		retval.put("getX", getX());
+		retval.put("getY", getY());
+		retval.put("getZ", getZ());
 		return retval;
 	}
 	
@@ -126,26 +125,26 @@ public class Point3d implements Traceable {
 		return result;
 	}
 	
-	public final int x(){
+	public final int getX(){
 		return x;
 	}
 	
-	public final int y(){
+	public final int getY(){
 		return y;
 	}
-	public final int z(){
+	public final int getZ(){
 		return z;
 	}
 
-	public final void x(int x) {
+	public final void setX(int x) {
 		this.x = x;
 	}
 
-	public final void y(int y) {
+	public final void setY(int y) {
 		this.y = y;
 	}
 
-	public final void z(int z) {
+	public final void setZ(int z) {
 		this.z = z;
 	}
 }

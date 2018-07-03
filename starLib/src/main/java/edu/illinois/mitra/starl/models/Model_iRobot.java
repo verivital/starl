@@ -11,7 +11,7 @@ import edu.illinois.mitra.starl.objects.PositionList;
 
 /**
  * This class represents a simple model of the iRobot Create, including angle, radius, type, velocity, leftbump, rightbump, circleSensor, vFwd, vRad
- * and some prediction on x and y based on vFwd and vRad
+ * and some prediction on getX and getY based on vFwd and vRad
  *
  * default type:
  *	0: get to goal robot
@@ -61,9 +61,9 @@ public class Model_iRobot extends Model_Ground {
 		String[] parts = received.replace(",", "").split("\\|");
 		if(parts.length == 7) {
 			this.name = parts[1];
-			this.x(Integer.parseInt(parts[2]));
-			this.y(Integer.parseInt(parts[3]));
-			this.z(Integer.parseInt(parts[4]));
+			this.setX(Integer.parseInt(parts[2]));
+			this.setY(Integer.parseInt(parts[3]));
+			this.setZ(Integer.parseInt(parts[4]));
 			this.angle = Integer.parseInt(parts[5]);
 //		} else {
 //			throw new ItemFormattingException("Should be length 7, is length " + parts.length);
@@ -88,7 +88,7 @@ public class Model_iRobot extends Model_Ground {
 	}
 
 	public Model_iRobot(ItemPosition t_pos) {
-		super(t_pos.name, t_pos.x(), t_pos.y(), t_pos.z());
+		super(t_pos.name, t_pos.getX(), t_pos.getY(), t_pos.getZ());
 		initial_helper();
 		this.angle = t_pos.index;
 		// TODO Auto-generated constructor stub
@@ -96,7 +96,7 @@ public class Model_iRobot extends Model_Ground {
 
 	@Override
 	public String toString() {
-		return name + ": " + x() + ", " + y() + ", " + z() + ", angle " + angle;
+		return name + ": " + getX() + ", " + getY() + ", " + getZ() + ", angle " + angle;
 	}
 
 	/**
@@ -107,12 +107,12 @@ public class Model_iRobot extends Model_Ground {
 		if(other == null) {
 			return false;
 		}
-		if(other.x() == this.x() && other.y() == this.y()){
+		if(other.getX() == this.getX() && other.getY() == this.getY()){
 			return true;
 		}
-    	double angleT = Math.toDegrees(Math.atan2((other.y() - this.y()) , (other.x() - this.x())));
+    	double angleT = Math.toDegrees(Math.atan2((other.getY() - this.getY()) , (other.getX() - this.getX())));
     	if(angleT  == 90){
-    		if(this.y() < other.y())
+    		if(this.getY() < other.getY())
     			angleT = angleT + 90;
     		double temp = this.angle % 360;
     		if(temp > 0)
@@ -166,8 +166,8 @@ public class Model_iRobot extends Model_Ground {
 			return 0;
 		}
 
-		int delta_x = other.x() - this.x();
-		int delta_y = other.y() - this.y();
+		int delta_x = other.getX() - this.getX();
+		int delta_y = other.getY() - this.getY();
 		double angle = this.angle;
 		int otherAngle = (int) Math.toDegrees(Math.atan2(delta_y,delta_x));
 		if(angle > 180) {
@@ -187,19 +187,17 @@ public class Model_iRobot extends Model_Ground {
 		return  Math.round(retAngle);
 	}
 
-	public void set(int x, int y, int angle) {
-		this.x(x);
-		this.y(y);
+	public void setPos(int x, int y, int angle) {
+		this.setX(x);
+		this.setY(y);
 		this.angle = angle;
 	}
 
-	public void set(Model_iRobot other) {
-		this.x(other.x());
-		this.y(other.y());
+	public void setPos(Model_iRobot other) {
+		this.setX(other.getX());
+		this.setY(other.getY());
 		this.angle = other.angle;
 	}
-
-
 
 	private void initial_helper(){
 		angle = 0;
@@ -212,20 +210,20 @@ public class Model_iRobot extends Model_Ground {
 		vRad = 0;
 	}
 
-    @Override
-    public int radius() {
-        return 165;
-    }
+	@Override
+	public int radius() {
+	    return 165;
+	}
 
 	@Override
 	public Point3d predict(double[] noises, double timeSinceUpdate) {
 		if(noises.length != 3){
-			System.out.println("Incorrect number of noises parameters passed in, please pass in x noise, y, noise and angle noise");
-			return new Point3d(x(), y());
+			System.out.println("Incorrect number of noises parameters passed in, please pass in getX noise, getY, noise and angle noise");
+			return new Point3d(getX(), getY());
 		}
-		double xNoise = (rand()*2*noises[0]) - noises[0];
-		double yNoise = (rand()*2*noises[1]) - noises[1];
-		double aNoise = (rand()*2*noises[2]) - noises[2];
+		double xNoise = (getRand()*2*noises[0]) - noises[0];
+		double yNoise = (getRand()*2*noises[1]) - noises[1];
+		double aNoise = (getRand()*2*noises[2]) - noises[2];
 
 		int dX = 0, dY = 0;
 		double dA = 0;
@@ -233,8 +231,8 @@ public class Model_iRobot extends Model_Ground {
 		dA = aNoise + (vRad*timeSinceUpdate);
 		dX = (int) (xNoise + Math.cos(Math.toRadians(angle))*(vFwd*timeSinceUpdate));
 		dY = (int) (yNoise + Math.sin(Math.toRadians(angle))*(vFwd*timeSinceUpdate));
-		x_p = x() +dX;
-		y_p = y() +dY;
+		x_p = getX() +dX;
+		y_p = getY() +dY;
 		angle_p = angle+dA;
 		return new Point3d(x_p,y_p);
 	}
@@ -267,8 +265,8 @@ public class Model_iRobot extends Model_Ground {
 	public void updatePos(boolean followPredict) {
 		if(followPredict){
 			angle = angle_p;
-			x(x_p);
-			y(y_p);
+			setX(x_p);
+			setY(y_p);
 		}
 	}
 

@@ -135,8 +135,8 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 
 	public void goTo(ItemPosition dest, ObstacleList obsList) {
 		if((inMotion && !this.destination.equals(dest)) || !inMotion) {
-			this.destination = new ItemPosition(dest.name, dest.x(), dest.y(),0);
-//            Log.d(TAG, "Going to X: " + Integer.toString(dest.x) + " Y: " + Integer.toString(dest.y));
+			this.destination = new ItemPosition(dest.name, dest.getX(), dest.getY(),0);
+//            Log.d(TAG, "Going to X: " + Integer.toString(dest.getX) + " Y: " + Integer.toString(dest.getY));
 			//this.destination = dest;
 			this.mode = OPMODE.GO_TO;
 			this.obsList = obsList;
@@ -611,10 +611,10 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 
 	// Calculates the radius of curvature to meet a target
 	private int curveRadius() {
-		int x0 = mypos.x();
-		int y0 = mypos.y();
-		int x1 = destination.x();
-		int y1 = destination.y();
+		int x0 = mypos.getX();
+		int y0 = mypos.getY();
+		int x1 = destination.getX();
+		int y1 = destination.getY();
 		int theta = (int)mypos.angle;
 		double alpha = -180 + Math.toDegrees(Math.atan2((y1 - y0), (x1 - x0)));
 		double rad = -(Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2)) / (2 * Math.sin(Math.toRadians(alpha - theta))));
@@ -689,20 +689,20 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 		if(mypos.leftbump || mypos.rightbump){
 			double ColPoint_x, ColPoint_y;
 			if(mypos.leftbump&&mypos.rightbump){
-				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle))) + mypos.x();
-				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle))) + mypos.y();
+				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle))) + mypos.getX();
+				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle))) + mypos.getY();
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);
 			}
 			else if(mypos.leftbump){
-				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle+45))) + mypos.x();
-				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle+45))) + mypos.y();
+				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle+45))) + mypos.getX();
+				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle+45))) + mypos.getY();
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);
 				
 				
 			}
 			else{
-				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle-45))) + mypos.x();
-				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle-45))) + mypos.y();
+				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle-45))) + mypos.getX();
+				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle-45))) + mypos.getY();
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);	
 			}
 			

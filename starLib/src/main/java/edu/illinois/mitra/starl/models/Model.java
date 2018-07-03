@@ -1,17 +1,16 @@
 package edu.illinois.mitra.starl.models;
 
-import java.util.Random;
-
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Point3d;
 import edu.illinois.mitra.starl.objects.PositionList;
+import java.util.*;
 
 public abstract class Model extends ItemPosition {
 
-	private final Random rand = new Random();
+	private Random rand = new Random();
 
-	protected final double rand() {
+	protected double getRand(){
 		return rand.nextDouble();
 	}
 
@@ -20,10 +19,12 @@ public abstract class Model extends ItemPosition {
 	public abstract void updatePos(boolean followPredict);
 	public abstract boolean inMotion();
 	public abstract void updateSensor(ObstacleList obspoint_positions, PositionList<ItemPosition> sensepoint_positions);
+	public abstract int radius();
 
-	public Model() {}
+	public Model(){
 
-	public Model(String name, int x, int y) {
+	}
+	public Model(String name, int x, int y){
 		super(name, x, y);
 	}
 
@@ -35,11 +36,7 @@ public abstract class Model extends ItemPosition {
 		super(t_pos);
 	}
 
-    // Used to identify the real type of a Model
-	public final String getTypeName() {
-		return getClass().getSimpleName();
-	}
-
-    // Subclass-specific constants that must be set
-    public abstract int radius();
+	public final String getTypeName(){
+	    return getClass().getSimpleName();
+    }
 }

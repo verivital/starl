@@ -18,14 +18,14 @@ public final class Vector3d implements Traceable {
     }
 
     /**
-     * Construct a Vector3d with the given x and y values, setting z to 0.
+     * Construct a Vector3d with the given getX and getY values, setting getZ to 0.
      */
     public Vector3d(int x, int y) {
         set(x, y, 0);
     }
 
     /**
-     * Construct a Vector3d with the given x, y, and z values.
+     * Construct a Vector3d with the given getX, getY, and getZ values.
      */
     public Vector3d(int x, int y, int z) {
         set(x, y, z);
@@ -36,7 +36,7 @@ public final class Vector3d implements Traceable {
      * @param other Another Vector3d instance.
      */
     public Vector3d(Vector3d other) {
-        set(other.x(), other.y(), other.z());
+        set(other.getX(), other.getY(), other.getZ());
     }
 
     /**
@@ -44,9 +44,9 @@ public final class Vector3d implements Traceable {
      * @return a reference to this
      */
     public Vector3d set(int x, int y, int z) {
-        this.x(x);
-        this.y(y);
-        this.z(z);
+        this.setX(x);
+        this.setY(y);
+        this.setZ(z);
         return this;
     }
 
@@ -89,23 +89,23 @@ public final class Vector3d implements Traceable {
     public boolean equals(Object obj) {
         if (obj != null && obj instanceof Vector3d) {
             Vector3d point = (Vector3d)obj;
-            return x() == point.x() && y() == point.y() && z() == point.z();
+            return getX() == point.getX() && getY() == point.getY() && getZ() == point.getZ();
         }
         return false;
     }
 
     @Override
     public String toString() {
-        return "Vector3d: " + x() + ", " + y() + ", " + z();
+        return "Vector3d: " + getX() + ", " + getY() + ", " + getZ();
     }
 
     @Override
     public HashMap<String, Object> getXML() {
         HashMap<String, Object> retval = new HashMap<String,Object>();
         retval.put("name", ' ');
-        retval.put("x", x());
-        retval.put("y", y());
-        retval.put("z", z());
+        retval.put("getX", getX());
+        retval.put("getY", getY());
+        retval.put("getZ", getZ());
         return retval;
     }
 
@@ -118,27 +118,27 @@ public final class Vector3d implements Traceable {
         return result;
     }
 
-    public int x() {
+    public int getX() {
         return x;
     }
 
-    public void x(int x) {
+    public void setX(int x) {
         this.x = x;
     }
 
-    public int y() {
+    public int getY() {
         return y;
     }
 
-    public void y(int y) {
+    public void setY(int y) {
         this.y = y;
     }
 
-    public int z() {
+    public int getZ() {
         return z;
     }
 
-    public void z(int z) {
+    public void setZ(int z) {
         this.z = z;
     }
 }

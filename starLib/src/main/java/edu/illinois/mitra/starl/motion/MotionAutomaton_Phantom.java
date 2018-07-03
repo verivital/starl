@@ -95,9 +95,9 @@ public class MotionAutomaton_Phantom extends RobotMotion {
     public void goTo(ItemPosition dest) {
         if(!inMotion || !this.destination.equals(dest)) {
             done = false;
-            this.destination = new ItemPosition(dest.name, dest.x(), dest.y(),0); //Todo(TIM) add dest.z?
-            gvh.log.d(TAG, "Going to X: " + Integer.toString(dest.x()) + ", Y: " + Integer.toString(dest.y()));
-            //      Log.d(TAG, "Going to X: " + Integer.toString(dest.x) + ", Y: " + Integer.toString(dest.y));
+            this.destination = new ItemPosition(dest.name, dest.getX(), dest.getY(),0); //Todo(TIM) add dest.getZ?
+            gvh.log.d(TAG, "Going to X: " + Integer.toString(dest.getX()) + ", Y: " + Integer.toString(dest.getY()));
+            //      Log.d(TAG, "Going to X: " + Integer.toString(dest.getX) + ", Y: " + Integer.toString(dest.getY));
             //this.destination = dest;
             this.mode = OPMODE.GO_TO;
             startMotion();
@@ -126,8 +126,8 @@ public class MotionAutomaton_Phantom extends RobotMotion {
                 // if you change to 3D waypoints, use distanceTo instead of distanceTo2D
                 int distance = (int)mypos.distanceTo2D(destination);
                 colliding = false;
-                debugmsg += "My position: " + mypos.x() + ", " + mypos.y() + "\n";
-                debugmsg += "Destination: " + destination.x() + ", " + destination.y() + "\n";
+                debugmsg += "My position: " + mypos.getX() + ", " + mypos.getY() + "\n";
+                debugmsg += "Destination: " + destination.getX() + ", " + destination.getY() + "\n";
                 if(!colliding && stage != null) {
                     if(stage != prev)
                         gvh.log.e(TAG, "Stage is: " + stage.toString());
@@ -162,12 +162,12 @@ public class MotionAutomaton_Phantom extends RobotMotion {
                                 next = STAGE.GOAL;
                             }
                             else{
-                                double rollCommand = PID_x.getCommand(mypos.x(), destination.x());
-                                double pitchCommand = PID_y.getCommand(mypos.y(), destination.y());
+                                double rollCommand = PID_x.getCommand(mypos.getX(), destination.getX());
+                                double pitchCommand = PID_y.getCommand(mypos.getY(), destination.getY());
                                 double yawCommand = calculateYaw();
                                 double gazCommand = 0;
-                                gvh.log.d("POSITION DEBUG", "My Position: " + mypos.x() + " " + mypos.y());
-                                gvh.log.d("POSITION DEBUG", "Destination: " + destination.x() + " " + destination.y());
+                                gvh.log.d("POSITION DEBUG", "My Position: " + mypos.getX() + " " + mypos.getY());
+                                gvh.log.d("POSITION DEBUG", "Destination: " + destination.getX() + " " + destination.getY());
 
                                 setControlInputRescale(yawCommand, pitchCommand, rollCommand, gazCommand);
                                 debugmsg += "Yaw, pitch, roll, throttle:\n";
@@ -189,8 +189,8 @@ public class MotionAutomaton_Phantom extends RobotMotion {
                                 hover();
                             }
                             else{
-                                double rollCommand = PID_x.getCommand(mypos.x(), destination.x());
-                                double pitchCommand = PID_y.getCommand(mypos.y(), destination.y());
+                                double rollCommand = PID_x.getCommand(mypos.getX(), destination.getX());
+                                double pitchCommand = PID_y.getCommand(mypos.getY(), destination.getY());
                                 double yawCommand = calculateYaw();
                                 double gazCommand = 0;
                                 setControlInputRescale(yawCommand, pitchCommand, rollCommand, gazCommand);

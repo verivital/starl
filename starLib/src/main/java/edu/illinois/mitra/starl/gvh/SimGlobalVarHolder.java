@@ -4,12 +4,8 @@ import java.util.HashMap;
 
 import edu.illinois.mitra.starl.harness.IdealSimGpsProvider;
 import edu.illinois.mitra.starl.harness.IdealSimMotionAutomaton;
-import edu.illinois.mitra.starl.harness.RealisticSimMotionAutomaton_Phantom;
-import edu.illinois.mitra.starl.harness.RealisticSimMotionAutomaton_ghost;
+import edu.illinois.mitra.starl.harness.RealisticSimMotionAutomaton_Drone;
 import edu.illinois.mitra.starl.harness.RealisticSimMotionAutomaton_iRobot;
-import edu.illinois.mitra.starl.harness.RealisticSimMotionAutomaton_mavic;
-import edu.illinois.mitra.starl.harness.RealisticSimMotionAutomaton_quadcopter;
-import edu.illinois.mitra.starl.harness.RealisticSimMotionAutomaton_3DR;
 import edu.illinois.mitra.starl.harness.SimGpsReceiver;
 import edu.illinois.mitra.starl.harness.SimSmartComThread;
 import edu.illinois.mitra.starl.harness.SimulationEngine;
@@ -46,7 +42,11 @@ public class SimGlobalVarHolder extends GlobalVarHolder {
 		super.plat = new AndroidPlatform();
 		plat.model = initpos;
 		plat.reachAvoid = new ReachAvoid(this);
-        // Yixiao says IdealSimGpsProvider shouldn't be used. Should probably remove the if else here.
+
+
+		// Yixiao says IdealSimGpsProvider shouldn't be used. Should probably remove the if else here.
+		//Model_Drone is base class for all aerial robots.
+		//TODO: Create base class for all ground robots
 		if(initpos instanceof Model_iRobot){
 			if(engine.getGps() instanceof IdealSimGpsProvider) {
 				plat.moat = new IdealSimMotionAutomaton(this, (IdealSimGpsProvider)engine.getGps());
@@ -54,12 +54,13 @@ public class SimGlobalVarHolder extends GlobalVarHolder {
 				plat.moat = new RealisticSimMotionAutomaton_iRobot(this, engine.getGps());
 				plat.moat.start();
 			}
-		}
-		else if(initpos instanceof Model_quadcopter){
-			plat.moat = new RealisticSimMotionAutomaton_quadcopter(this, engine.getGps());
+		} else if(initpos instanceof Model_Drone){
+			plat.moat = new RealisticSimMotionAutomaton_Drone(this, engine.getGps());
 			plat.moat.start();
 		}
-		else if(initpos instanceof Model_GhostAerial){
+
+
+		/*else if(initpos instanceof Model_GhostAerial){
 			plat.moat = new RealisticSimMotionAutomaton_ghost(this, engine.getGps());
 			plat.moat.start();
 		}else if(initpos instanceof Model_Mavic){
@@ -74,8 +75,8 @@ public class SimGlobalVarHolder extends GlobalVarHolder {
 			plat.moat.start();
 		}
 		else {
-			throw new RuntimeException("After adding a model, please add the motion controler for that model in SimGlobalVarHolder.java");
-		}
+			throw new RuntimeException("After adding a model, please add the motion controller for that model in SimGlobalVarHolder.java");
+		}*/
 	}
 
 	@Override

@@ -7,7 +7,11 @@ import java.util.Observer;
 import java.util.Vector;
 
 import edu.illinois.mitra.starl.models.Model;
+import edu.illinois.mitra.starl.models.Model_3DR;
 import edu.illinois.mitra.starl.models.Model_Drone;
+import edu.illinois.mitra.starl.models.Model_GhostAerial;
+import edu.illinois.mitra.starl.models.Model_Mavic;
+import edu.illinois.mitra.starl.models.Model_Phantom;
 import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
@@ -35,10 +39,10 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 	private Map<String, TrackedModel<Model>> getModels(String typename) {
 		Map<String, TrackedModel<Model>> subMap = models.get(typename);
 		if (subMap == null) {
-			subMap = models.put(typename, new HashMap<>());
+			subMap = new HashMap<>();
+			models.put(typename, subMap);
 		}
 		return subMap;
-//		return models.computeIfAbsent(typename, t -> new HashMap<>());
 	}
 	private final Map<String, Map<String, TrackedModel<Model>>> models;
 
@@ -51,10 +55,10 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 	private PositionList<Model> getModelPositions(String typename) {
 		PositionList<Model> list = modelPositions.get(typename);
 		if (list == null) {
-			list = modelPositions.put(typename, new PositionList<>());
+			list = new PositionList<>();
+			modelPositions.put(typename, list);
 		}
 		return list;
-//		return modelPositions.computeIfAbsent(typename, t -> new PositionList<>());
 	}
 
 	private final Map<String, PositionList<Model>> modelPositions;
@@ -111,34 +115,28 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 	}
 
 	@Override
-	public void setVelocity(String name, int fwd, int rad) {
-		Model_iRobot iRobot = (Model_iRobot)getModels("Model_iRobot").get(name).cur;
+	public void setVelocity(String typename, String name, int fwd, int rad) {
+		Model_iRobot iRobot = (Model_iRobot)getModels(typename).get(name).cur;
 		iRobot.vFwd = fwd;
 		iRobot.vRad = rad;
 	}
 
 	@Override
-	public void setControlInput(String name, double v_yaw, double pitch, double roll, double gaz) {
+	public void setControlInput(String typename, String name, double v_yaw, double pitch, double roll, double gaz) {
 		/** TODO: replace with PID model here
 		*/
 
-        Model_Drone drone = (Model_Drone)models.get("Model_quadcopter").get(name).cur;
+        Model_Drone drone = (Model_Drone)models.get(typename).get(name).cur;
 		drone.v_yawR = v_yaw;
 		drone.pitchR = pitch;
 		drone.rollR = roll;
 		drone.gazR = gaz;
 	}
 
-	@Override
-	public synchronized void halt(String name) {
-		setVelocity(name, 0, 0);
-		setControlInput(name, 0, 0, 0, 0);
-	}
-
-	@Override
-	public PositionList<ItemPosition> getAllPositions(){
-		return allpos;
-	}
+    @Override
+    public PositionList<ItemPosition> getAllPositions() {
+        return allpos;
+    }
 
 	@Override
 	public void setWaypoints(PositionList<ItemPosition> loadedWaypoints) {
@@ -255,125 +253,66 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 			timeLastUpdate = se.getTime();
 		}
 
-		public boolean checkCollision(Point3d bot) {
-			//double min_distance = Double.MAX_VALUE;
-			int myRadius = cur.radius();
-			boolean toReturn = false;
+        public boolean checkCollision(Point3d bot) {
+            //double min_distance = Double.MAX_VALUE;
+            int myRadius = cur.radius();
 
-			for(Model_iRobot current : iRobot_positions.getList()) {
-				if(!current.name.equals(cur.name)) {
-					if(bot.distanceTo(current) <= myRadius + current.radius()){
-						//update sensors for both robots
-						current.collision(cur);
-						cur.collision(current);
-						toReturn = true;
-					}
-					//min_distance = Math.min(bot.distanceTo(current) - current.radius, min_distance);
-				}
-			}
+            boolean toReturn = false;
 
-			for(Model_quadcopter current : quadcopter_positions.getList()) {
-				if(!current.name.equals(cur.name)) {
-					if(bot.distanceTo(current) <= myRadius + current.radius()){
-						//update sensors for both robots
-						current.collision(cur);
-						cur.collision(current);
-						toReturn = true;
-					}
-					//min_distance = Math.min(bot.distanceTo(current) - current.radius, min_distance);
-				}
-			}
+            for (Model current : modelPositions.get(cur.getTypeName())) {
+                if (!current.name.equals(cur.name)) {
+                    if (bot.distanceTo(current) <= myRadius + current.radius()) {
+                        //update sensors for both robots
+                        current.collision(cur);
+                        cur.collision(current);
+                        toReturn = true;
+                    }
+                    //min_distance = Math.min(bot.distanceTo(current) - current.radius, min_distance);
+                }
+            }
 
-			for(Model_GhostAerial current : ghost_positions.getList()) {
-				if(!current.name.equals(cur.name)) {
-					if(bot.distanceTo(current) <= myRadius + current.radius){
-						//update sensors for both robots
-						current.collision(cur);
-						cur.collision(current);
-						toReturn = true;
-					}
-					//min_distance = Math.min(bot.distanceTo(current) - current.radius, min_distance);
-				}
-			}
+            ObstacleList list = obspoint_positions;
+            for (int i = 0; i < list.ObList.size(); i++) {
+                Obstacles currobs = list.ObList.get(i);
+                Point3d nextpoint = currobs.obstacle.firstElement();
+                Point3d curpoint = currobs.obstacle.firstElement();
+                ItemPosition wall = new ItemPosition("wall", 0, 0, 0);
 
-			for(Model_Mavic current : mavic_positions.getList()) {
-				if(!current.name.equals(cur.name)) {
-					if(bot.distanceTo(current) <= myRadius + current.radius){
-						//update sensors for both robots
-						current.collision(cur);
-						cur.collision(current);
-						toReturn = true;
-					}
-					//min_distance = Math.min(bot.distanceTo(current) - current.radius, min_distance);
-				}
-			}
-			for(Model_Phantom current : phantom_positions.getList()) {
-				if(!current.name.equals(cur.name)) {
-					if(bot.distanceTo(current) <= myRadius + current.radius){
-						//update sensors for both robots
-						current.collision(cur);
-						cur.collision(current);
-						toReturn = true;
-					}
-					//min_distance = Math.min(bot.distanceTo(current) - current.radius, min_distance);
-				}
-			}
-			for(Model_3DR current : o3DR_positions.getList()) {
-				if(!current.name.equals(cur.name)) {
-					if(bot.distanceTo(current) <= myRadius + current.radius){
-						//update sensors for both robots
-						current.collision(cur);
-						cur.collision(current);
-						toReturn = true;
-					}
-					//min_distance = Math.min(bot.distanceTo(current) - current.radius, min_distance);
-				}
-			}
+                for (int j = 0; j < currobs.obstacle.size(); j++) {
+                    curpoint = currobs.obstacle.get(j);
+                    if (j == currobs.obstacle.size() - 1) {
+                        nextpoint = currobs.obstacle.firstElement();
+                    } else {
+                        nextpoint = currobs.obstacle.get(j + 1);
+                    }
+                    Point3d closeP = currobs.getClosestPointOnSegment(curpoint.x, curpoint.y, nextpoint.x, nextpoint.y, bot.x, bot.y);
+                    wall.set(closeP.x, closeP.y, 0);
+                    double distance = Math.sqrt(Math.pow(closeP.x - bot.x, 2) + Math.pow(closeP.y - bot.y, 2));
 
-			ObstacleList list = obspoint_positions;
-			for(int i = 0; i < list.ObList.size(); i++)
-			{
-				Obstacles currobs = list.ObList.get(i);
-				Point3d nextpoint = currobs.obstacle.firstElement();
-				Point3d curpoint = currobs.obstacle.firstElement();
-				ItemPosition wall = new ItemPosition("wall",0,0,0);
+                    //need to modify some conditions of bump sensors, we have left and right bump sensor for now
+                    if (distance < myRadius) {
+                        //update the bump sensor
+                        cur.collision(wall);
+                        toReturn = true;
+                    }
+                }
+            }
+            if (!toReturn) {
+                cur.collision(null);
+            }
+            return toReturn;
+        }
 
-				for(int j = 0; j < currobs.obstacle.size() ; j++){
-					curpoint = currobs.obstacle.get(j);
-					if (j == currobs.obstacle.size() -1){
-						nextpoint = currobs.obstacle.firstElement();
-					}
-					else{
-						nextpoint = currobs.obstacle.get(j+1);
-					}
-					Point3d closeP = currobs.getClosestPointOnSegment(curpoint.x(), curpoint.y(), nextpoint.x(), nextpoint.y(), bot.x(), bot.y());
-					wall.x(closeP.x());
-					wall.y(closeP.y());
-					double distance = Math.sqrt(Math.pow(closeP.x() - bot.x(), 2) + Math.pow(closeP.y() - bot.y(), 2)) ;
+        public String getName() {
+            return cur.name;
+        }
 
-					//need to modify some conditions of bump sensors, we have left and right bump sensor for now
-					if(distance < myRadius){
-						//update the bump sensor
-						cur.collision(wall);
-						toReturn = true;
-					}
-				}
-			}
-			if(!toReturn){
-				cur.collision(null);
-			}
-			return toReturn;
-		}
-
-		public String getName() {
-			return cur.name;
-		}
-
-	}
-
+    }
+	
 	@Override
 	public void addObserver(Observer o) {
 		super.addObserver(o);
 	}
-
+    @Override
+    public synchronized void halt(String name){}
 }
