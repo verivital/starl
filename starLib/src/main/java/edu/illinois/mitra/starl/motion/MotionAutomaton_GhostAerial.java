@@ -309,7 +309,7 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
         setControlInput(rescale(yaw_v, 50), rescale(pitch, 50), rescale(roll, 50), rescale(gaz, 50));
     }
     private void setControlInputRescaleD(double yaw_v, double pitch, double roll, double gaz){
-        setControlInput(rescale(yaw_v, mypos.max_yaw_speed), rescale(pitch, mypos.max_pitch_roll), rescale(roll, mypos.max_pitch_roll), rescale(gaz, mypos.max_gaz));
+       // setControlInput(rescale(yaw_v, mypos.max_yaw_speed), rescale(pitch, mypos.max_pitch_roll), rescale(roll, mypos.max_pitch_roll), rescale(gaz, mypos.max_gaz));
     }
 
     private double rescale(double value, double max_value){

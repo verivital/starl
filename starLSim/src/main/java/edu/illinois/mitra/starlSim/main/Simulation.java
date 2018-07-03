@@ -22,12 +22,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 
-import edu.illinois.mitra.starl.harness.IdealSimGpsProvider;
 import edu.illinois.mitra.starl.harness.RealisticSimGpsProvider;
 import edu.illinois.mitra.starl.harness.SimGpsProvider;
 import edu.illinois.mitra.starl.harness.SimulationEngine;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
-import edu.illinois.mitra.starl.interfaces.TrackedRobot;
 import edu.illinois.mitra.starl.models.Model_3DR;
 import edu.illinois.mitra.starl.models.Model_GhostAerial;
 import edu.illinois.mitra.starl.models.Model_Mavic;
@@ -184,7 +182,7 @@ public class Simulation {
 				while (retries++ < 10000 && (!acceptableStart(initialPosition) || !valid)) {
 					initialPosition = new Model_iRobot(botName, rand.nextInt(settings.GRID_XSIZE), rand.nextInt(settings.GRID_YSIZE), rand.nextInt(360));
 					if (list != null) {
-						valid = (list.validstarts(initialPosition, initialPosition.radius));
+						valid = (list.validstarts(initialPosition, initialPosition.radius()));
 					}
 				}
 				if (retries > 10000) {
@@ -200,7 +198,8 @@ public class Simulation {
 				//default robot type is 0
 			}
 
-			initialPosition.radius = settings.BOT_RADIUS;
+			//TODO: Modify this setting
+			//initialPosition.radius = settings.BOT_RADIUS;
 			SimApp sa = new SimApp(botName, participants, simEngine, initialPosition, settings.TRACE_OUT_DIR, app, drawFrame, settings.TRACE_CLOCK_DRIFT_MAX, settings.TRACE_CLOCK_SKEW_MAX);
 			bots.add(sa);
 			logicThreads.add(sa.logic);
@@ -222,14 +221,14 @@ public class Simulation {
 				while (retries++ < 10000 && (!acceptableStart(initialPosition) || !valid)) {
 					initialPosition = new Model_quadcopter(botName, rand.nextInt(settings.GRID_XSIZE), rand.nextInt(settings.GRID_YSIZE), 0, rand.nextInt(360));
 					if (list != null) {
-						valid = (list.validstarts(initialPosition, initialPosition.radius));
+						valid = (list.validstarts(initialPosition, initialPosition.radius()));
 					}
 				}
 				if (retries > 10000) {
 					System.out.println("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE/GRID_ZSIZE or remove some obstacles");
 				}
 			}
-			initialPosition.radius = settings.BOT_RADIUS;
+			//initialPosition.radius() = settings.BOT_RADIUS;
 
 			SimApp sa = new SimApp(botName, participants, simEngine, initialPosition, settings.TRACE_OUT_DIR, app, drawFrame, settings.TRACE_CLOCK_DRIFT_MAX, settings.TRACE_CLOCK_SKEW_MAX);
 
@@ -255,14 +254,14 @@ public class Simulation {
 				while (retries++ < 10000 && (!acceptableStart(initialPosition) || !valid)) {
 					initialPosition = new Model_GhostAerial(botName, rand.nextInt(settings.GRID_XSIZE), rand.nextInt(settings.GRID_YSIZE), 0, rand.nextInt(360));
 					if (list != null) {
-						valid = (list.validstarts(initialPosition, initialPosition.radius));
+						valid = (list.validstarts(initialPosition, initialPosition.radius()));
 					}
 				}
 				if (retries > 10000) {
 					System.out.println("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE/GRID_ZSIZE or remove some obstacles");
 				}
 			}
-			initialPosition.radius = settings.BOT_RADIUS;
+			//initialPosition.radius() = settings.BOT_RADIUS;
 
 			SimApp sa = new SimApp(botName, participants, simEngine, initialPosition, settings.TRACE_OUT_DIR, app, drawFrame, settings.TRACE_CLOCK_DRIFT_MAX, settings.TRACE_CLOCK_SKEW_MAX);
 
@@ -288,14 +287,14 @@ public class Simulation {
 				while (retries++ < 10000 && (!acceptableStart(initialPosition) || !valid)) {
 					initialPosition = new Model_Mavic(botName, rand.nextInt(settings.GRID_XSIZE), rand.nextInt(settings.GRID_YSIZE), 0, rand.nextInt(360));
 					if (list != null) {
-						valid = (list.validstarts(initialPosition, initialPosition.radius));
+						valid = (list.validstarts(initialPosition, initialPosition.radius()));
 					}
 				}
 				if (retries > 10000) {
 					System.out.println("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE/GRID_ZSIZE or remove some obstacles");
 				}
 			}
-			initialPosition.radius = settings.BOT_RADIUS;
+			initialPosition.radius() = settings.BOT_RADIUS;
 
 			SimApp sa = new SimApp(botName, participants, simEngine, initialPosition, settings.TRACE_OUT_DIR, app, drawFrame, settings.TRACE_CLOCK_DRIFT_MAX, settings.TRACE_CLOCK_SKEW_MAX);
 
@@ -320,14 +319,14 @@ public class Simulation {
 				while (retries++ < 10000 && (!acceptableStart(initialPosition) || !valid)) {
 					initialPosition = new Model_Phantom(botName, rand.nextInt(settings.GRID_XSIZE), rand.nextInt(settings.GRID_YSIZE), 0, rand.nextInt(360));
 					if (list != null) {
-						valid = (list.validstarts(initialPosition, initialPosition.radius));
+						valid = (list.validstarts(initialPosition, initialPosition.radius()));
 					}
 				}
 				if (retries > 10000) {
 					System.out.println("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE/GRID_ZSIZE or remove some obstacles");
 				}
 			}
-			initialPosition.radius = settings.BOT_RADIUS;
+			//initialPosition.radius() = settings.BOT_RADIUS;
 
 			SimApp sa = new SimApp(botName, participants, simEngine, initialPosition, settings.TRACE_OUT_DIR, app, drawFrame, settings.TRACE_CLOCK_DRIFT_MAX, settings.TRACE_CLOCK_SKEW_MAX);
 
@@ -353,14 +352,14 @@ public class Simulation {
 				while (retries++ < 10000 && (!acceptableStart(initialPosition) || !valid)) {
 					initialPosition = new Model_3DR(botName, rand.nextInt(settings.GRID_XSIZE), rand.nextInt(settings.GRID_YSIZE), 0, rand.nextInt(360));
 					if (list != null) {
-						valid = (list.validstarts(initialPosition, initialPosition.radius));
+						valid = (list.validstarts(initialPosition, initialPosition.radius()));
 					}
 				}
 				if (retries > 10000) {
 					System.out.println("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE/GRID_ZSIZE or remove some obstacles");
 				}
 			}
-			initialPosition.radius = settings.BOT_RADIUS;
+			//initialPosition.radius = settings.BOT_RADIUS;
 
 			SimApp sa = new SimApp(botName, participants, simEngine, initialPosition, settings.TRACE_OUT_DIR, app, drawFrame, settings.TRACE_CLOCK_DRIFT_MAX, settings.TRACE_CLOCK_SKEW_MAX);
 

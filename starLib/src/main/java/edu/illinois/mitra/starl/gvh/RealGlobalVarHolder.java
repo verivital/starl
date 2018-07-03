@@ -7,7 +7,7 @@ import android.content.Context;
 import android.os.Handler;
 import edu.illinois.mitra.starl.comms.SmartUdpComThread;
 import edu.illinois.mitra.starl.comms.UdpGpsReceiver;
-import edu.illinois.mitra.starl.interfaces.TrackedRobot;
+import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_GhostAerial;
 import edu.illinois.mitra.starl.models.Model_Mavic;
 import edu.illinois.mitra.starl.models.Model_Phantom;
@@ -39,7 +39,7 @@ public class RealGlobalVarHolder extends GlobalVarHolder {
 	 * @param handler the main application handler capable of receiving GUI update messages
 	 * @param robotMac the MAC address of this agent's iRobot Create chassis
 	 */
-	public RealGlobalVarHolder(String name, Map<String,String> participants, TrackedRobot initpos, Handler handler, String robotMac, Context context) {
+	public RealGlobalVarHolder(String name, Map<String,String> participants, Model initpos, Handler handler, String robotMac, Context context) {
 //	public RealGlobalVarHolder(String name, Map<String,String> participants, Handler handler, String robotMac, Context context) {
 		super(name, participants);
 

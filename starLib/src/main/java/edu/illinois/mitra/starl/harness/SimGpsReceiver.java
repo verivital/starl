@@ -5,7 +5,7 @@ import java.util.Vector;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.GpsReceiver;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener.Event;
-import edu.illinois.mitra.starl.interfaces.TrackedRobot;
+import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_GhostAerial;
 import edu.illinois.mitra.starl.models.Model_Mavic;
 import edu.illinois.mitra.starl.models.Model_iRobot;
@@ -25,7 +25,7 @@ public class SimGpsReceiver implements GpsReceiver {
 	
 	private SimGpsProvider provider;
 	
-	public SimGpsReceiver(GlobalVarHolder gvh, SimGpsProvider provider, TrackedRobot initpos) {
+	public SimGpsReceiver(GlobalVarHolder gvh, SimGpsProvider provider, Model initpos) {
 		this.gvh = gvh;
 		this.provider = provider;
 		provider.registerReceiver(gvh.id.getName(), this);

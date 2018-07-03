@@ -16,7 +16,7 @@ public class RealisticSimMotionAutomaton_Phantom extends MotionAutomaton_Phantom
 		name = gvh.id.getName();
 		this.gpsp = gpsp;
 		this.my_model = (Model_Phantom)gvh.plat.model;
-		maxTilt = (float)this.my_model.max_pitch_roll;
+		maxTilt = (float)this.my_model.max_pitch_roll();
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class RealisticSimMotionAutomaton_Phantom extends MotionAutomaton_Phantom
 			throw new IllegalArgumentException("gaz, vertical speed must be between -1 to 1");
 		}
 		System.out.printf("CINPUT: %f %f %f %f\n", yaw_v, pitch, roll, gaz);
-		gpsp.setControlInputPhantom(name, yaw_v*my_model.max_yaw_speed, pitch*maxTilt, roll*maxTilt, gaz*my_model.max_gaz);
+		//gpsp.setControlInputPhantom(name, yaw_v*my_model.max_yaw_speed, pitch*maxTilt, roll*maxTilt, gaz*my_model.max_gaz);
 		//gpsp.setControlInputPhantom(name, yaw_v*1500, 0, 0, gaz*my_model.max_gaz);
 	}
 

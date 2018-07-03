@@ -689,20 +689,20 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 		if(mypos.leftbump || mypos.rightbump){
 			double ColPoint_x, ColPoint_y;
 			if(mypos.leftbump&&mypos.rightbump){
-				ColPoint_x = mypos.radius*(Math.cos(Math.toRadians(mypos.angle))) + mypos.x;
-				ColPoint_y = mypos.radius*(Math.sin(Math.toRadians(mypos.angle))) + mypos.y;
+				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle))) + mypos.x;
+				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle))) + mypos.y;
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);
 			}
 			else if(mypos.leftbump){
-				ColPoint_x = mypos.radius*(Math.cos(Math.toRadians(mypos.angle+45))) + mypos.x;
-				ColPoint_y = mypos.radius*(Math.sin(Math.toRadians(mypos.angle+45))) + mypos.y;
+				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle+45))) + mypos.x;
+				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle+45))) + mypos.y;
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);
 				
 				
 			}
 			else{
-				ColPoint_x = mypos.radius*(Math.cos(Math.toRadians(mypos.angle-45))) + mypos.x;
-				ColPoint_y = mypos.radius*(Math.sin(Math.toRadians(mypos.angle-45))) + mypos.y;
+				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle-45))) + mypos.x;
+				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle-45))) + mypos.y;
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);	
 			}
 			

@@ -23,6 +23,8 @@ import edu.illinois.mitra.starl.objects.PositionList;
  * App is set to either have two robots automatically go to unique points and wait for each other,
  * or it can be changed to enable to the user to pilot one robot using the arrow keys.
  * Change USER_CONTROl to true for piloting, and false for automatic movement based on ReachAvoid.
+ *
+ * TODO: Re-implement User Interface in zoomable panel and motion classes.
  */
 
 public class TestApp extends LogicThread {
@@ -70,8 +72,16 @@ public class TestApp extends LogicThread {
 
         gvh.plat.moat.setParameters(param);
 
-        // Destinations are loaded from Waypoint file, and are filtered and stored in hashmap for each robot.
-        //doReachAvoid directs robots to waypoints, must also be passed to TestDrawer.
+        /**
+         *Destinations are loaded from Waypoint file, and are filtered and stored in hashmap for each robot based on unique key.
+         *doReachAvoid directs robots to waypoints, must also be passed to TestDrawer.
+         *
+         * Keys: All numbers start at 1 and increment
+         * iRob: #-iRob
+         * quad: #-quad
+         * All Others: #
+         */
+
         int index = 1;
         for (ItemPosition i : gvh.gps.getWaypointPositions()) {
             if (gvh.plat.model instanceof Model_quadcopter) {
@@ -112,12 +122,12 @@ public class TestApp extends LogicThread {
                         currentDestination = getRandomElement(destinations, destIndex);
                         destIndex++;
 
-                        //Have to investigate kdTree.
                         if (!USER_CONTROL) {
                             kdTree = gvh.plat.reachAvoid.kdTree;
                             gvh.plat.reachAvoid.doReachAvoid(gvh.gps.getMyPosition(), currentDestination, obs);
                         } else {
-                            gvh.plat.moat.userControl(currentDestination, obs);
+                            //TODO: Add support for userControl in RobotMotion class.
+                            //gvh.plat.moat.userControl(currentDestination, obs);
                         }
 
                         //Deals with log.
@@ -130,6 +140,7 @@ public class TestApp extends LogicThread {
                     break;
 
                 case GO:
+                    //doneFlag is for reachAvoid algorithm, moat.done is for user control.
                     if (gvh.plat.reachAvoid.doneFlag || (USER_CONTROL && gvh.plat.moat.done)) {
                         System.out.println("done");
                         if (currentDestination != null) {
@@ -186,13 +197,6 @@ public class TestApp extends LogicThread {
             messageCount = 0;
             stage = Stage.PICK;
         }
-    }
-
-    @Override
-    public void receivedPointInput(int x, int y) {
-        ItemPosition temp = new ItemPosition("rand", x, y);
-        destinations.put("rand", temp);
-
     }
 
     private static final Random rand = new Random();

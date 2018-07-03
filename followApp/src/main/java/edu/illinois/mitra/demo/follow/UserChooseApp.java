@@ -21,6 +21,8 @@ import edu.illinois.mitra.starl.objects.PositionList;
 /**
  * This app allows the user to set a waypoint by right clicking on the desired spot. Only one destination
  * can be chosen at a time. Can also change between piloting and automatic control by changing USER_CONTROL boolean.
+ *
+ * TODO: Re-implement userControl interface
  */
 
 
@@ -88,7 +90,7 @@ public class UserChooseApp extends LogicThread {
                         currentDestination = destinations.get("Point " + destIndex);
                         destIndex++;
                         if(USER_CONTROL){
-                            gvh.plat.moat.userControl(currentDestination, obs);
+                            //gvh.plat.moat.userControl(currentDestination, obs);
                         } else {
                             kdTree = gvh.plat.reachAvoid.kdTree;
                             gvh.plat.reachAvoid.doReachAvoid(gvh.gps.getMyPosition(), currentDestination, obs);
@@ -102,7 +104,11 @@ public class UserChooseApp extends LogicThread {
         }
     }
 
-
+    /**
+     * Receives a point where the user right clicked the mouse, then adds it to destinations
+     * @param x coordinate
+     * @param y coordinate
+     */
     @Override
     public void receivedPointInput(int x, int y) {
         ItemPosition temp = new ItemPosition("Point " + destIndex, x, y);
