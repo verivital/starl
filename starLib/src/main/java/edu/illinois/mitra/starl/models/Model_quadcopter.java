@@ -3,7 +3,6 @@ package edu.illinois.mitra.starl.models;
 import java.util.Random;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.interfaces.TrackedRobot;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Point3d;
@@ -14,7 +13,7 @@ import edu.illinois.mitra.starl.objects.PositionList;
  * @version 1.0
  */
 
-public class Model_quadcopter extends ItemPosition implements TrackedRobot{
+public class Model_quadcopter extends Model_Drone {
 	// for default values, see initial_helper()
 	public double yaw;
 	public double pitch;
@@ -39,8 +38,6 @@ public class Model_quadcopter extends ItemPosition implements TrackedRobot{
 	//	private double a_pitch;
 	//	private double a_roll;
 
-	public Random rand;
-
 	public double v_yawR = 0;;
 	public double pitchR = 0;
 	public double rollR = 0;
@@ -62,10 +59,7 @@ public class Model_quadcopter extends ItemPosition implements TrackedRobot{
 	private double v_y_p = 0.0;
 	private double v_z_p = 0.0;
 
-	// platform specific control parameters: see page 78 of http://www.msh-tools.com/ardrone/ARDrone_Developer_Guide.pdf 
-	public double max_gaz = 1000; // millimeter/s 200 to 2000 
-	public double max_pitch_roll = 20;  // in degrees  
-	public double max_yaw_speed = 200;  // degrees/s
+	// platform specific control parameters: see page 78 of http://www.msh-tools.com/ardrone/ARDrone_Developer_Guide.pdf
 	public double windx = 0;   // millimeter/s
 	public double windy = 0;
 	public double windt = 0;
@@ -124,6 +118,36 @@ public class Model_quadcopter extends ItemPosition implements TrackedRobot{
 	public Model_quadcopter(ItemPosition t_pos) {
 		super(t_pos.name, t_pos.x(), t_pos.y(), t_pos.z());
 		initial_helper();
+	}
+
+	@Override
+	public double max_gaz() {
+		return 1000;
+	}
+
+	@Override
+	public double max_pitch_roll() {
+		return 20;
+	}
+
+	@Override
+	public double max_yaw_speed() {
+		return 200;
+	}
+
+	@Override
+	public double mass() {
+		return 0.5;
+	}
+
+	@Override
+	public double height() {
+		return 50;
+	}
+
+	@Override
+	public int radius() {
+		return 340;
 	}
 
 	@Override 
@@ -237,12 +261,9 @@ public class Model_quadcopter extends ItemPosition implements TrackedRobot{
 
 
 	private void initial_helper(){
-		height = 50;
 		yaw = 0.0;
 		pitch = 0.0;
 		roll = 0.0;
-		radius = 340;
-		mass = 0.5; // default mass is 500 grams
 		v_x = 0.0;
 		v_y = 0.0;
 		v_z = 0.0;
@@ -264,19 +285,19 @@ public class Model_quadcopter extends ItemPosition implements TrackedRobot{
 		roll += (rollR-roll)*timeSinceUpdate;
 		gaz += (gazR-gaz)*timeSinceUpdate;
 
-		double xNoise = (rand.nextDouble()*2*noises[0]) - noises[0];
-		double yNoise = (rand.nextDouble()*2*noises[0]) - noises[0];
-		double zNoise = (rand.nextDouble()*2*noises[0]) - noises[0];
-		double yawNoise = (rand.nextDouble()*2*noises[1]) - noises[1];
+		double xNoise = (rand()*2*noises[0]) - noises[0];
+		double yNoise = (rand()*2*noises[0]) - noises[0];
+		double zNoise = (rand()*2*noises[0]) - noises[0];
+		double yawNoise = (rand()*2*noises[1]) - noises[1];
 
 		windt += timeSinceUpdate;
 		windxNoise =  xNoise + windx*Math.sin(windt);
 		windyNoise =  yNoise + windy*Math.sin(windt);
 
 
-		//	double yawNoise = (rand.nextDouble()*2*noises[3]) - noises[3];
-		//double pitchNoise = (rand.nextDouble()*2*noises[4]) - noises[4];
-		//double rollNoise = (rand.nextDouble()*2*noises[5]) - noises[5];
+		//	double yawNoise = (rand()*2*noises[3]) - noises[3];
+		//double pitchNoise = (rand()*2*noises[4]) - noises[4];
+		//double rollNoise = (rand()*2*noises[5]) - noises[5];
 
 		//TODO: correct the model
 
@@ -362,11 +383,6 @@ public class Model_quadcopter extends ItemPosition implements TrackedRobot{
 	@Override
 	public boolean inMotion() {
 		return (v_x != 0 || v_y != 0 || v_z != 0 || v_yaw != 0);
-	}
-
-	@Override
-	public void initialize() {
-		rand = new Random(); //initialize random variable for TrackedRobot
 	}
 
 	@Override

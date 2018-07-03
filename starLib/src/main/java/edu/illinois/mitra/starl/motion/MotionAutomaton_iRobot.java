@@ -187,7 +187,7 @@ public class MotionAutomaton_iRobot extends RobotMotion {
                 // why is getModel being used? Think it should be get position.
 				//mypos = (Model_iRobot)gvh.plat.getModel();
                 mypos = (Model_iRobot)gvh.gps.getMyPosition();
-				int distance = mypos.distanceTo(destination);
+				int distance = (int)mypos.distanceTo(destination);
 				int angle = mypos.angleTo(destination);
 				int absangle = Math.abs(angle);
 				switch(param.COLAVOID_MODE) {
@@ -208,7 +208,7 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 					break;
 				}
 
-				if((mypos.type == 3)|| (mypos.type == 2)){
+				if((mypos.type == Model_iRobot.Type.EXPLORE_AREA)|| (mypos.type == Model_iRobot.Type.RANDOM_MOVING_OBSTACLE)){
 					stage = null;
 					next = null;
 					colliding = true;
@@ -398,16 +398,16 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 	
 	private void use_colback() {
 		switch(mypos.type) {
-			case 0:
+			case GET_TO_GOAL:
 				goalbot();
 				break;
-			case 1:
+			case EXPLORE_AREA:
 				discoverbot();
 				break;
-			case 2:
+			case RANDOM_MOVING_OBSTACLE:
 				badbot();
 				break;
-			case 3:
+			case ANTI_GOAL:
 				break;
 		}	
 	}
@@ -689,20 +689,20 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 		if(mypos.leftbump || mypos.rightbump){
 			double ColPoint_x, ColPoint_y;
 			if(mypos.leftbump&&mypos.rightbump){
-				ColPoint_x = mypos.radius*(Math.cos(Math.toRadians(mypos.angle))) + mypos.x();
-				ColPoint_y = mypos.radius*(Math.sin(Math.toRadians(mypos.angle))) + mypos.y();
+				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle))) + mypos.x();
+				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle))) + mypos.y();
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);
 			}
 			else if(mypos.leftbump){
-				ColPoint_x = mypos.radius*(Math.cos(Math.toRadians(mypos.angle+45))) + mypos.x();
-				ColPoint_y = mypos.radius*(Math.sin(Math.toRadians(mypos.angle+45))) + mypos.y();
+				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle+45))) + mypos.x();
+				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle+45))) + mypos.y();
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);
 				
 				
 			}
 			else{
-				ColPoint_x = mypos.radius*(Math.cos(Math.toRadians(mypos.angle-45))) + mypos.x();
-				ColPoint_y = mypos.radius*(Math.sin(Math.toRadians(mypos.angle-45))) + mypos.y();
+				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle-45))) + mypos.x();
+				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle-45))) + mypos.y();
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);	
 			}
 			

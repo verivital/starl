@@ -3,7 +3,6 @@ package edu.illinois.mitra.starl.models;
 import java.util.Random;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.interfaces.TrackedRobot;
 import edu.illinois.mitra.starl.objects.Common;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
@@ -13,41 +12,47 @@ import edu.illinois.mitra.starl.objects.PositionList;
 /**
  * This class represents a simple model of the iRobot Create, including angle, radius, type, velocity, leftbump, rightbump, circleSensor, vFwd, vRad
  * and some prediction on x and y based on vFwd and vRad
- * 
+ *
  * default type:
  *	0: get to goal robot
  *	behavior: marks the unknown obstacle when collide, redo path planning (get around the obstacle)to reach the goal
  *	1: explore the area robot
  *	behavior: explore the shape of the unknown obstacle and sent out the shape to others
- *	2: random moving obstacle robot 
+ *	2: random moving obstacle robot
  *	behavior:acts as simple moving obstacle
  *	3: anti goal robot
  *	behavior:acts as AI opponent try to block robots getting to the goal
  * @author Yixiao Lin
  * @version 1.0
  */
-public class Model_iRobot extends ItemPosition implements TrackedRobot{
+public class Model_iRobot extends Model_Ground {
+
+    public enum Type {
+        GET_TO_GOAL,
+        EXPLORE_AREA,
+        RANDOM_MOVING_OBSTACLE,
+        ANTI_GOAL
+    }
 
 	public double angle;
-	public int radius;
-	public int type;
+	public Type type;
 	public double velocity;
-	
+
 	public boolean leftbump;
 	public boolean rightbump;
 	public boolean circleSensor;
-		
+
 	public double vFwd;
 	public double vRad;
 	public Random rand;
 	public int x_p;
 	public int y_p;
 	public double angle_p;
-	
+
 	/**
 	 * Construct an Model_iRobot from a received GPS broadcast message
-	 * 
-	 * @param received GPS broadcast received 
+	 *
+	 * @param received GPS broadcast received
 	 * @throws ItemFormattingException
 	 */
 
@@ -70,25 +75,18 @@ public class Model_iRobot extends ItemPosition implements TrackedRobot{
             throw new ItemFormattingException("Should be length 5, is length " + parts.length);
         }
 	}
-	
+
 	public Model_iRobot(String name, int x, int y) {
 		super(name, x, y);
 		initial_helper();
 	}
-	
+
 	public Model_iRobot(String name, int x, int y, double angle) {
 		super(name, x, y);
 		initial_helper();
 		this.angle = angle;
 	}
-	
-	public Model_iRobot(String name, int x, int y, double angle, int radius) {
-		super(name, x, y);
-		initial_helper();
-		this.angle = angle;
-		this.radius = radius;
-	}
-	
+
 	public Model_iRobot(ItemPosition t_pos) {
 		super(t_pos.name, t_pos.x(), t_pos.y(), t_pos.z());
 		initial_helper();
@@ -96,16 +94,16 @@ public class Model_iRobot extends ItemPosition implements TrackedRobot{
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override 
+	@Override
 	public String toString() {
 		return name + ": " + x() + ", " + y() + ", " + z() + ", angle " + angle;
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 * @return true if one robot is facing another robot/point
 	 */
-	public boolean isFacing(Point3d other) { 
+	public boolean isFacing(Point3d other) {
 		if(other == null) {
 			return false;
 		}
@@ -155,11 +153,11 @@ public class Model_iRobot extends ItemPosition implements TrackedRobot{
 				return false;
 			else
 				return true;
-				
+
 		}
 	}
 
-	/** 
+	/**
 	 * @param other The ItemPosition to measure against
 	 * @return Number of degrees this position must rotate to face position other
 	 */
@@ -167,7 +165,7 @@ public class Model_iRobot extends ItemPosition implements TrackedRobot{
 		if(other == null) {
 			return 0;
 		}
-		
+
 		int delta_x = other.x() - this.x();
 		int delta_y = other.y() - this.y();
 		double angle = this.angle;
@@ -188,25 +186,24 @@ public class Model_iRobot extends ItemPosition implements TrackedRobot{
 		}
 		return  Math.round(retAngle);
 	}
-	
+
 	public void set(int x, int y, int angle) {
 		this.x(x);
 		this.y(y);
 		this.angle = angle;
 	}
-	
+
 	public void set(Model_iRobot other) {
 		this.x(other.x());
 		this.y(other.y());
 		this.angle = other.angle;
 	}
-	
-	
-	
+
+
+
 	private void initial_helper(){
 		angle = 0;
-		radius = 165;
-		type = 0;
+		type = Type.GET_TO_GOAL;
 		velocity = 0;
 		leftbump = false;
 		rightbump = false;
@@ -215,16 +212,21 @@ public class Model_iRobot extends ItemPosition implements TrackedRobot{
 		vRad = 0;
 	}
 
+    @Override
+    public int radius() {
+        return 165;
+    }
+
 	@Override
 	public Point3d predict(double[] noises, double timeSinceUpdate) {
 		if(noises.length != 3){
 			System.out.println("Incorrect number of noises parameters passed in, please pass in x noise, y, noise and angle noise");
 			return new Point3d(x(), y());
 		}
-		double xNoise = (rand.nextDouble()*2*noises[0]) - noises[0];
-		double yNoise = (rand.nextDouble()*2*noises[1]) - noises[1];
-		double aNoise = (rand.nextDouble()*2*noises[2]) - noises[2];
-		
+		double xNoise = (rand()*2*noises[0]) - noises[0];
+		double yNoise = (rand()*2*noises[1]) - noises[1];
+		double aNoise = (rand()*2*noises[2]) - noises[2];
+
 		int dX = 0, dY = 0;
 		double dA = 0;
 		// Arcing motion
@@ -257,7 +259,7 @@ public class Model_iRobot extends ItemPosition implements TrackedRobot{
 			rightbump = false;
 			leftbump = false;
 		}
-		
+
 		//TODO update local map
 	}
 
@@ -277,7 +279,7 @@ public class Model_iRobot extends ItemPosition implements TrackedRobot{
 
 	@Override
 	public void updateSensor(ObstacleList obspoint_positions, PositionList<ItemPosition> sensepoint_positions) {
-		
+
 		for(ItemPosition other : sensepoint_positions.getList()) {
 			if(distanceTo(other)<600){
 				if(!obspoint_positions.badPath(this, other)){
@@ -287,10 +289,5 @@ public class Model_iRobot extends ItemPosition implements TrackedRobot{
 			}
 		}
 		return;
-	}
-
-	@Override
-	public void initialize() {
-		rand = new Random();
 	}
 }

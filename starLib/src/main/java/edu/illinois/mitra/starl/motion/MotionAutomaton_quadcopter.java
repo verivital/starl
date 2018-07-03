@@ -267,7 +267,7 @@ public class MotionAutomaton_quadcopter extends RobotMotion {
 	}
 
 	private void setControlInputRescale(double yaw_v, double pitch, double roll, double gaz){
-		setControlInput(rescale(yaw_v, mypos.max_yaw_speed), rescale(pitch, mypos.max_pitch_roll), rescale(roll, mypos.max_pitch_roll), rescale(gaz, mypos.max_gaz));
+		setControlInput(rescale(yaw_v, mypos.max_yaw_speed()), rescale(pitch, mypos.max_pitch_roll()), rescale(roll, mypos.max_pitch_roll()), rescale(gaz, mypos.max_gaz()));
 	}
 
 	private double rescale(double value, double max_value){

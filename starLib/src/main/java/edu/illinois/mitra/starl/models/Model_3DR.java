@@ -7,13 +7,12 @@ package edu.illinois.mitra.starl.models;
 import java.util.Random;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.interfaces.TrackedRobot;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Point3d;
 import edu.illinois.mitra.starl.objects.PositionList;
 
-public class Model_3DR extends ItemPosition implements TrackedRobot {
+public class Model_3DR extends Model_Drone {
 
     // for default values, see initial_helper()
     public double yaw;
@@ -22,9 +21,6 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
     //vertical speed
     public double gaz;
     public int radius;
-    // mass in kilograms
-    private double mass;
-    public int height;
 
     public double v_x;
     public double v_y;
@@ -38,8 +34,6 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
     //	private double a_yaw;
     //	private double a_pitch;
     //	private double a_roll;
-
-    public Random rand;
 
     public double v_yawR = 0;;
     public double pitchR = 0;
@@ -63,9 +57,6 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
     private double v_z_p = 0.0;
 
     // platform specific control parameters: see page 78 of http://www.msh-tools.com/ardrone/ARDrone_Developer_Guide.pdf
-    public double max_gaz = 1000; // millimeter/s 200 to 2000
-    public double max_pitch_roll = 20;  // in degrees
-    public double max_yaw_speed = 200;  // degrees/s
     private double windx = 0;   // millimeter/s
     private double windy = 0;
     private double windt = 0;
@@ -121,12 +112,9 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
     }
 
     private void initial_helper(){
-        height = 50;
         yaw = 0.0;
         pitch = 0.0;
         roll = 0.0;
-        radius = 340;
-        mass = 0.5; // default mass is 500 grams
         v_x = 0.0;
         v_y = 0.0;
         v_z = 0.0;
@@ -135,6 +123,36 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
         //		a_yaw = 0;
         //		a_pitch = 0;
         //		a_roll = 0;
+    }
+
+    @Override
+    public double max_gaz() {
+        return 1000;
+    }
+
+    @Override
+    public double max_pitch_roll() {
+        return 20;
+    }
+
+    @Override
+    public double max_yaw_speed() {
+        return 200;
+    }
+
+    @Override
+    public double mass() {
+        return 0.5;
+    }
+
+    @Override
+    public double height() {
+        return 50;
+    }
+
+    @Override
+    public int radius() {
+        return 340;
     }
 
     @Override
@@ -153,19 +171,19 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
         roll += (rollR-roll)*timeSinceUpdate;
         gaz += (gazR-gaz)*timeSinceUpdate;
 
-        double xNoise = (rand.nextDouble()*2*noises[0]) - noises[0];
-        double yNoise = (rand.nextDouble()*2*noises[0]) - noises[0];
-        double zNoise = (rand.nextDouble()*2*noises[0]) - noises[0];
-        double yawNoise = (rand.nextDouble()*2*noises[1]) - noises[1];
+        double xNoise = (rand()*2*noises[0]) - noises[0];
+        double yNoise = (rand()*2*noises[0]) - noises[0];
+        double zNoise = (rand()*2*noises[0]) - noises[0];
+        double yawNoise = (rand()*2*noises[1]) - noises[1];
 
         windt += timeSinceUpdate;
         windxNoise =  xNoise + windx*Math.sin(windt);
         windyNoise =  yNoise + windy*Math.sin(windt);
 
 
-        //	double yawNoise = (rand.nextDouble()*2*noises[3]) - noises[3];
-        //double pitchNoise = (rand.nextDouble()*2*noises[4]) - noises[4];
-        //double rollNoise = (rand.nextDouble()*2*noises[5]) - noises[5];
+        //	double yawNoise = (rand()*2*noises[3]) - noises[3];
+        //double pitchNoise = (rand()*2*noises[4]) - noises[4];
+        //double rollNoise = (rand()*2*noises[5]) - noises[5];
 
         //TODO: correct the model
 
@@ -182,8 +200,8 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
         z_p = z() +dZ;
 
         double thrust;
-        if((mass * Math.cos(Math.toRadians(roll)) * Math.cos(Math.toRadians(pitch))) != 0){
-            thrust = ((gaz+1000) / (mass * Math.cos(Math.toRadians(roll))) / (Math.cos(Math.toRadians(pitch))));
+        if((mass() * Math.cos(Math.toRadians(roll)) * Math.cos(Math.toRadians(pitch))) != 0){
+            thrust = ((gaz+1000) / (mass() * Math.cos(Math.toRadians(roll))) / (Math.cos(Math.toRadians(pitch))));
         }
         else{
             thrust = 1000;
@@ -191,8 +209,8 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
 
         //double thrust = Math.abs((gaz) * (mass * Math.cos(Math.toRadians(roll)) * Math.cos(Math.toRadians(pitch))));
         //double thrust = 100;
-        double dv_x = - ((thrust)  * (Math.sin(Math.toRadians(roll)) * Math.sin(Math.toRadians(yaw)) + Math.cos(Math.toRadians(roll)) * Math.sin(Math.toRadians(pitch)) * Math.cos(Math.toRadians(yaw))))/ (mass) ;
-        double dv_y = ((thrust)  * (Math.sin(Math.toRadians(roll)) * Math.cos(Math.toRadians(yaw)) - Math.cos(Math.toRadians(roll)) * Math.sin(Math.toRadians(pitch)) * Math.sin(Math.toRadians(yaw))))/ (mass) ;
+        double dv_x = -thrust * (Math.sin(Math.toRadians(roll)) * Math.sin(Math.toRadians(yaw)) + Math.cos(Math.toRadians(roll)) * Math.sin(Math.toRadians(pitch)) * Math.cos(Math.toRadians(yaw))) / mass();
+        double dv_y = thrust * (Math.sin(Math.toRadians(roll)) * Math.cos(Math.toRadians(yaw)) - Math.cos(Math.toRadians(roll)) * Math.sin(Math.toRadians(pitch)) * Math.sin(Math.toRadians(yaw))) / mass();
 
 
         v_x_p = v_x + dv_x * timeSinceUpdate;
@@ -251,11 +269,6 @@ public class Model_3DR extends ItemPosition implements TrackedRobot {
     @Override
     public boolean inMotion() {
         return (v_x != 0 || v_y != 0 || v_z != 0 || v_yaw != 0);
-    }
-
-    @Override
-    public void initialize() {
-        rand = new Random(); //initialize random variable for TrackedRobot
     }
 
     @Override

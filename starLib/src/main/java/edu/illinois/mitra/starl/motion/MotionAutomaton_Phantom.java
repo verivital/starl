@@ -124,7 +124,7 @@ public class MotionAutomaton_Phantom extends RobotMotion {
                 mypos = (Model_Phantom)temp; // TD_NATHAN: check. I fixed it.
                 //             if(mypos == null) { continue;}
                 // if you change to 3D waypoints, use distanceTo instead of distanceTo2D
-                int distance = mypos.distanceTo2D(destination);
+                int distance = (int)mypos.distanceTo2D(destination);
                 colliding = false;
                 debugmsg += "My position: " + mypos.x() + ", " + mypos.y() + "\n";
                 debugmsg += "Destination: " + destination.x() + ", " + destination.y() + "\n";

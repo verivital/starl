@@ -6,6 +6,7 @@ import java.util.Observer;
 import java.util.Random;
 import java.util.Vector;
 
+import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_GhostAerial;
 import edu.illinois.mitra.starl.models.Model_Mavic;
 import edu.illinois.mitra.starl.models.Model_Phantom;
@@ -68,7 +69,6 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 		robots.get(name).setDest(null, 1);
 	}
 	
-	@Override
 	public PositionList<Model_iRobot> getiRobotPositions() {
 		return robot_positions;
 	}
@@ -353,13 +353,13 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
     // TD_NATHAN: old version
     @Override
     public synchronized void addRobot(Model_iRobot bot) {
-        robots.put(bot.name, new TrackedRobot(bot));
+        robots.put(bot.name, new Model(bot));
         robot_positions.update(bot);
     }
     */
 
     @Override
-    public synchronized void addRobot(edu.illinois.mitra.starl.interfaces.TrackedRobot bot) {
+    public synchronized void addRobot(Model bot) {
         // TD_NATHAN: fix
         /*
         allpos.update((ItemPosition)bot);

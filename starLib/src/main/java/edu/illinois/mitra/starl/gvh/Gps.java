@@ -3,9 +3,6 @@ package edu.illinois.mitra.starl.gvh;
 import java.util.Vector;
 
 import edu.illinois.mitra.starl.interfaces.GpsReceiver;
-import edu.illinois.mitra.starl.interfaces.TrackedRobot;
-import edu.illinois.mitra.starl.models.Model_iRobot;
-import edu.illinois.mitra.starl.models.Model_quadcopter;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.PositionList;

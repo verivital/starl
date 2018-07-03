@@ -116,7 +116,7 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
                 System.out.printf("mypos (%d, %d) \n", mypos.x(), mypos.y());
                 System.out.printf("destination (%d, %d) \n", destination.x(), destination.y());
                 //int distance = (int) Math.sqrt(Math.pow((mypos.x - destination.x),2) + Math.pow((mypos.y - destination.y), 2));
-                int distance = mypos.distanceTo2D(destination);
+                int distance = (int)mypos.distanceTo2D(destination);
                 System.out.println("distance:" + distance);
 
                 colliding = (stage != STAGE.LAND && mypos.gaz < -50);

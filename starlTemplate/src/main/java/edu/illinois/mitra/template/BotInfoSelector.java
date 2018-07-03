@@ -1,6 +1,6 @@
 package edu.illinois.mitra.template;
 
-import edu.illinois.mitra.starl.interfaces.TrackedRobot;
+import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_GhostAerial;
 import edu.illinois.mitra.starl.models.Model_Mavic;
 import edu.illinois.mitra.starl.models.Model_Phantom;
@@ -21,7 +21,7 @@ public class BotInfoSelector {
     public String name;
     public String ip;
     public String bluetooth;
-    public TrackedRobot type;
+    public Model type;
 
 
     public BotInfoSelector(String color, int type, int deviceType) {

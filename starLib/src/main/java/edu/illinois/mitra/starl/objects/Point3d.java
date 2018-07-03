@@ -14,9 +14,9 @@ import edu.illinois.mitra.starl.interfaces.Traceable;
 
 public class Point3d implements Traceable {
 
-	private int x;
-	private int y;
-	private int z;
+	public int x;
+	public int y;
+	public int z;
 
 	/**
 	 * Construct a Point3d with default value (0, 0, 0).
@@ -51,7 +51,7 @@ public class Point3d implements Traceable {
 	 * Set the Point3d's values to the given values.
 	 * @return a reference to this
 	 */
-	public Point3d set(int x, int y, int z) {
+	private Point3d set(int x, int y, int z) {
 		this.x(x);
 		this.y(y);
 		this.z(z);
@@ -62,7 +62,7 @@ public class Point3d implements Traceable {
 	 * Add vec to this.
 	 * @return a reference to this
 	 */
-	public Point3d add(Vector3d vec) {
+	public final Point3d add(Vector3d vec) {
 		return set(x + vec.x(), y + vec.y(), z + vec.z());
 	}
 
@@ -70,11 +70,14 @@ public class Point3d implements Traceable {
 	 * Subtract vec from this.
 	 * @return a reference to this
 	 */
-	public Point3d subtract(Vector3d vec) {
+	public final Point3d subtract(Vector3d vec) {
 		return set(x - vec.x(), y - vec.y(), z - vec.z());
 	}
 
-	public Vector3d subtract(Point3d point) {
+	/**
+	 * @return a new vector from point to this.
+	 */
+	public final Vector3d subtract(Point3d point) {
 		return new Vector3d(x - point.x, y - point.y, z - point.z);
 	}
 	
@@ -123,26 +126,26 @@ public class Point3d implements Traceable {
 		return result;
 	}
 	
-	public int x(){
+	public final int x(){
 		return x;
 	}
 	
-	public int y(){
+	public final int y(){
 		return y;
 	}
-	public int z(){
+	public final int z(){
 		return z;
 	}
 
-	public void x(int x) {
+	public final void x(int x) {
 		this.x = x;
 	}
 
-	public void y(int y) {
+	public final void y(int y) {
 		this.y = y;
 	}
 
-	public void z(int z) {
+	public final void z(int z) {
 		this.z = z;
 	}
 }

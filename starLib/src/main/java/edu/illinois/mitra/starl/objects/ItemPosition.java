@@ -17,32 +17,32 @@ public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
 	public String name;
 	public int index;
 	public long receivedTime;
-	
+
+	public ItemPosition(){
+		super();
+		setName("");
+	}
+
 	/**
 	 * Construct an ItemPosition from a name, X, and Y positions, With Z= 0 as default
-	 * 
+	 *
 	 * @param name The name of the new position
 	 * @param x X position
 	 * @param y Y position
 	 */
-	public ItemPosition(){
-		super();
-		setname("");
-	}
-	
 	public ItemPosition(String name, int x, int y) {
 		super(x, y);
-		setname(name);
+		setName(name);
 	}
 	
 	public ItemPosition(String name, int x, int y, int z) {
 		super(x, y, z);
-		setname(name);
+		setName(name);
 	}
 	
 	public ItemPosition(String name, int x, int y, int z, int index) {
 		super(x, y, z);
-		setname(name);
+		setName(name);
 		this.index = index;
 	}
 	
@@ -54,7 +54,7 @@ public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
 	
 	public ItemPosition(ItemPosition other) {
 		super(other);
-		setname(other.name);
+		setName(other.name);
 	}
 	
 	/**
@@ -110,6 +110,8 @@ public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+
+		
 	}
 
 	@Override
@@ -139,17 +141,12 @@ public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
 		return name.compareTo(other.name);
 	}
 	
-	private void setname(String name){
+	private void setName(String name){
 		if(name == null){
 			this.name = "";
 			return;
 		}
-		if(name.contains(",")) {
-			String[] namePieces = name.split(",");
-			this.name = namePieces[0];
-		} else {
-			this.name = name;
-		}
+		this.name = name.split(",", 2)[0];
 	}
 	
 	public String getName(){

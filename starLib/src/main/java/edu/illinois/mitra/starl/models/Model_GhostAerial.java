@@ -3,7 +3,6 @@ package edu.illinois.mitra.starl.models;
 import java.util.Random;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.interfaces.TrackedRobot;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Point3d;
@@ -13,7 +12,7 @@ import edu.illinois.mitra.starl.objects.PositionList;
  * Created by wangcs2 on 6/2/2017.
  */
 
-public class Model_GhostAerial extends ItemPosition implements TrackedRobot {
+public class Model_GhostAerial extends Model_Drone {
 
     // for default values, see initial_helper()
     public double yaw;
@@ -38,8 +37,6 @@ public class Model_GhostAerial extends ItemPosition implements TrackedRobot {
     //	private double a_yaw;
     //	private double a_pitch;
     //	private double a_roll;
-
-    public Random rand;
 
     public double v_yawR = 0;
     public double pitchR = 0;
@@ -236,12 +233,9 @@ public void set(Model_Quadcopter other) {
 
 
     private void initial_helper(){
-        height = 50;
         yaw = 90.0;
         pitch = 0.0;
         roll = 0.0;
-        radius = 340;
-        mass = 1.2; // default mass is 500 grams
         v_x = 0.0;
         v_y = 0.0;
         v_z = 0.0;
@@ -251,6 +245,24 @@ public void set(Model_Quadcopter other) {
         //		a_pitch = 0;
         //		a_roll = 0;
     }
+
+    @Override
+    public int radius() { return 340; }
+
+    @Override
+    public double height() { return 50; }
+
+    @Override
+    public double mass() { return 1.2; }
+
+    @Override
+    public double max_gaz() { return 2000; }
+
+    @Override
+    public double max_pitch_roll(){ return 20; }
+
+    @Override
+    public double max_yaw_speed() { return 200; }
 
     @Override
     public Point3d predict(double[] noises, double timeSinceUpdate) {
@@ -263,19 +275,19 @@ public void set(Model_Quadcopter other) {
         roll += (rollR-roll)*timeSinceUpdate;
         gaz += (gazR-gaz)*timeSinceUpdate;
 
-        double xNoise = (rand.nextDouble()*2*noises[0]) - noises[0];
-        double yNoise = (rand.nextDouble()*2*noises[0]) - noises[0];
-        double zNoise = (rand.nextDouble()*2*noises[0]) - noises[0];
-        double yawNoise = (rand.nextDouble()*2*noises[1]) - noises[1];
+        double xNoise = (rand()*2*noises[0]) - noises[0];
+        double yNoise = (rand()*2*noises[0]) - noises[0];
+        double zNoise = (rand()*2*noises[0]) - noises[0];
+        double yawNoise = (rand()*2*noises[1]) - noises[1];
 
         windt += timeSinceUpdate;
         windxNoise =  xNoise + windx* Math.sin(windt);
         windyNoise =  yNoise + windy* Math.sin(windt);
 
 
-        //	double yawNoise = (rand.nextDouble()*2*noises[3]) - noises[3];
-        //double pitchNoise = (rand.nextDouble()*2*noises[4]) - noises[4];
-        //double rollNoise = (rand.nextDouble()*2*noises[5]) - noises[5];
+        //	double yawNoise = (rand()*2*noises[3]) - noises[3];
+        //double pitchNoise = (rand()*2*noises[4]) - noises[4];
+        //double rollNoise = (rand()*2*noises[5]) - noises[5];
 
         //TODO: correct the model
 
@@ -364,15 +376,9 @@ public void set(Model_Quadcopter other) {
     }
 
     @Override
-    public void initialize() {
-        rand = new Random(); //initialize random variable for TrackedRobot
-    }
-
-    @Override
     public void updateSensor(ObstacleList obspoint_positions,
                              PositionList<ItemPosition> sensepoint_positions) {
         return;
         // no sensor model yet
     }
 }
-

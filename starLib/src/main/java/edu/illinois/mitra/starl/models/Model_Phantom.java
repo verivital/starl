@@ -3,7 +3,6 @@ package edu.illinois.mitra.starl.models;
 import java.util.Random;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.interfaces.TrackedRobot;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Point3d;
@@ -15,7 +14,7 @@ import edu.illinois.mitra.starl.objects.PositionList;
  * @version 1.0
  */
 
-public class Model_Phantom extends ItemPosition implements TrackedRobot {
+public class Model_Phantom extends Model_Drone {
 	// for default values, see initial_helper()
 	public double yaw;
 	public double pitch;
@@ -39,8 +38,6 @@ public class Model_Phantom extends ItemPosition implements TrackedRobot {
 	//	private double a_yaw;
 	//	private double a_pitch;
 	//	private double a_roll;
-
-	public Random rand;
 
 	public double v_yawR = 0;;
 	public double pitchR = 0;
@@ -265,19 +262,19 @@ public class Model_Phantom extends ItemPosition implements TrackedRobot {
 		roll += (rollR-roll)*timeSinceUpdate;
 		gaz += (gazR-gaz)*timeSinceUpdate;
 
-		double xNoise = (rand.nextDouble()*2*noises[0]) - noises[0];
-		double yNoise = (rand.nextDouble()*2*noises[0]) - noises[0];
-		double zNoise = (rand.nextDouble()*2*noises[0]) - noises[0];
-		double yawNoise = (rand.nextDouble()*2*noises[1]) - noises[1];
+		double xNoise = (rand()*2*noises[0]) - noises[0];
+		double yNoise = (rand()*2*noises[0]) - noises[0];
+		double zNoise = (rand()*2*noises[0]) - noises[0];
+		double yawNoise = (rand()*2*noises[1]) - noises[1];
 
 		windt += timeSinceUpdate;
 		windxNoise =  xNoise + windx*Math.sin(windt);
 		windyNoise =  yNoise + windy*Math.sin(windt);
 
 
-		//	double yawNoise = (rand.nextDouble()*2*noises[3]) - noises[3];
-		//double pitchNoise = (rand.nextDouble()*2*noises[4]) - noises[4];
-		//double rollNoise = (rand.nextDouble()*2*noises[5]) - noises[5];
+		//	double yawNoise = (rand()*2*noises[3]) - noises[3];
+		//double pitchNoise = (rand()*2*noises[4]) - noises[4];
+		//double rollNoise = (rand()*2*noises[5]) - noises[5];
 
 		//TODO: correct the model
 
@@ -363,11 +360,6 @@ public class Model_Phantom extends ItemPosition implements TrackedRobot {
 	@Override
 	public boolean inMotion() {
 		return (v_x != 0 || v_y != 0 || v_z != 0 || v_yaw != 0);
-	}
-
-	@Override
-	public void initialize() {
-		rand = new Random(); //initialize random variable for TrackedRobot
 	}
 
 	@Override

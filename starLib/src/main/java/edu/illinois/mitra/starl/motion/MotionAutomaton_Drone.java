@@ -4,21 +4,14 @@ import java.util.*;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener.Event;
-import edu.illinois.mitra.starl.models.Model_3DR;
+import edu.illinois.mitra.starl.models.Model_Drone;
+import edu.illinois.mitra.starl.models.Model_quadcopter;
 import edu.illinois.mitra.starl.objects.*;
 
 /**
- * This motion controller is for 3DR models only
- *
- * Motion controller which extends the RobotMotion abstract class. Capable of
- * going to destination or passing through a destination without stopping.
- * Includes optional collision avoidance which is controlled
- * by the motion parameters setting.
- *
- * @author Yixiao Lin
- * @version 1.0
+ * TODO: Right now its a basic copy of quadcopter, remove unncessary methods/cleanup, also PID Controller.
  */
-public class MotionAutomaton_3DR extends RobotMotion {
+public class MotionAutomaton_Drone extends RobotMotion {
     protected static final String TAG = "MotionAutomaton";
     protected static final String ERR = "Critical Error";
     final int safeHeight = 500;
@@ -28,29 +21,8 @@ public class MotionAutomaton_3DR extends RobotMotion {
 
     // Motion tracking
     protected ItemPosition destination;
-    private Model_3DR mypos; // TODO: 6/6/2017 for 3DR
+    private Model_Drone mypos;
 
-    //PID controller parameters
-    double saturationLimit = 50;
-    double windUpLimit = 185;
-    int filterLength = 8;
-    /*double Kpx = 0.2;
-    double Kpy = 0.2;
-    double Kix = 0.04;
-    double Kiy = 0.04;
-    double Kdx = 0.4;
-    double Kdy = 0.45;*/
-    // the ones below work pretty well
-    double Kpx = 0.0714669809792096;
-    double Kpy = 0.0714669809792096;
-    double Kix = 0.0110786899216426;
-    double Kiy = 0.0110786899216426;
-    double Kdx = 0.113205037832174;
-    double Kdy = 0.113205037832174;
-
-    PIDController PID_x = new PIDController(Kpx, Kix, Kdx, saturationLimit, windUpLimit, filterLength);
-    PIDController PID_y = new PIDController(Kpy, Kiy, Kdy, saturationLimit, windUpLimit, filterLength);
-    //need to set to new values as the 3DR
 
     protected enum STAGE {
         INIT, MOVE, HOVER, TAKEOFF, LAND, GOAL, STOP
@@ -76,7 +48,7 @@ public class MotionAutomaton_3DR extends RobotMotion {
 
     //	private volatile MotionParameters param = settings.build();
 
-    public MotionAutomaton_3DR(GlobalVarHolder gvh, BluetoothInterface bti) {
+    public MotionAutomaton_Drone(GlobalVarHolder gvh, BluetoothInterface bti) {
         super(gvh.id.getName());
         this.gvh = gvh;
         this.bti = bti;
@@ -90,7 +62,7 @@ public class MotionAutomaton_3DR extends RobotMotion {
     public void goTo(ItemPosition dest) {
         if((inMotion && !this.destination.equals(dest)) || !inMotion) {
             done = false;
-            this.destination = new ItemPosition(dest.name, dest.x(), dest.y(), dest.z());
+            this.destination = new ItemPosition(dest.name,dest.x,dest.y,dest.z);
             //this.destination = dest;
             this.mode = OPMODE.GO_TO;
             startMotion();
@@ -114,11 +86,11 @@ public class MotionAutomaton_3DR extends RobotMotion {
         while(true) {
             //			gvh.gps.getObspointPositions().updateObs();
             if(running) {
-                mypos = (Model_3DR)gvh.plat.getModel();
+                mypos = (Model_Drone) gvh.plat.getModel();
 //				System.out.println(mypos.toString());
-                System.out.printf("mypos (%d, %d) \n", mypos.x(), mypos.y());
-                System.out.printf("destination (%d, %d) \n", destination.x(), destination.y());
-                int distance = (int) Math.sqrt(Math.pow((mypos.x() - destination.x()),2) + Math.pow((mypos.y() - destination.y()), 2));
+                System.out.printf("mypos (%d, %d) \n", mypos.x, mypos.y);
+                System.out.printf("destination (%d, %d) \n", destination.x, destination.y);
+                int distance = (int) Math.sqrt(Math.pow((mypos.x - destination.x),2) + Math.pow((mypos.y - destination.y), 2));
                 System.out.println("distance:" + distance);
                 //int distance = mypos.distanceTo(destination);
                 if(mypos.gaz < -50){
@@ -130,7 +102,7 @@ public class MotionAutomaton_3DR extends RobotMotion {
                     switch(stage) {
                         case INIT:
                             if(mode == OPMODE.GO_TO) {
-                                if(mypos.z() < safeHeight){
+                                if(mypos.z < safeHeight){
                                     // just a safe distance from ground
                                     takeOff();
                                     next = STAGE.TAKEOFF;
@@ -161,15 +133,17 @@ public class MotionAutomaton_3DR extends RobotMotion {
                                 double Ax_d, Ay_d = 0.0;
                                 double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
                                 //		System.out.println(destination.x - mypos.x + " , " + mypos.v_x);
-                                Ax_d = (kpx * (destination.x() - mypos.x()) - kdx * mypos.v_x) ;
-                                Ay_d = (kpy * (destination.y() - mypos.y()) - kdy * mypos.v_y) ;
-                                Ryaw = Math.atan2(destination.y() - mypos.y(), destination.x() - mypos.x());
+                                Ax_d = (kpx * (destination.x - mypos.x) - kdx * mypos.v_x) ;
+                                Ay_d = (kpy * (destination.y - mypos.y) - kdy * mypos.v_y) ;
+                                Ryaw = Math.atan2(destination.y - mypos.y, destination.x - mypos.x);
                                 //Ryaw = Math.atan2((destination.y - mypos.x), (destination.x - mypos.y));
                                 Ryawsp = kpz * ((Ryaw - Math.toRadians(mypos.yaw)));
                                 Rroll = Math.asin((Ay_d * Math.cos(Math.toRadians(mypos.yaw)) - Ax_d * Math.sin(Math.toRadians(mypos.yaw))) %1);
                                 Rpitch = Math.asin( (-Ay_d * Math.sin(Math.toRadians(mypos.yaw)) - Ax_d * Math.cos(Math.toRadians(mypos.yaw))) / (Math.cos(Rroll)) %1);
-                                Rvs = (kpz * (destination.z() - mypos.z()) - kdz * mypos.v_z);
+                                Rvs = (kpz * (destination.z - mypos.z) - kdz * mypos.v_z);
                                 //	System.out.println(Ryaw + " , " + Ryawsp + " , " +  Rroll  + " , " +  Rpitch + " , " + Rvs);
+
+                                System.out.println("here");
 
                                 setControlInputRescale(Math.toDegrees(Ryawsp),Math.toDegrees(Rpitch)%360,Math.toDegrees(Rroll)%360,Rvs);
                                 //setControlInput(Ryawsp/param.max_yaw_speed, Rpitch%param.max_pitch_roll, Rroll%param.max_pitch_roll, Rvs/param.max_gaz);
@@ -181,7 +155,7 @@ public class MotionAutomaton_3DR extends RobotMotion {
                             // do nothing
                             break;
                         case TAKEOFF:
-                            switch(mypos.z() /(safeHeight/2)){
+                            switch(mypos.z/(safeHeight/2)){
                                 case 0:// 0 - 1/2 safeHeight
                                     setControlInput(0,0,0,1);
                                     break;
@@ -200,7 +174,7 @@ public class MotionAutomaton_3DR extends RobotMotion {
                             }
                             break;
                         case LAND:
-                            switch(mypos.z() /(safeHeight/2)){
+                            switch(mypos.z/(safeHeight/2)){
                                 case 0:// 0 - 1/2 safeHeight
                                     setControlInput(0,0,0,0);
                                     next = STAGE.STOP;
@@ -215,7 +189,6 @@ public class MotionAutomaton_3DR extends RobotMotion {
                             break;
                         case GOAL:
                             System.out.println("Done flag");
-
                             done = true;
                             gvh.log.i(TAG, "At goal!");
                             gvh.log.i("DoneFlag", "write");
@@ -255,7 +228,6 @@ public class MotionAutomaton_3DR extends RobotMotion {
         }
     }
 
-
     public void cancel() {
         running = false;
         bti.disconnect();
@@ -271,33 +243,6 @@ public class MotionAutomaton_3DR extends RobotMotion {
     }
 
     public void takePicture(){}
-
- /*   @Override
-=======
-    @Override
->>>>>>> a46592728b3e054fe8a3d11ec7511018c2934dd1
-    public void rotateGimbal(float y) {
-
-    }
-
-    @Override
-    public void rotateGimbal(float p, float y) {
-
-    }
-
-    @Override
-    public void rotateGimbal(float p, float y, float r) {
-
-    }
-
-    @Override
-    public void downloadPhotos() {
-
-<<<<<<< HEAD
-    }*/
-
-
-    ;
 
     @Override
     public void motion_resume() {
@@ -380,26 +325,9 @@ public class MotionAutomaton_3DR extends RobotMotion {
         gvh.log.i(TAG, "Drone hovering");
     }
 
-    private double calculateYaw() {
-        // this method calculates a yaw correction, to keep the drone's yaw angle near 90 degrees
-        if(mypos.yaw > 93) {
-            return 1;
-        }
-        else if(mypos.yaw < 87) {
-            return -1;
-        }
-        else {
-            return 0;
-        }
-    }
-
-    private void setMaxTilt(float val) {
-        //controller.setMaxTilt(val);
-    }
-
     @Override
     public void turnTo(ItemPosition dest) {
-        throw new IllegalArgumentException("solo does not have a corresponding turn to");
+        throw new IllegalArgumentException("quadcopter does not have a corresponding turn to");
     }
 
     @Override
@@ -407,26 +335,11 @@ public class MotionAutomaton_3DR extends RobotMotion {
         // TODO Auto-generated method stub
     }
 
-    public void rotateGimbal(float y){
-
-    }
-
-    public void rotateGimbal(float p, float y){
-
-    }
-
-    public void rotateGimbal(float p, float y, float r){
-
-    }
-
-    public void downloadPhotos(){
-
-    }
 
     /**
      * Slow down linearly upon coming within R_slowfwd of the goal
      *
-     * @param distance
+     * @param
      * @return
      */
 	/*
@@ -447,4 +360,8 @@ public class MotionAutomaton_3DR extends RobotMotion {
 		this.turnspeed = (param.TURNSPEED_MAX - param.TURNSPEED_MIN) / (param.SLOWTURN_ANGLE - param.SMALLTURN_ANGLE);
 	}
 	 */
+
+    protected void setMaxTilt(float val){}
+
+
 }
