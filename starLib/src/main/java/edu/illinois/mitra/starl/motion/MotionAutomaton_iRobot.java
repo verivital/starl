@@ -178,7 +178,6 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 
 	@Override
 	public void run() {
-		super.run();
 		gvh.threadCreated(this);
 	
 		while(true) {

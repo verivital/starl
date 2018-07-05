@@ -108,9 +108,9 @@ public class MotionAutomaton_3DR extends RobotMotion {
         super.run();
         gvh.threadCreated(this);
         // some control parameters
-        double kpx,kpy,kpz, kdx,kdy,kdz;
-        kpx = kpy = kpz = 0.00033;
-        kdx = kdy = kdz = 0.0006;
+        double kp, kpz, kd, kdz;
+        kp = kpz = 0.00033;
+        kd = kdz = 0.0006;
         while(true) {
             //			gvh.gps.getObspointPositions().updateObs();
             if(running) {
@@ -158,17 +158,16 @@ public class MotionAutomaton_3DR extends RobotMotion {
                                 next = STAGE.GOAL;
                             }
                             else{
-                                double Ax_d, Ay_d = 0.0;
                                 double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
                                 //		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
-                                Ax_d = (kpx * (destination.getX() - mypos.getX()) - kdx * mypos.v_x) ;
-                                Ay_d = (kpy * (destination.getY() - mypos.getY()) - kdy * mypos.v_y) ;
+                                Vector3f A_d = destination.getPos().subtract(mypos.getPos()).toVector3f().scale(kp)
+                                        .subtract(mypos.getVelocity().scale(kd));
                                 Ryaw = Math.atan2(destination.getY() - mypos.getY(), destination.getX() - mypos.getX());
                                 //Ryaw = Math.atan2((destination.getY - mypos.getX), (destination.getX - mypos.getY));
                                 Ryawsp = kpz * ((Ryaw - Math.toRadians(mypos.yaw)));
-                                Rroll = Math.asin((Ay_d * Math.cos(Math.toRadians(mypos.yaw)) - Ax_d * Math.sin(Math.toRadians(mypos.yaw))) %1);
-                                Rpitch = Math.asin( (-Ay_d * Math.sin(Math.toRadians(mypos.yaw)) - Ax_d * Math.cos(Math.toRadians(mypos.yaw))) / (Math.cos(Rroll)) %1);
-                                Rvs = (kpz * (destination.getZ() - mypos.getZ()) - kdz * mypos.v_z);
+                                Rroll = Math.asin((A_d.getY() * Math.cos(Math.toRadians(mypos.yaw)) - A_d.getX() * Math.sin(Math.toRadians(mypos.yaw))) %1);
+                                Rpitch = Math.asin( (-A_d.getY() * Math.sin(Math.toRadians(mypos.yaw)) - A_d.getX() * Math.cos(Math.toRadians(mypos.yaw))) / (Math.cos(Rroll)) %1);
+                                Rvs = (kpz * (destination.getZ() - mypos.getZ()) - kdz * mypos.getVelocity().getZ());
                                 //	System.out.println(Ryaw + " , " + Ryawsp + " , " +  Rroll  + " , " +  Rpitch + " , " + Rvs);
 
                                 setControlInputRescale(Math.toDegrees(Ryawsp),Math.toDegrees(Rpitch)%360,Math.toDegrees(Rroll)%360,Rvs);
@@ -295,9 +294,6 @@ public class MotionAutomaton_3DR extends RobotMotion {
 
 <<<<<<< HEAD
     }*/
-
-
-    ;
 
     @Override
     public void motion_resume() {
