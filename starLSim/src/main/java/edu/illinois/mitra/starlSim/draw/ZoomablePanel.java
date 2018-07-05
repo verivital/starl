@@ -1,19 +1,27 @@
 package edu.illinois.mitra.starlSim.draw;
 
 
+
+
+import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -31,7 +39,8 @@ import edu.illinois.mitra.starlSim.main.SimSettings;
 
 @SuppressWarnings("serial")
 public abstract class ZoomablePanel extends JPanel implements MouseWheelListener, 
-MouseListener, MouseMotionListener, ExplicitlyDrawable
+MouseListener, MouseMotionListener, ExplicitlyDrawable, KeyListener
+
 {
 //	 negative = zoom in, positive = zoom out
 	protected double zoomFactor = 0;
@@ -39,7 +48,7 @@ MouseListener, MouseMotionListener, ExplicitlyDrawable
 	protected double moveX = 0, moveY = 0;
 	private double defaultMoveX = 0, defaultMoveY = 0;
 	private int lastX = -1, lastY = -1;
-	
+
 	private static final RoundRectangle2D.Double up = new RoundRectangle2D.Double(30,5,20,20,15,15);
 	private static final RoundRectangle2D.Double down = new RoundRectangle2D.Double(30,55,20,20,15,15);
 	private static final RoundRectangle2D.Double left = new RoundRectangle2D.Double(5,30,20,20,15,15);
@@ -47,6 +56,8 @@ MouseListener, MouseMotionListener, ExplicitlyDrawable
 	private static final RoundRectangle2D.Double in = new RoundRectangle2D.Double(30,30,10,20,15,15);
 	private static final RoundRectangle2D.Double out = new RoundRectangle2D.Double(40,30,10,20,15,15);
 	private RoundRectangle2D.Double colored_rect = null;
+
+	private String key;
 	
 	private static RoundRectangle2D.Double rects[] = 
 	{
@@ -93,6 +104,9 @@ MouseListener, MouseMotionListener, ExplicitlyDrawable
 		addMouseWheelListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);
+		addKeyListener(this);
+		setFocusable(true);
+        requestFocus();
 		
 		PaintThread pt = new PaintThread();
 		pt.start();
@@ -112,6 +126,7 @@ MouseListener, MouseMotionListener, ExplicitlyDrawable
 	}
 	
 	public abstract void notifyClickListeners();
+	public abstract void notifyKeyListeners();
 	
 	long lastDrawTime = 0;
 	
@@ -119,6 +134,7 @@ MouseListener, MouseMotionListener, ExplicitlyDrawable
 	{
 		// hackish, also send point input events now (so it's synchronized withl logic threads)
 		notifyClickListeners();
+		notifyKeyListeners();
 		
 		long now = System.currentTimeMillis();
 		
@@ -482,6 +498,26 @@ MouseListener, MouseMotionListener, ExplicitlyDrawable
 		
 		mouseExitedAt(toRealCoords(e.getPoint()), e);
 	}
+
+
+
+	@Override
+	public void keyPressed(KeyEvent e){
+    }
+	@Override
+    public void keyReleased(KeyEvent e){
+    }
+    @Override
+	public void keyTyped(KeyEvent e){
+    }
+
+	public String getKeyType(){
+	    return key;
+    }
+
+    public void setKey(String key){
+	    this.key = key;
+    }
 	
 	protected void mousePressedAt(Point p, MouseEvent e) {}
 	protected void mouseDraggedAt(Point realPoint, MouseEvent e) {}

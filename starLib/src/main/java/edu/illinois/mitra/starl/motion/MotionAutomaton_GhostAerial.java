@@ -64,7 +64,7 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
     boolean colliding = false;
 
     private enum OPMODE {
-        GO_TO
+        GO_TO, USER_CONTROL
     }
 
     private OPMODE mode = OPMODE.GO_TO;
@@ -399,6 +399,14 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
         else {
             return 0;
         }
+    }
+
+    @Override
+    public void userControl(){ }
+
+    @Override
+    public void receivedKeyInput(String key){
+        curKey = key;
     }
 }
 

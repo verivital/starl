@@ -468,7 +468,7 @@ public class MotionAutomaton_Mavic extends RobotMotion {
     /**
      * Slow down linearly upon coming within R_slowfwd of the goal
      *
-     * @param distance
+     *
      * @return
      */
 	/*
@@ -487,5 +487,13 @@ public class MotionAutomaton_Mavic extends RobotMotion {
 		this.turnspeed = (param.TURNSPEED_MAX - param.TURNSPEED_MIN) / (param.SLOWTURN_ANGLE - param.SMALLTURN_ANGLE);
 	}
 	 */
+
+    @Override
+    public void userControl(){ }
+
+    @Override
+    public void receivedKeyInput(String key){
+        curKey = key;
+    }
 
 }

@@ -78,5 +78,12 @@ public class IdealSimMotionAutomaton extends RobotMotion implements RobotEventLi
 		defaultParam = param;
 	}
 
+	@Override
+	public void receivedKeyInput(String key){
+		curKey = key;
+	}
+	@Override
+	public void userControl(){ }
+
 
 }
