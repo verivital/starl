@@ -88,8 +88,8 @@ public class ReachAvoid extends Thread implements Cancellable {
 				break;
 			case PLAN:
 				double magic = .0011;
-				int xRange = Math.abs(start.getX() - dest.getX());
-				int yRange = Math.abs(start.getY() - dest.getY());
+				double xRange = Math.abs(start.getX() - dest.getX());
+				double yRange = Math.abs(start.getY() - dest.getY());
 				xLower = Math.min(start.getX(), dest.getX()) - (int)((xRange+radius)*(counter+1)*radius*magic);
 				xUpper = Math.max(start.getX(), dest.getX()) + (int)((xRange+radius)*(counter+1)*radius*magic);
 				yLower = Math.min(start.getY(), dest.getY()) - (int)((yRange+radius)*(counter+1)*radius*magic);

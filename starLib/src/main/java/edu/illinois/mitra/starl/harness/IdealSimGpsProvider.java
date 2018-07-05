@@ -7,12 +7,7 @@ import java.util.Random;
 import java.util.Vector;
 
 import edu.illinois.mitra.starl.models.Model;
-import edu.illinois.mitra.starl.models.Model_GhostAerial;
-import edu.illinois.mitra.starl.models.Model_Mavic;
-import edu.illinois.mitra.starl.models.Model_Phantom;
 import edu.illinois.mitra.starl.models.Model_iRobot;
-import edu.illinois.mitra.starl.models.Model_quadcopter;
-import edu.illinois.mitra.starl.models.Model_3DR;
 import edu.illinois.mitra.starl.objects.*;
 
 public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {	
@@ -161,7 +156,7 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 	private class TrackedRobot {
 		private int velocity = 200; // TODO was 0
 		private ItemPosition start = null;
-		private Model_iRobot pos = null;
+		private Model_iRobot iRobot = null;
 		private ItemPosition dest = null;
 		private boolean newdest = false;
 		private boolean reportpos = false;
@@ -175,8 +170,8 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 		private int xNoise = 0;
 		private int yNoise = 0;
 				
-		public TrackedRobot(Model_iRobot pos) {
-			this.pos = pos;
+		public TrackedRobot(Model_iRobot iRobot) {
+			this.iRobot = iRobot;
 			timeLastUpdate = se.getTime();
 		}
 		public synchronized  void updatePos() {
@@ -199,19 +194,18 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 				}
 				else
 				{
-					int deltaX = dest.x-start.x;
-					int deltaY = dest.y-start.y;
-					motAngle = Math.atan2(deltaY, deltaX);
+					Vector3i delta = dest.getPos().subtract(start.getPos());
+					motAngle = Math.atan2(delta.getX(), delta.getY());
 					
-					vX = (Math.cos(motAngle) * velocity);
-					vY = (Math.sin(motAngle) * velocity);
+					vX = Math.cos(motAngle) * velocity;
+					vY = Math.sin(motAngle) * velocity;
 					
 					// Set position to ideal angle +/- noise
-					angle = (int)Math.toDegrees(Math.atan2(deltaY, deltaX));
+					angle = (int)Math.toDegrees(motAngle);
 				}
 				
 				if(angleNoise != 0) aNoise = rand.nextInt(angleNoise*2)-angleNoise;
-				pos.setPos(start.x, start.y, angle+aNoise);
+				iRobot.setPosAndAngle(start.getX(), start.getY(), angle+aNoise);
 				newdest = false;
 			} else if(dest != null) {
 				// Calculate noise
@@ -227,8 +221,8 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 				if(totalTimeInMotion < totalMotionTime) {
 					int dX = (int)(vX * totalTimeInMotion)/1000;
 					int dY = (int)(vY * totalTimeInMotion)/1000;
-					pos.setPos(start.x+dX+xNoise, start.y+dY+yNoise, (int)Math.toDegrees(motAngle));
-					pos.velocity = velocity;
+					iRobot.setPosAndAngle(start.getX()+dX+xNoise, start.getX()+dY+yNoise, (int)Math.toDegrees(motAngle));
+					iRobot.velocity = velocity;
 				} else {
 					
 				
@@ -237,10 +231,10 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 						throw new RuntimeException("dest is null");
 					}
 					
-					if (pos==null )
-						throw new RuntimeException("pos is null");
+					if (iRobot ==null )
+						throw new RuntimeException("iRobot is null");
 					
-					pos.setPos(dest.x+xNoise, dest.y+yNoise, (int)pos.angle+aNoise);
+					iRobot.setPosAndAngle(dest.getX()+xNoise, dest.getY()+yNoise, (int) iRobot.angle+aNoise);
 					
 					dest = null;
 					reportpos = true;
@@ -258,7 +252,7 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 			if(hasChanged()) updatePos();
 			
 			this.dest = dest;
-			this.start = new ItemPosition(pos);
+			this.start = new ItemPosition(iRobot);
 			this.velocity = velocity;
 			
 			totalMotionTime = (int)(this.start.distanceTo(dest)*1000.0)/velocity;
@@ -276,7 +270,7 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 			return dest != null;
 		}
 		public String getName() {
-			return pos.name;
+			return iRobot.name;
 		}
 	}
 

@@ -2,7 +2,7 @@ package edu.illinois.mitra.starl.models;
 
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
-import edu.illinois.mitra.starl.objects.Point3d;
+import edu.illinois.mitra.starl.objects.Point3i;
 import edu.illinois.mitra.starl.objects.PositionList;
 import java.util.*;
 
@@ -14,8 +14,8 @@ public abstract class Model extends ItemPosition {
 		return rand.nextDouble();
 	}
 
-	public abstract Point3d predict(double[] noises, double timeSinceUpdate);
-	public abstract void collision(Point3d collision_point);
+	public abstract Point3i predict(double[] noises, double timeSinceUpdate);
+	public abstract void collision(Point3i collision_point);
 	public abstract void updatePos(boolean followPredict);
 	public abstract boolean inMotion();
 	public abstract void updateSensor(ObstacleList obspoint_positions, PositionList<ItemPosition> sensepoint_positions);

@@ -140,14 +140,14 @@ public class MotionAutomaton_quadcopter extends RobotMotion {
 							double Ax_d, Ay_d = 0.0;
 							double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
 							//		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
-							Ax_d = (kpx * (destination.getX() - mypos.getX()) - kdx * mypos.v_x) ;
-							Ay_d = (kpy * (destination.getY() - mypos.getY()) - kdy * mypos.v_y) ;
+							Ax_d = (kpx * (destination.getX() - mypos.getX()) - kdx * mypos.getV_x()) ;
+							Ay_d = (kpy * (destination.getY() - mypos.getY()) - kdy * mypos.getV_y()) ;
 							Ryaw = Math.atan2(destination.getY() - mypos.getY(), destination.getX() - mypos.getX());
 							//Ryaw = Math.atan2((destination.getY - mypos.getX), (destination.getX - mypos.getY));
 							Ryawsp = kpz * ((Ryaw - Math.toRadians(mypos.yaw)));
 							Rroll = Math.asin((Ay_d * Math.cos(Math.toRadians(mypos.yaw)) - Ax_d * Math.sin(Math.toRadians(mypos.yaw))) %1);
 							Rpitch = Math.asin( (-Ay_d * Math.sin(Math.toRadians(mypos.yaw)) - Ax_d * Math.cos(Math.toRadians(mypos.yaw))) / (Math.cos(Rroll)) %1);
-							Rvs = (kpz * (destination.getZ() - mypos.getZ()) - kdz * mypos.v_z);
+							Rvs = (kpz * (destination.getZ() - mypos.getZ()) - kdz * mypos.getV_z());
 						//	System.out.println(Ryaw + " , " + Ryawsp + " , " +  Rroll  + " , " +  Rpitch + " , " + Rvs);
 
 							setControlInputRescale(Math.toDegrees(Ryawsp),Math.toDegrees(Rpitch)%360,Math.toDegrees(Rroll)%360,Rvs);

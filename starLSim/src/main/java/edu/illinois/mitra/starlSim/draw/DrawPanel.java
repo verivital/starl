@@ -21,7 +21,7 @@ import edu.illinois.mitra.starl.interfaces.AcceptsPointInput;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Obstacles;
-import edu.illinois.mitra.starl.objects.Point3d;
+import edu.illinois.mitra.starl.objects.Point3i;
 import edu.illinois.mitra.starlSim.main.SimSettings;
 
 
@@ -147,8 +147,8 @@ public class DrawPanel extends ZoomablePanel
 		for(int i = 0; i < list.ObList.size(); i++)
 		{
 			Obstacles currobs = list.ObList.get(i);
-			Point3d nextpoint = currobs.obstacle.firstElement();
-			Point3d curpoint = currobs.obstacle.firstElement();
+			Point3i nextpoint = currobs.obstacle.firstElement();
+			Point3i curpoint = currobs.obstacle.firstElement();
 			int[] xs = new int[currobs.obstacle.size()]; 
 			int[] ys = new int[currobs.obstacle.size()];
 

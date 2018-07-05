@@ -20,7 +20,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
 
     // Motion tracking
     protected ItemPosition destination;
-    private Model_Drone mypos;
+    private Model_Drone drone;
 
 
     protected enum STAGE {
@@ -61,7 +61,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
     public void goTo(ItemPosition dest) {
         if((inMotion && !this.destination.equals(dest)) || !inMotion) {
             done = false;
-            this.destination = new ItemPosition(dest.name,dest.x,dest.y,dest.z);
+            this.destination = new ItemPosition(dest);
             //this.destination = dest;
             this.mode = OPMODE.GO_TO;
             startMotion();
@@ -85,23 +85,23 @@ public class MotionAutomaton_Drone extends RobotMotion {
         while(true) {
             //			gvh.gps.getObspointPositions().updateObs();
             if(running) {
-                mypos = (Model_Drone) gvh.plat.getModel();
-//				System.out.println(mypos.toString());
-                System.out.printf("mypos (%d, %d) \n", mypos.x, mypos.y);
-                System.out.printf("destination (%d, %d) \n", destination.x, destination.y);
-                int distance = (int) Math.sqrt(Math.pow((mypos.x - destination.x),2) + Math.pow((mypos.y - destination.y), 2));
+                drone = (Model_Drone) gvh.plat.getModel();
+//				System.out.println(drone.toString());
+                System.out.printf("drone (%d, %d) \n", drone.getX(), drone.getY());
+                System.out.printf("destination (%d, %d) \n", destination.getX(), destination.getY());
+                int distance = (int)drone.distanceTo2D(destination);
                 System.out.println("distance:" + distance);
-                //int distance = mypos.distanceTo(destination);
-                if(mypos.gaz < -50){
-                    //		System.out.println("going down");
+
+                if (drone.gaz < -50){
+                    // System.out.println("going down");
                 }
-                colliding = (stage != STAGE.LAND && mypos.gaz < -50);
+                colliding = (stage != STAGE.LAND && drone.gaz < -50);
 
                 if(!colliding && stage != null) {
                     switch(stage) {
                         case INIT:
                             if(mode == OPMODE.GO_TO) {
-                                if(mypos.z < safeHeight){
+                                if(drone.getZ() < safeHeight){
                                     // just a safe distance from ground
                                     takeOff();
                                     next = STAGE.TAKEOFF;
@@ -118,7 +118,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
                             }
                             break;
                         case MOVE:
-                            if(mypos.getZ() < safeHeight){
+                            if(drone.getZ() < safeHeight){
                                 // just a safe distance from ground
                                 takeOff();
                                 next = STAGE.TAKEOFF;
@@ -131,15 +131,15 @@ public class MotionAutomaton_Drone extends RobotMotion {
                             else{
                                 double Ax_d, Ay_d = 0.0;
                                 double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
-                                //		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
-                                Ax_d = (kpx * (destination.x - mypos.x) - kdx * mypos.v_x) ;
-                                Ay_d = (kpy * (destination.y - mypos.y) - kdy * mypos.v_y) ;
-                                Ryaw = Math.atan2(destination.y - mypos.y, destination.x - mypos.x);
-                                //Ryaw = Math.atan2((destination.getY - mypos.getX), (destination.getX - mypos.getY));
-                                Ryawsp = kpz * ((Ryaw - Math.toRadians(mypos.yaw)));
-                                Rroll = Math.asin((Ay_d * Math.cos(Math.toRadians(mypos.yaw)) - Ax_d * Math.sin(Math.toRadians(mypos.yaw))) %1);
-                                Rpitch = Math.asin( (-Ay_d * Math.sin(Math.toRadians(mypos.yaw)) - Ax_d * Math.cos(Math.toRadians(mypos.yaw))) / (Math.cos(Rroll)) %1);
-                                Rvs = (kpz * (destination.z - mypos.z) - kdz * mypos.v_z);
+                                //		System.out.println(destination.getX - drone.getX + " , " + drone.v_x);
+                                Ax_d = (kpx * (destination.getX() - drone.getX()) - kdx * drone.getV_x()) ;
+                                Ay_d = (kpy * (destination.getY() - drone.getY()) - kdy * drone.getV_y()) ;
+                                Ryaw = Math.atan2(destination.getY() - drone.getY(), destination.getX() - drone.getX());
+                                //Ryaw = Math.atan2((destination.getY - drone.getX), (destination.getX - drone.getY));
+                                Ryawsp = kpz * ((Ryaw - Math.toRadians(drone.yaw)));
+                                Rroll = Math.asin((Ay_d * Math.cos(Math.toRadians(drone.yaw)) - Ax_d * Math.sin(Math.toRadians(drone.yaw))) %1);
+                                Rpitch = Math.asin( (-Ay_d * Math.sin(Math.toRadians(drone.yaw)) - Ax_d * Math.cos(Math.toRadians(drone.yaw))) / (Math.cos(Rroll)) %1);
+                                Rvs = (kpz * (destination.getZ() - drone.getZ()) - kdz * drone.getV_z());
                                 //	System.out.println(Ryaw + " , " + Ryawsp + " , " +  Rroll  + " , " +  Rpitch + " , " + Rvs);
 
                                 System.out.println("here");
@@ -154,7 +154,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
                             // do nothing
                             break;
                         case TAKEOFF:
-                            switch(mypos.z/(safeHeight/2)){
+                            switch(drone.getZ()/(safeHeight/2)){
                                 case 0:// 0 - 1/2 safeHeight
                                     setControlInput(0,0,0,1);
                                     break;
@@ -173,7 +173,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
                             }
                             break;
                         case LAND:
-                            switch(mypos.z/(safeHeight/2)){
+                            switch(drone.getZ()/(safeHeight/2)){
                                 case 0:// 0 - 1/2 safeHeight
                                     setControlInput(0,0,0,0);
                                     next = STAGE.STOP;
@@ -261,7 +261,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
     }
 
     private void setControlInputRescale(double yaw_v, double pitch, double roll, double gaz){
-        setControlInput(rescale(yaw_v, mypos.max_yaw_speed()), rescale(pitch, mypos.max_pitch_roll()), rescale(roll, mypos.max_pitch_roll()), rescale(gaz, mypos.max_gaz()));
+        setControlInput(rescale(yaw_v, drone.max_yaw_speed()), rescale(pitch, drone.max_pitch_roll()), rescale(roll, drone.max_pitch_roll()), rescale(gaz, drone.max_gaz()));
     }
 
     private double rescale(double value, double max_value){

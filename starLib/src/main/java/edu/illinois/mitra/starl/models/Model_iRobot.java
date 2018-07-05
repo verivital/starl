@@ -6,7 +6,7 @@ import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
 import edu.illinois.mitra.starl.objects.Common;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
-import edu.illinois.mitra.starl.objects.Point3d;
+import edu.illinois.mitra.starl.objects.Point3i;
 import edu.illinois.mitra.starl.objects.PositionList;
 
 /**
@@ -61,9 +61,9 @@ public class Model_iRobot extends Model_Ground {
 		String[] parts = received.replace(",", "").split("\\|");
 		if(parts.length == 7) {
 			this.name = parts[1];
-			this.setX(Integer.parseInt(parts[2]));
-			this.setY(Integer.parseInt(parts[3]));
-			this.setZ(Integer.parseInt(parts[4]));
+			this.setPos(Integer.parseInt(parts[2]),
+					Integer.parseInt(parts[3]),
+					Integer.parseInt(parts[4]));
 			this.angle = Integer.parseInt(parts[5]);
 //		} else {
 //			throw new ItemFormattingException("Should be length 7, is length " + parts.length);
@@ -100,10 +100,14 @@ public class Model_iRobot extends Model_Ground {
 	}
 
 	/**
-	 *
+	 * isFacing
 	 * @return true if one robot is facing another robot/point
 	 */
-	public boolean isFacing(Point3d other) {
+	public boolean isFacing(ItemPosition other) {
+		return isFacing(other.getPos());
+	}
+
+	public boolean isFacing(Point3i other) {
 		if(other == null) {
 			return false;
 		}
@@ -161,7 +165,11 @@ public class Model_iRobot extends Model_Ground {
 	 * @param other The ItemPosition to measure against
 	 * @return Number of degrees this position must rotate to face position other
 	 */
-	public <T extends Point3d> int angleTo(T other) {
+	public int angleTo(ItemPosition other) {
+		return angleTo(other.getPos());
+	}
+
+	public int angleTo(Point3i other) {
 		if(other == null) {
 			return 0;
 		}
@@ -187,15 +195,13 @@ public class Model_iRobot extends Model_Ground {
 		return  Math.round(retAngle);
 	}
 
-	public void setPos(int x, int y, int angle) {
-		this.setX(x);
-		this.setY(y);
+	public void setPosAndAngle(int x, int y, int angle) {
+		this.setPos(x, y);
 		this.angle = angle;
 	}
 
 	public void setPos(Model_iRobot other) {
-		this.setX(other.getX());
-		this.setY(other.getY());
+		this.setPos(other.getPos());
 		this.angle = other.angle;
 	}
 
@@ -216,10 +222,10 @@ public class Model_iRobot extends Model_Ground {
 	}
 
 	@Override
-	public Point3d predict(double[] noises, double timeSinceUpdate) {
+	public Point3i predict(double[] noises, double timeSinceUpdate) {
 		if(noises.length != 3){
 			System.out.println("Incorrect number of noises parameters passed in, please pass in getX noise, getY, noise and angle noise");
-			return new Point3d(getX(), getY());
+			return new Point3i(getX(), getY());
 		}
 		double xNoise = (getRand()*2*noises[0]) - noises[0];
 		double yNoise = (getRand()*2*noises[1]) - noises[1];
@@ -234,11 +240,11 @@ public class Model_iRobot extends Model_Ground {
 		x_p = getX() +dX;
 		y_p = getY() +dY;
 		angle_p = angle+dA;
-		return new Point3d(x_p,y_p);
+		return new Point3i(x_p,y_p);
 	}
 
 	@Override
-	public void collision(Point3d collision_point) {
+	public void collision(Point3i collision_point) {
 		// No collision point, set both sensor to false
 		if(collision_point == null){
 			rightbump = false;
@@ -265,8 +271,7 @@ public class Model_iRobot extends Model_Ground {
 	public void updatePos(boolean followPredict) {
 		if(followPredict){
 			angle = angle_p;
-			setX(x_p);
-			setY(y_p);
+			setPos(x_p, y_p);
 		}
 	}
 

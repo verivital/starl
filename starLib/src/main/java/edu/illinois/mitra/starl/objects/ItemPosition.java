@@ -3,6 +3,7 @@ package edu.illinois.mitra.starl.objects;
 import java.util.HashMap;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
+import edu.illinois.mitra.starl.interfaces.Traceable;
 //import edu.illinois.mitra.starl.interfaces.Traceable;
 /**
  * This class represents the position of a point in XYZ plane.
@@ -10,17 +11,48 @@ import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
  * @author Yixiao Lin, Adam Zimmerman
  * @version 2.0
  */
-public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
+public class ItemPosition implements Comparable<ItemPosition>, Traceable {
 //	private static final String TAG = "itemPosition";
 //	private static final String ERR = "Critical Error";
 	
 	public String name;
 	public int index;
 	public long receivedTime;
+	private Point3i pos;
 
 	public ItemPosition(){
 		super();
 		setName("");
+	}
+
+	public final int getX(){
+		return pos.getX();
+	}
+	public final int getY(){
+		return pos.getY();
+	}
+	public final int getZ(){
+		return pos.getZ();
+	}
+
+	public final Point3i getPos() {
+		return pos;
+	}
+
+	public final void setPos(Point3i pos) {
+		this.pos = pos;
+	}
+
+	public final void setPos(ItemPosition other) {
+		setPos(other.getPos());
+	}
+
+	public final void setPos(int x, int y) {
+		setPos(new Point3i(x, y));
+	}
+
+	public final void setPos(int x, int y, int z) {
+		setPos(new Point3i(x, y, z));
 	}
 
 	/**
@@ -31,17 +63,17 @@ public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
 	 * @param y Y position
 	 */
 	public ItemPosition(String name, int x, int y) {
-		super(x, y);
+		pos = new Point3i(x, y);
 		setName(name);
 	}
 	
 	public ItemPosition(String name, int x, int y, int z) {
-		super(x, y, z);
+		pos = new Point3i(x, y, z);
 		setName(name);
 	}
 	
 	public ItemPosition(String name, int x, int y, int z, int index) {
-		super(x, y, z);
+		pos = new Point3i(x, y, z);
 		setName(name);
 		this.index = index;
 	}
@@ -53,7 +85,7 @@ public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
 	 */
 	
 	public ItemPosition(ItemPosition other) {
-		super(other);
+		pos = new Point3i(other.pos);
 		setName(other.name);
 	}
 	
@@ -67,9 +99,9 @@ public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
 		String[] parts = received.replace(",", "").split("\\|");
 		if(parts.length == 7) {
 			this.name = parts[1];
-			this.setX(Integer.parseInt(parts[2]));
-			this.setY(Integer.parseInt(parts[3]));
-			this.setZ(Integer.parseInt(parts[4]));
+			this.pos = new Point3i(Integer.parseInt(parts[2]),
+					Integer.parseInt(parts[3]),
+					Integer.parseInt(parts[4]));
 			this.index = Integer.parseInt(parts[5]);
 		} else {
 			throw new ItemFormattingException("Should be length 7, is length " + parts.length);
@@ -114,7 +146,6 @@ public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
 		
 	}
 
-	@Override
 	public HashMap<String, Object> getXML() {
 		HashMap<String, Object> retval = new HashMap<String,Object>();
 		retval.put("name", name);
@@ -156,5 +187,20 @@ public class ItemPosition extends Point3d implements Comparable<ItemPosition>{
 	public int getIndex(){
 		return index;
 	}
-	
+
+	public double distanceTo(ItemPosition other) {
+		return distanceTo(other.getPos());
+	}
+
+	public double distanceTo(Point3i other) {
+		return getPos().subtract(other).magnitude();
+	}
+
+	public double distanceTo2D(ItemPosition other) {
+		return distanceTo2D(other.getPos());
+	}
+
+	public double distanceTo2D(Point3i other) {
+		return getPos().subtract(other).magnitude2D();
+	}
 }

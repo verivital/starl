@@ -7,16 +7,12 @@ import java.util.Observer;
 import java.util.Vector;
 
 import edu.illinois.mitra.starl.models.Model;
-import edu.illinois.mitra.starl.models.Model_3DR;
 import edu.illinois.mitra.starl.models.Model_Drone;
-import edu.illinois.mitra.starl.models.Model_GhostAerial;
-import edu.illinois.mitra.starl.models.Model_Mavic;
-import edu.illinois.mitra.starl.models.Model_Phantom;
 import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Obstacles;
-import edu.illinois.mitra.starl.objects.Point3d;
+import edu.illinois.mitra.starl.objects.Point3i;
 import edu.illinois.mitra.starl.objects.PositionList;
 
 /**
@@ -243,7 +239,7 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 		public void updatePos() {
 			double timeSinceUpdate = (se.getTime() - timeLastUpdate)/1000.0;
 
-			Point3d p_point = cur.predict(noises, timeSinceUpdate);
+			Point3i p_point = cur.predict(noises, timeSinceUpdate);
 			boolean collided = checkCollision(p_point);
 			//boolean collided = false; todo(tim) address collisions
 			cur.updatePos(!collided);
@@ -253,7 +249,7 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 			timeLastUpdate = se.getTime();
 		}
 
-        public boolean checkCollision(Point3d bot) {
+        public boolean checkCollision(Point3i bot) {
             //double min_distance = Double.MAX_VALUE;
             int myRadius = cur.radius();
 
@@ -261,21 +257,20 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 
             for (Model current : modelPositions.get(cur.getTypeName())) {
                 if (!current.name.equals(cur.name)) {
-                    if (bot.distanceTo(current) <= myRadius + current.radius()) {
+                    if (bot.distanceTo(current.getPos()) <= myRadius + current.radius()) {
                         //update sensors for both robots
-                        current.collision(cur);
-                        cur.collision(current);
+                        current.collision(cur.getPos());
+                        cur.collision(current.getPos());
                         toReturn = true;
                     }
-                    //min_distance = Math.min(bot.distanceTo(current) - current.radius, min_distance);
                 }
             }
 
             ObstacleList list = obspoint_positions;
             for (int i = 0; i < list.ObList.size(); i++) {
                 Obstacles currobs = list.ObList.get(i);
-                Point3d nextpoint = currobs.obstacle.firstElement();
-                Point3d curpoint = currobs.obstacle.firstElement();
+                Point3i nextpoint;
+                Point3i curpoint;
                 ItemPosition wall = new ItemPosition("wall", 0, 0, 0);
 
                 for (int j = 0; j < currobs.obstacle.size(); j++) {
@@ -285,14 +280,14 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
                     } else {
                         nextpoint = currobs.obstacle.get(j + 1);
                     }
-                    Point3d closeP = currobs.getClosestPointOnSegment(curpoint.x, curpoint.y, nextpoint.x, nextpoint.y, bot.x, bot.y);
-                    wall.set(closeP.x, closeP.y, 0);
-                    double distance = Math.sqrt(Math.pow(closeP.x - bot.x, 2) + Math.pow(closeP.y - bot.y, 2));
+                    Point3i closeP = currobs.getClosestPointOnSegment(curpoint, nextpoint, bot);
+                    wall.setPos(closeP);
+                    double distance = closeP.distanceTo2D(bot);
 
                     //need to modify some conditions of bump sensors, we have left and right bump sensor for now
                     if (distance < myRadius) {
                         //update the bump sensor
-                        cur.collision(wall);
+                        cur.collision(wall.getPos());
                         toReturn = true;
                     }
                 }

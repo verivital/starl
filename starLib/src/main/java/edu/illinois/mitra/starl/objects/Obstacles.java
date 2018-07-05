@@ -12,7 +12,7 @@ import edu.illinois.mitra.starl.motion.RRTNode;
  * @version 2.0
  */
 public class Obstacles {
-    public Vector<Point3d> obstacle;
+    public Vector<Point3i> obstacle;
     public int height;
     public long timeFrame;
     public boolean hidden;
@@ -22,15 +22,15 @@ public class Obstacles {
     //once zero, it will be removed from the obsList
 
     public Obstacles() {
-        obstacle = new Vector<Point3d>(4, 3);
+        obstacle = new Vector<Point3i>(4, 3);
     }
 
-    public Obstacles(Vector<Point3d> obstacle1) {
+    public Obstacles(Vector<Point3i> obstacle1) {
         obstacle = obstacle1;
     }
 
     public Obstacles(Obstacles original) {
-        obstacle = new Vector<Point3d>(4, 3);
+        obstacle = new Vector<Point3i>(4, 3);
         for (int i = 0; i < original.obstacle.size(); i++) {
             add(original.obstacle.get(i).getX(), original.obstacle.get(i).getY());
         }
@@ -42,28 +42,31 @@ public class Obstacles {
 
     //method for adding unknown obstacles
     public Obstacles(int x, int y) {
-        obstacle = new Vector<Point3d>(4, 3);
-        add(x, y, 0);
-        grided = false;
-        timeFrame = -1;
-        height = -1;
+        this(new Point3i(x, y));
+    }
+    public Obstacles(int x, int y, int z) {
+        this(new Point3i(x, y, z));
     }
 
-    public Obstacles(int x, int y, int z) {
-        obstacle = new Vector<Point3d>(4, 3);
-        add(x, y, z);
+
+    public Obstacles(Point3i point) {
+        obstacle = new Vector<Point3i>(4, 3);
+        add(point);
         grided = false;
         timeFrame = -1;
         height = -1;
     }
 
     public void add(int x, int y) {
-        add(x, y, 0);
+        add(new Point3i(x, y, 0));
     }
 
     public void add(int x, int y, int z) {
-        Point3d temp = new Point3d(x, y, z);
-        obstacle.add(temp);
+        add(new Point3i(x, y, z));
+    }
+
+    public void add(Point3i point) {
+        obstacle.add(point);
     }
 
     /**
@@ -72,8 +75,8 @@ public class Obstacles {
      *
      * @return
      */
-    public Vector<Point3d> getObstacleVector() {
-        return (Vector<Point3d>) this.obstacle.clone();
+    public Vector<Point3i> getObstacleVector() {
+        return (Vector<Point3i>) this.obstacle.clone();
     }
 
     /**
@@ -182,8 +185,8 @@ public class Obstacles {
         if (obstacle.size() == 0)
             return true;
 
-        Point3d nextpoint = obstacle.firstElement();
-        Point3d curpoint = obstacle.firstElement();
+        Point3i nextpoint = obstacle.firstElement();
+        Point3i curpoint = obstacle.firstElement();
         int[] x = new int[obstacle.size()];
         int[] y = new int[obstacle.size()];
 
@@ -219,7 +222,7 @@ public class Obstacles {
      * @return
      */
     public boolean validItemPos(ItemPosition destination) {
-        Point3d curpoint = obstacle.firstElement();
+        Point3i curpoint = obstacle.firstElement();
         int[] x = new int[obstacle.size()];
         int[] y = new int[obstacle.size()];
 
@@ -234,8 +237,8 @@ public class Obstacles {
     }
 
     public double findMinDist(RRTNode destNode, RRTNode currentNode) {
-        Point3d nextpoint = obstacle.firstElement();
-        Point3d curpoint = obstacle.firstElement();
+        Point3i nextpoint = obstacle.firstElement();
+        Point3i curpoint = obstacle.firstElement();
         double minDist = Double.MAX_VALUE;
         double cx1 = destNode.position.getX();
         double cy1 = destNode.position.getY();
@@ -324,18 +327,34 @@ public class Obstacles {
 
     }
 
-    public Point3d getClosestPointOnSegment(int sx1, int sy1, int sx2, int sy2, int px, int py) {
+    public Point3i getClosestPointOnSegment(Point3i s1, Point3i s2, Point3i p) {
+        assert(s1 != null && s2 != null && p != null);
+        Vector3i delta = s2.subtract(s1);
+        double u = ((p.getX() - s1.getX()) * delta.getX() + (p.getY() - s1.getY()) * delta.getY()) / (delta.magnitudeSq());
+
+        final Point3i closestPoint;
+        if (u < 0) {
+            closestPoint = s1;
+        } else if (u > 1) {
+            closestPoint = s2;
+        } else {
+            closestPoint = s1.add(delta.scale(u));
+        }
+        return closestPoint;
+    }
+
+    public Point3i getClosestPointOnSegment(int sx1, int sy1, int sx2, int sy2, int px, int py) {
         double xDelta = sx2 - sx1;
         double yDelta = sy2 - sy1;
         double u = ((px - sx1) * xDelta + (py - sy1) * yDelta) / (xDelta * xDelta + yDelta * yDelta);
 
-        final Point3d closestPoint;
+        final Point3i closestPoint;
         if (u < 0) {
-            closestPoint = new Point3d(sx1, sy1);
+            closestPoint = new Point3i(sx1, sy1);
         } else if (u > 1) {
-            closestPoint = new Point3d(sx2, sy2);
+            closestPoint = new Point3i(sx2, sy2);
         } else {
-            closestPoint = new Point3d((int) Math.round(sx1 + u * xDelta), (int) Math.round(sy1 + u * yDelta));
+            closestPoint = new Point3i((int) Math.round(sx1 + u * xDelta), (int) Math.round(sy1 + u * yDelta));
         }
 
         return closestPoint;
@@ -353,10 +372,10 @@ public class Obstacles {
         //System.out.println(obstacle);
         switch (obstacle.size()) {
             case 1:
-                Point3d leftBottom1 = new Point3d(obstacle.firstElement().getX() - ((obstacle.firstElement().getX()) % a), obstacle.firstElement().getY() - ((obstacle.firstElement().getY()) % a));
-                Point3d rightBottom1 = new Point3d((leftBottom1.getX() + a), leftBottom1.getY());
-                Point3d rightTop1 = new Point3d((leftBottom1.getX() + a), (leftBottom1.getY() + a));
-                Point3d leftTop1 = new Point3d((leftBottom1.getX()), (leftBottom1.getY() + a));
+                Point3i leftBottom1 = new Point3i(obstacle.firstElement().getX() - ((obstacle.firstElement().getX()) % a), obstacle.firstElement().getY() - ((obstacle.firstElement().getY()) % a));
+                Point3i rightBottom1 = new Point3i((leftBottom1.getX() + a), leftBottom1.getY());
+                Point3i rightTop1 = new Point3i((leftBottom1.getX() + a), (leftBottom1.getY() + a));
+                Point3i leftTop1 = new Point3i((leftBottom1.getX()), (leftBottom1.getY() + a));
                 obstacle.removeAllElements();
                 obstacle.add(leftBottom1);
                 obstacle.add(rightBottom1);
@@ -373,10 +392,10 @@ public class Obstacles {
                 int max_y = Math.max(obstacle.firstElement().getY(), obstacle.get(1).getY());
                 max_y = max_y - (max_y % a) + a;
 
-                Point3d leftBottom2 = new Point3d(min_x, min_y);
-                Point3d rightBottom2 = new Point3d(max_x, min_y);
-                Point3d rightTop2 = new Point3d(max_x, max_y);
-                Point3d leftTop2 = new Point3d(min_x, max_y);
+                Point3i leftBottom2 = new Point3i(min_x, min_y);
+                Point3i rightBottom2 = new Point3i(max_x, min_y);
+                Point3i rightTop2 = new Point3i(max_x, max_y);
+                Point3i leftTop2 = new Point3i(min_x, max_y);
                 obstacle.removeAllElements();
                 obstacle.add(leftBottom2);
                 obstacle.add(rightBottom2);
@@ -404,10 +423,10 @@ public class Obstacles {
                 max_y3 = Math.max(max_y3, obstacle.get(3).getY());
                 max_y3 = max_y3 - (max_y3 % a) + a;
 
-                Point3d leftBottom3 = new Point3d(min_x3, min_y3);
-                Point3d rightBottom3 = new Point3d(max_x3, min_y3);
-                Point3d rightTop3 = new Point3d(max_x3, max_y3);
-                Point3d leftTop3 = new Point3d(min_x3, max_y3);
+                Point3i leftBottom3 = new Point3i(min_x3, min_y3);
+                Point3i rightBottom3 = new Point3i(max_x3, min_y3);
+                Point3i rightTop3 = new Point3i(max_x3, max_y3);
+                Point3i leftTop3 = new Point3i(min_x3, max_y3);
                 obstacle.removeAllElements();
                 obstacle.add(leftBottom3);
                 obstacle.add(rightBottom3);

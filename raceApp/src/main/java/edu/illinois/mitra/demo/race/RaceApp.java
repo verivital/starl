@@ -8,6 +8,7 @@ import java.util.Random;
 import edu.illinois.mitra.starl.comms.RobotMessage;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
+import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.models.Model_GhostAerial;
 import edu.illinois.mitra.starl.models.Model_quadcopter;
 import edu.illinois.mitra.starl.motion.MotionParameters;
@@ -60,10 +61,8 @@ public class RaceApp extends LogicThread {
 			//	Model_iRobot log_p = (Model_iRobot) gvh.gps.getMyPosition();
 			//	gvh.log.i("POSITION", log_p.name + " " + log_p.getX  + " " +log_p.getY  + " " +log_p.getZ  + " " +log_p.angle);
 
-			if(gvh.plat.model instanceof Model_quadcopter){
-				gvh.log.i("WIND", ((Model_quadcopter)gvh.plat.model).windxNoise + " " +  ((Model_quadcopter)gvh.plat.model).windyNoise);
-			} else if(gvh.plat.model instanceof Model_GhostAerial){
-				gvh.log.i("WIND", ((Model_GhostAerial)gvh.plat.model).windxNoise + " " +  ((Model_GhostAerial)gvh.plat.model).windyNoise);
+			if(gvh.plat.model instanceof Model_Drone){
+				gvh.log.i("WIND", ((Model_Drone) gvh.plat.model).getWindNoise());
 			}
 			switch(stage) {
 				case PICK:

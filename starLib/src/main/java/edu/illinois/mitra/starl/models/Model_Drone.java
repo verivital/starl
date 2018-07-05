@@ -1,9 +1,22 @@
 package edu.illinois.mitra.starl.models;
 
+import org.bouncycastle.pqc.math.linearalgebra.Vector;
+
+import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
 import edu.illinois.mitra.starl.objects.ItemPosition;
+import edu.illinois.mitra.starl.objects.ObstacleList;
+import edu.illinois.mitra.starl.objects.Point3i;
+import edu.illinois.mitra.starl.objects.PositionList;
+import edu.illinois.mitra.starl.objects.Vector3f;
+import edu.illinois.mitra.starl.objects.Vector3i;
 
 
 public abstract class Model_Drone extends Model {
+
+    // platform specific control parameters: see page 78 of http://www.msh-tools.com/ardrone/ARDrone_Developer_Guide.pdf
+    private double windt;
+    private Vector3f wind = new Vector3f(); // mm/s
+    private Vector3f windNoise = new Vector3f();
 
     // Subclass-specific constants that must be set
     public abstract double max_gaz(); // mm/s 200 to 2000
@@ -18,11 +31,14 @@ public abstract class Model_Drone extends Model {
     public double roll;
     public double gaz;
 
-    // Used for inMotion Method, update position
-    public double v_x;
-    public double v_y;
-    public double v_z;
-    public double v_yaw;
+    // Velocity, translational and rotational
+    private Vector3f vel;
+    private double v_yaw;
+
+    private Point3i pos_p = new Point3i();
+    private Vector3f vel_p = new Vector3f();
+    private double yaw_p;
+    private double v_yaw_p;
 
     public double v_yawR = 0;
     public double pitchR = 0;
@@ -30,6 +46,27 @@ public abstract class Model_Drone extends Model {
     public double rollR = 0;
 
     public Model_Drone() {}
+
+    /**
+     * Construct a Model_Drone from a received GPS broadcast message
+     *
+     * @param received GPS broadcast received
+     * @throws ItemFormattingException
+     */
+    public Model_Drone(String received) throws ItemFormattingException {
+        String[] parts = received.replace(",", "").split("\\|");
+        if(parts.length == 9) {
+            this.name = parts[1];
+            this.setPos(Integer.parseInt(parts[2]),
+                    Integer.parseInt(parts[3]),
+                    Integer.parseInt(parts[4]));
+            this.yaw = Integer.parseInt(parts[5]);
+            this.pitch = Integer.parseInt(parts[6]);
+            this.roll = Integer.parseInt(parts[7]);
+        } else {
+            throw new ItemFormattingException("Should be length 9, is length " + parts.length);
+        }
+    }
 
     public Model_Drone(String name, int x, int y) {
         super(name, x, y);
@@ -39,7 +76,199 @@ public abstract class Model_Drone extends Model {
         super(name, x, y, z);
     }
 
+    public Model_Drone(String name, int x, int y, int z, double yaw) {
+        this(name, x, y, z);
+        this.yaw = yaw;
+    }
+
+    public Model_Drone(String name, int x, int y, int z, double yaw, double pitch, double roll) {
+        this(name, x, y, z, yaw);
+        this.pitch = pitch;
+        this.roll = roll;
+    }
+
     public Model_Drone(ItemPosition t_pos) {
         super(t_pos);
+    }
+
+    @Override
+    public String toString() {
+        return name + " (" + getTypeName() + "): " + getPos()
+                + "; yaw, pitch, roll, gaz: " + yaw + ", " + pitch + ", " + roll + " ," + gaz;
+    }
+
+    public Vector3f getVelocity() { return vel; }
+
+    public void setVelocity(Vector3f vel) {
+        this.vel = vel;
+    }
+
+    /*
+	@Override
+	public Point3i predict(double[] noises, double timeSinceUpdate) {
+		if(noises.length != 3){
+			System.out.println("Incorrect number of noises parameters passed in, please pass in getX, getY, getZ, yaw, pitch, roll noises");
+			return new Point3i(getX(), getY(), getZ());
+		}
+		v_yaw += (v_yawR - v_yaw)*timeSinceUpdate;
+		pitch += (pitchR - pitch)*timeSinceUpdate;
+		roll += (rollR-roll)*timeSinceUpdate;
+		gaz += (gazR-gaz)*timeSinceUpdate;
+
+		double xNoise = (getRand()*2*noises[0]) - noises[0];
+		double yNoise = (getRand()*2*noises[0]) - noises[0];
+		double zNoise = (getRand()*2*noises[0]) - noises[0];
+		double yawNoise = (getRand()*2*noises[1]) - noises[1];
+
+		windt += timeSinceUpdate;
+		setWindxNoise(xNoise + windx*Math.sin(windt));
+		setWindyNoise(yNoise + windy*Math.sin(windt));
+
+
+		//	double yawNoise = (getRand()*2*noises[3]) - noises[3];
+		//double pitchNoise = (getRand()*2*noises[4]) - noises[4];
+		//double rollNoise = (getRand()*2*noises[5]) - noises[5];
+
+		//TODO: correct the model
+
+		// speed is in millimeter/second
+		// mass in kilograms
+		// each pixel is 1 millimeter
+		// timeSinceUpdate is in second
+		int dX = (int) (xNoise + getV_x() *timeSinceUpdate + getWindxNoise());
+		int dY= (int) (yNoise +  getV_y() *timeSinceUpdate + getWindyNoise());
+		int dZ= (int) (zNoise +  gaz*timeSinceUpdate);
+
+		x_p = getX() +dX;
+		y_p = getY() +dY;
+		z_p = getZ() +dZ;
+
+		double thrust;
+		if((mass() * Math.cos(Math.toRadians(roll)) * Math.cos(Math.toRadians(pitch))) != 0){
+			thrust = ((gaz+1000) / (mass() * Math.cos(Math.toRadians(roll))) / (Math.cos(Math.toRadians(pitch))));
+		}
+		else{
+			thrust = 1000;
+		}
+
+		//double thrust = Math.abs((gaz) * (mass * Math.cos(Math.toRadians(roll)) * Math.cos(Math.toRadians(pitch))));
+		//double thrust = 100;
+		double dv_x = - ((thrust)  * (Math.sin(Math.toRadians(roll)) * Math.sin(Math.toRadians(yaw)) + Math.cos(Math.toRadians(roll)) * Math.sin(Math.toRadians(pitch)) * Math.cos(Math.toRadians(yaw))))/ (mass()) ;
+		double dv_y = ((thrust)  * (Math.sin(Math.toRadians(roll)) * Math.cos(Math.toRadians(yaw)) - Math.cos(Math.toRadians(roll)) * Math.sin(Math.toRadians(pitch)) * Math.sin(Math.toRadians(yaw))))/ (mass()) ;
+
+
+		v_x_p = getV_x() + dv_x * timeSinceUpdate;
+		v_y_p = getV_y() + dv_y * timeSinceUpdate;
+		v_z_p = gaz;
+
+		double dYaw = (v_yaw*timeSinceUpdate);
+		yaw_p = (yaw + dYaw) %360;
+
+		return new Point3i(x_p, y_p, z_p);
+	}
+	*/
+
+    public Point3i predict(double[] noises, double timeSinceUpdate) {
+        if(noises.length != 3){
+            System.out.println("Incorrect number of noises parameters passed in, please pass in getX, getY, getZ, yaw, pitch, roll noises");
+            return new Point3i(getPos());
+        }
+        v_yaw += (v_yawR - v_yaw) * timeSinceUpdate;
+        pitch += (pitchR - pitch) * timeSinceUpdate;
+        roll += (rollR - roll) * timeSinceUpdate;
+        gaz += (gazR - gaz) * timeSinceUpdate;
+
+        Vector3f noise = new Vector3f(getRand(), getRand(), getRand())
+                .subtract(new Vector3f(0.5, 0.5,  0.5))
+                .scale(2 * noises[0]);
+        double yawNoise = (getRand() - 0.5) * 2 * noises[1];
+
+        windt += timeSinceUpdate;
+        windNoise = new Vector3f(wind).scale(Math.sin(windt));
+
+
+        //	double yawNoise = (getRand()*2*noises[3]) - noises[3];
+        //double pitchNoise = (getRand()*2*noises[4]) - noises[4];
+        //double rollNoise = (getRand()*2*noises[5]) - noises[5];
+
+        //TODO: correct the model
+
+        // speed is in millimeter/second
+        // mass in kilograms
+        // each pixel is 1 millimeter
+        // timeSinceUpdate is in second
+        Vector3i delta = noise.add(windNoise)
+                .add(new Vector3f(vel.getX(), vel.getY(), gaz).scale(timeSinceUpdate))
+                .toVector3i();
+
+        pos_p = getPos().add(delta);
+
+        double thrust;
+        double pitchRad = Math.toRadians(pitch);
+        double rollRad = Math.toRadians(roll);
+        double yawRad = Math.toRadians(yaw);
+        if (mass() != 0 && Math.cos(rollRad) != 0 && Math.cos(pitchRad) != 0) {
+            thrust = (gaz+1000) / (mass() * Math.cos(rollRad)) / Math.cos(pitchRad);
+        }
+        else{
+            thrust = 1000;
+        }
+
+        Vector3f dv = new Vector3f(-(Math.sin(rollRad) * Math.sin(yawRad) + Math.cos(rollRad) * Math.sin(pitchRad) * Math.cos(yawRad)),
+                Math.sin(rollRad) * Math.cos(yawRad) - Math.cos(rollRad) * Math.sin(pitchRad) * Math.sin(yawRad)).scale(thrust / mass());
+
+        vel_p = new Vector3f(vel.getX() + dv.getX() * timeSinceUpdate, vel.getY() + dv.getY() * timeSinceUpdate, gaz);
+
+        yaw_p = (yaw + v_yaw * timeSinceUpdate) % 360;
+
+        return new Point3i(pos_p);
+    }
+
+    @Override
+    public final void updatePos(boolean followPredict) {
+        if (followPredict) {
+            setPos(pos_p);
+            yaw = yaw_p;
+            //		pitch = pitch_p;
+            //		roll = roll_p;
+            v_yaw = v_yaw_p;
+            //		v_pitch = v_pitch_p;
+            //		v_roll = v_roll_p;
+            setVelocity(vel_p);
+        } else {
+            setPos(getPos().getX(), getPos().getY(), pos_p.getZ());
+            vel = new Vector3f(vel.getX(), vel.getY(), vel_p.getZ());
+            if(getZ() < 20){
+                roll = 0;
+                pitch = 0;
+            }
+        }
+        if(getZ() < 0) {
+            setPos(getPos().getX(), getPos().getY(), 0);
+            vel = new Vector3f(vel.getX(), vel.getY(), 0);
+        }
+    }
+
+    @Override
+    public final boolean inMotion() {
+        return (!getVelocity().equals(Vector3f.ZERO) || v_yaw != 0);
+    }
+
+    @Override
+    public void collision(Point3i collision_point) { //todo(tim) address collision
+        // No collision point, set both sensor to false
+        if(collision_point != null){
+            gaz = -1000;
+        }
+    }
+
+    @Override
+    public void updateSensor(ObstacleList obspoint_positions,
+                             PositionList<ItemPosition> sensepoint_positions) {
+        // no sensor model yet
+    }
+
+    public final Vector3f getWindNoise() {
+        return windNoise;
     }
 }

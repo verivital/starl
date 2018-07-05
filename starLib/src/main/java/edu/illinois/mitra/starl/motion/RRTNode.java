@@ -4,7 +4,7 @@ import java.util.Stack;
 
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
-import edu.illinois.mitra.starl.objects.Point3d;
+import edu.illinois.mitra.starl.objects.Point3i;
 import edu.wlu.cs.levy.CG.KDTree;
 import edu.wlu.cs.levy.CG.KeySizeException;
 
@@ -16,7 +16,7 @@ import edu.wlu.cs.levy.CG.KeySizeException;
  */
 
 public class RRTNode {
-	public Point3d position = new Point3d();
+	public Point3i position;
 	public RRTNode parent;
 	public static RRTNode stopNode;
 	public KDTree<RRTNode> kd;
@@ -28,26 +28,23 @@ public class RRTNode {
 	}
 
 	public RRTNode(){
-		position.setX(0);
-		position.setY(0);
+		position = new Point3i();
 		parent = null;
 	}
 	
 	public RRTNode(int x, int y){
-		position.setX(x);
-		position.setY(y);
+		position = new Point3i(x, y);
 		parent = null;
 	}
 
 	public RRTNode(RRTNode copy){
-		position.setX(copy.position.getX());
-		position.setY(copy.position.getY());
+		position = new Point3i(copy.position);
 		parent = copy.parent;
 	}
 
 	/**
 	 * methods to find the route
-	 if find a path, return a midway Point3d stack
+	 if find a path, return a midway Point3i stack
 	 if can not find a path, return null
 	 remember to handle the null stack when writing apps using RRT path planning
 	 the obstacle list will be modified to remove any obstacle that is inside a robot
@@ -106,7 +103,7 @@ public class RRTNode {
 				//System.out.println("Added node was invalid.");
 			}
     		//not find yet, keep exploring
-    		//random a sample Point3d in the valid set of space
+    		//random a sample Point3i in the valid set of space
     		boolean validRandom = false;
     		int xRandom = 0;
     		int yRandom = 0;
@@ -114,8 +111,7 @@ public class RRTNode {
     		while(!validRandom){
 				xRandom = (int) Math.round((Math.random() * ((xUpper - xLower))));
 				yRandom = (int) Math.round((Math.random() * ((yUpper - yLower))));
-				sampledPos.setX(xRandom + xLower);
-				sampledPos.setY(yRandom + yLower);
+				sampledPos.setPos(xRandom + xLower, yRandom + yLower);
 				validRandom = ((sampledPos.getX() >= xLower && sampledPos.getX() <= xUpper) && (sampledPos.getY() >= yLower && sampledPos.getY() <= yUpper));
 				validRandom = validRandom && obsList.validstarts(sampledPos, radius);
 				if(validRandom){
@@ -133,7 +129,7 @@ public class RRTNode {
                 }
 			}
     		RRTNode sampledNode = new RRTNode(sampledPos.getX(), sampledPos.getY());
-    		// with a valid random sampled Point3d, we find it's nearest neighbor in the tree, set it as current Node
+    		// with a valid random sampled Point3i, we find it's nearest neighbor in the tree, set it as current Node
     		try{
     		currentNode = kd.nearest(sampledNode.getValue());
     		}
@@ -180,7 +176,7 @@ public class RRTNode {
 
     /**
      * toggle function deals with constrains by the environment as well as robot systems.
-     * It changes sampledNode to some Point3d alone the line of sampledNode and currentNode so that no obstacles are in the middle
+     * It changes sampledNode to some Point3i alone the line of sampledNode and currentNode so that no obstacles are in the middle
      * In other words, it changes sampledNode to somewhere alone the line where robot can reach
      *
      * TODO: we can add robot system constraints later
@@ -198,9 +194,9 @@ public class RRTNode {
 		// smaller tries might make integer casting loop forever
 		while((!obsList.validPath(toggleNode, currentNode, radius)) && (tries < 20)){
 			//move 1/4 toward current
-			toggleNode.position.setX((int) ((toggleNode.position.getX() + currentNode.position.getX())/(1.5)));
-			toggleNode.position.setY((int) ((toggleNode.position.getY() + currentNode.position.getY())/(1.5)));
-			tries ++;
+			toggleNode.position = new Point3i((int)((toggleNode.position.getX() + currentNode.position.getX())/1.5),
+					(int)((toggleNode.position.getY() + currentNode.position.getY())/1.5));
+			tries++;
 		}
 		//return currentNode if toggle failed
 		// TODO: remove magic number

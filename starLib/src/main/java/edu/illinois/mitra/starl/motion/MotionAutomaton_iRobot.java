@@ -56,7 +56,7 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 
 	// Motion tracking
 	protected ItemPosition destination;
-	private Model_iRobot mypos;
+	private Model_iRobot iRobot;
 	private ItemPosition blocker;
 	private ObstacleList obsList;
 	
@@ -185,10 +185,10 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 //			gvh.gps.getObspointPositions().updateObs();
 			if(running) {
                 // why is getModel being used? Think it should be get position.
-				//mypos = (Model_iRobot)gvh.plat.getModel();
-                mypos = (Model_iRobot)gvh.gps.getMyPosition();
-				int distance = (int)mypos.distanceTo(destination);
-				int angle = mypos.angleTo(destination);
+				//iRobot = (Model_iRobot)gvh.plat.getModel();
+                iRobot = (Model_iRobot)gvh.gps.getMyPosition();
+				int distance = (int) iRobot.distanceTo(destination);
+				int angle = iRobot.angleTo(destination);
 				int absangle = Math.abs(angle);
 				switch(param.COLAVOID_MODE) {
 				case BUMPERCARS:
@@ -208,7 +208,7 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 					break;
 				}
 
-				if((mypos.type == Model_iRobot.Type.EXPLORE_AREA)|| (mypos.type == Model_iRobot.Type.RANDOM_MOVING_OBSTACLE)){
+				if((iRobot.type == Model_iRobot.Type.EXPLORE_AREA)|| (iRobot.type == Model_iRobot.Type.RANDOM_MOVING_OBSTACLE)){
 					stage = null;
 					next = null;
 					colliding = true;
@@ -349,7 +349,7 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 		case TURN:
 			if(colstage != colprev) {
 				gvh.log.d(TAG, "Colliding: sending turn command");
-				turn(param.TURNSPEED_MAX, -1 * mypos.angleTo(blocker));
+				turn(param.TURNSPEED_MAX, -1 * iRobot.angleTo(blocker.getPos()));
 				
 			}
 
@@ -358,7 +358,7 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 				colnext = COLSTAGE.STRAIGHT;
 				
 			} else {
-				gvh.log.d(TAG, "colliding with " + blocker.name + " - " + mypos.isFacing(blocker) + " - " + mypos.distanceTo(blocker));
+				gvh.log.d(TAG, "colliding with " + blocker.name + " - " + iRobot.isFacing(blocker) + " - " + iRobot.distanceTo(blocker));
 			}
 			break;
 		case STRAIGHT:
@@ -397,7 +397,7 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 	}
 	
 	private void use_colback() {
-		switch(mypos.type) {
+		switch(iRobot.type) {
 			case GET_TO_GOAL:
 				goalbot();
 				break;
@@ -611,11 +611,11 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 
 	// Calculates the radius of curvature to meet a target
 	private int curveRadius() {
-		int x0 = mypos.getX();
-		int y0 = mypos.getY();
+		int x0 = iRobot.getX();
+		int y0 = iRobot.getY();
 		int x1 = destination.getX();
 		int y1 = destination.getY();
-		int theta = (int)mypos.angle;
+		int theta = (int) iRobot.angle;
 		double alpha = -180 + Math.toDegrees(Math.atan2((y1 - y0), (x1 - x0)));
 		double rad = -(Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2)) / (2 * Math.sin(Math.toRadians(alpha - theta))));
 		return (int) rad;
@@ -686,23 +686,23 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 	}
 
 	private boolean collision_mem_less(){
-		if(mypos.leftbump || mypos.rightbump){
+		if(iRobot.leftbump || iRobot.rightbump){
 			double ColPoint_x, ColPoint_y;
-			if(mypos.leftbump&&mypos.rightbump){
-				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle))) + mypos.getX();
-				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle))) + mypos.getY();
+			if(iRobot.leftbump&& iRobot.rightbump){
+				ColPoint_x = iRobot.radius()*(Math.cos(Math.toRadians(iRobot.angle))) + iRobot.getX();
+				ColPoint_y = iRobot.radius()*(Math.sin(Math.toRadians(iRobot.angle))) + iRobot.getY();
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);
 			}
-			else if(mypos.leftbump){
-				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle+45))) + mypos.getX();
-				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle+45))) + mypos.getY();
+			else if(iRobot.leftbump){
+				ColPoint_x = iRobot.radius()*(Math.cos(Math.toRadians(iRobot.angle+45))) + iRobot.getX();
+				ColPoint_y = iRobot.radius()*(Math.sin(Math.toRadians(iRobot.angle+45))) + iRobot.getY();
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);
 				
 				
 			}
 			else{
-				ColPoint_x = mypos.radius()*(Math.cos(Math.toRadians(mypos.angle-45))) + mypos.getX();
-				ColPoint_y = mypos.radius()*(Math.sin(Math.toRadians(mypos.angle-45))) + mypos.getY();
+				ColPoint_x = iRobot.radius()*(Math.cos(Math.toRadians(iRobot.angle-45))) + iRobot.getX();
+				ColPoint_y = iRobot.radius()*(Math.sin(Math.toRadians(iRobot.angle-45))) + iRobot.getY();
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);	
 			}
 			
