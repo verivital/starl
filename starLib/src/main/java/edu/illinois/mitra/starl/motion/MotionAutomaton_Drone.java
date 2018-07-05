@@ -34,7 +34,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
     boolean colliding = false;
 
     private enum OPMODE {
-        GO_TO
+        GO_TO, USER_CONTROL
     }
 
     private OPMODE mode = OPMODE.GO_TO;
@@ -142,7 +142,6 @@ public class MotionAutomaton_Drone extends RobotMotion {
                                 Rvs = (kpz * (destination.z - mypos.z) - kdz * mypos.v_z);
                                 //	System.out.println(Ryaw + " , " + Ryawsp + " , " +  Rroll  + " , " +  Rpitch + " , " + Rvs);
 
-                                System.out.println("here");
 
                                 setControlInputRescale(Math.toDegrees(Ryawsp),Math.toDegrees(Rpitch)%360,Math.toDegrees(Rroll)%360,Rvs);
                                 //setControlInput(Ryawsp/param.max_yaw_speed, Rpitch%param.max_pitch_roll, Rroll%param.max_pitch_roll, Rvs/param.max_gaz);
@@ -361,6 +360,19 @@ public class MotionAutomaton_Drone extends RobotMotion {
 	 */
 
     protected void setMaxTilt(float val){}
+
+    @Override
+    public void userControl(){
+        done = false;
+        this.mode = OPMODE.USER_CONTROL;
+        startMotion();
+    }
+
+    @Override
+    public void receivedKeyInput(String key){
+        curKey = key;
+        System.out.println(curKey);
+    }
 
 
 }

@@ -727,4 +727,12 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 		this.linspeed = (double) (param.LINSPEED_MAX - param.LINSPEED_MIN) / Math.abs((param.SLOWFWD_RADIUS - param.GOAL_RADIUS));
 		this.turnspeed = (param.TURNSPEED_MAX - param.TURNSPEED_MIN) / (param.SLOWTURN_ANGLE - param.SMALLTURN_ANGLE);
 	}
+
+	@Override
+	public void userControl(){ }
+
+	@Override
+	public void receivedKeyInput(String key){
+		curKey = key;
+	}
 }

@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -17,6 +18,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Set;
 
+import edu.illinois.mitra.starl.interfaces.AcceptsKeyInput;
 import edu.illinois.mitra.starl.interfaces.AcceptsPointInput;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
 import edu.illinois.mitra.starl.objects.ObstacleList;
@@ -41,6 +43,7 @@ public class DrawPanel extends ZoomablePanel
 	
 	private LinkedList <Drawer> preDrawers = new LinkedList <Drawer>();
 	private LinkedList <AcceptsPointInput> clickListeners = new LinkedList <AcceptsPointInput>();
+	private LinkedList <AcceptsKeyInput> keyListeners = new LinkedList <AcceptsKeyInput>();
 	
 	// wireless interface
 	RoundRectangle2D.Double toggle = new RoundRectangle2D.Double(5,5,20,20,15,15);
@@ -53,7 +56,6 @@ public class DrawPanel extends ZoomablePanel
 	public DrawPanel(Set<String> robotNames, Set<String> blockedWirelessNames, SimSettings settings)
 	{
 		super(settings);
-
 		this.robotNames.addAll(robotNames);
 		Collections.sort(this.robotNames);
 		
@@ -239,6 +241,39 @@ public class DrawPanel extends ZoomablePanel
 			clicked = null;
 		}
 	}
+
+	public void notifyKeyListeners() {
+		for (AcceptsKeyInput k : keyListeners)
+		    if(!keyListeners.isEmpty()) {
+		    k.receivedKeyInput(getKeyType());
+
+            }
+	}
+
+    @Override
+    public void keyPressed(KeyEvent e){
+        if(e.getKeyCode() == KeyEvent.VK_UP){ setKey("forward"); }
+        if(e.getKeyCode() == KeyEvent.VK_DOWN){ setKey("back"); }
+        if(e.getKeyCode() == KeyEvent.VK_LEFT){ setKey("left"); }
+        if(e.getKeyCode() == KeyEvent.VK_RIGHT){ setKey("right"); }
+        if(e.getKeyCode() == KeyEvent.VK_W){ setKey("up"); }
+        if(e.getKeyCode() == KeyEvent.VK_S){ setKey("down"); }
+        if(e.getKeyCode() == KeyEvent.VK_A){ setKey("turnL"); }
+        if(e.getKeyCode() == KeyEvent.VK_D){ setKey("turnR"); }
+
+    }
+    @Override
+    public void keyReleased(KeyEvent e){
+        if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_LEFT ||
+                e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_A
+                || e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_D){
+            setKey("stop");
+        }
+
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e){ }
 	
 	protected void mousePressedAt(Point p, MouseEvent e) 
 	{
@@ -451,4 +486,9 @@ public class DrawPanel extends ZoomablePanel
 	{
 		clickListeners.add(d);
 	}
+
+    public void addKeyListener(AcceptsKeyInput k)
+    {
+        keyListeners.add(k);
+    }
 }

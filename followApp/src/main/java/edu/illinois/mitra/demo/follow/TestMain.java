@@ -31,7 +31,7 @@ public class TestMain {
         //Misc
         settings.TIC_TIME_RATE(1);
 
-        Simulation sim = new Simulation(TestApp.class, settings.build());
+        Simulation sim = new Simulation(UserChooseApp.class, settings.build());
         sim.start();
     }
 

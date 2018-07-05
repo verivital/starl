@@ -7,12 +7,14 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 import edu.illinois.mitra.starl.interfaces.LogicThread;
+import edu.illinois.mitra.starl.motion.RobotMotion;
 import edu.illinois.mitra.starlSim.main.SimSettings;
 
 
 @SuppressWarnings("serial")
 public class DrawFrame extends JFrame {
     private DrawPanel dp = null;
+
 
     public DrawFrame(Set<String> robotNames, Set<String> blockedWireless, SimSettings settings) {
         try {
@@ -43,6 +45,7 @@ public class DrawFrame extends JFrame {
     public void addPointInputAccepter(LogicThread logic) {
         dp.addClickListener(logic);
     }
+    public void addKeyInputAccepter(RobotMotion rob) { dp.addKeyListener(rob); }
 
     public DrawPanel getPanel() {
         return dp;

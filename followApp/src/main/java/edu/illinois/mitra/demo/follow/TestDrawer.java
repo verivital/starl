@@ -19,7 +19,7 @@ public class TestDrawer extends Drawer {
 
     @Override
     public void draw(LogicThread lt, Graphics2D g) {
-        TestApp app = (TestApp) lt;
+        UserChooseApp app = (UserChooseApp) lt;
 
         g.setColor(Color.RED);
 

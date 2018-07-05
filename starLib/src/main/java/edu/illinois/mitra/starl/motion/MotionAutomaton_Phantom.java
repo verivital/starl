@@ -353,4 +353,12 @@ public class MotionAutomaton_Phantom extends RobotMotion {
         }
     }
 
+    @Override
+    public void userControl(){ }
+
+    @Override
+    public void receivedKeyInput(String key){
+        curKey = key;
+    }
+
 }
