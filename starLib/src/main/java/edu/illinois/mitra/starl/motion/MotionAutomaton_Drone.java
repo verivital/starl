@@ -24,7 +24,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
 
 
     protected enum STAGE {
-        INIT, MOVE, HOVER, TAKEOFF, LAND, GOAL, STOP
+        INIT, MOVE, HOVER, TAKEOFF, LAND, GOAL, STOP, USER_CONTROL
     }
 
     private STAGE next = null;
@@ -100,20 +100,21 @@ public class MotionAutomaton_Drone extends RobotMotion {
                 if(!colliding && stage != null) {
                     switch(stage) {
                         case INIT:
-                            if(mode == OPMODE.GO_TO) {
-                                if(drone.getZ() < safeHeight){
-                                    // just a safe distance from ground
-                                    takeOff();
-                                    next = STAGE.TAKEOFF;
+
+                            if(drone.getZ() < safeHeight){
+                                // just a safe distance from ground
+                                takeOff();
+                                next = STAGE.TAKEOFF;
+                            }
+                            else{
+                                if(distance <= param.GOAL_RADIUS) {
+                                    System.out.println(">>>Distance: " + distance + " - GOAL_RADIUS " + param.GOAL_RADIUS);
+                                    next = STAGE.GOAL;
                                 }
-                                else{
-                                    if(distance <= param.GOAL_RADIUS) {
-                                        System.out.println(">>>Distance: " + distance + " - GOAL_RADIUS " + param.GOAL_RADIUS);
-                                        next = STAGE.GOAL;
-                                    }
-                                    else{
-                                        next = STAGE.MOVE;
-                                    }
+                                else if(mode == OPMODE.GO_TO) {
+                                    next = STAGE.MOVE;
+                                } else if(mode == OPMODE.USER_CONTROL){
+                                    next = STAGE.USER_CONTROL;
                                 }
                             }
                             break;
@@ -202,6 +203,11 @@ public class MotionAutomaton_Drone extends RobotMotion {
                             System.out.println("STOP");
                             motion_stop();
                             //do nothing
+
+                        case USER_CONTROL:
+                            if(curKey.equals("forward") && drone.pitch <= .9){
+                                drone.pitch = drone.pitch + .01;
+                            }
                     }
                     if(next != null) {
                         prev = stage;
