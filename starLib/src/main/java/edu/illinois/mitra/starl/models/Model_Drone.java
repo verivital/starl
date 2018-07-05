@@ -10,13 +10,14 @@ import edu.illinois.mitra.starl.objects.PositionList;
 import edu.illinois.mitra.starl.objects.Vector3f;
 import edu.illinois.mitra.starl.objects.Vector3i;
 
-
+/**
+ * This class represents all airborne models. It uses standard flight dynamics parameters
+ * yaw, pitch, roll, and gaz, and provides methods predict(), updatePos(), inMotion(), collision(),
+ * and updateSensor() used in other classes.
+ *
+ * Subclasses must override the abstract methods, making sure each returns a constant value.
+ */
 public abstract class Model_Drone extends Model {
-
-    // platform specific control parameters: see page 78 of http://www.msh-tools.com/ardrone/ARDrone_Developer_Guide.pdf
-    private double windt;
-    private Vector3f wind = new Vector3f(); // mm/s
-    private Vector3f windNoise = new Vector3f();
 
     // Subclass-specific constants that must be set
     public abstract double max_gaz(); // mm/s 200 to 2000
@@ -24,6 +25,11 @@ public abstract class Model_Drone extends Model {
     public abstract double max_yaw_speed(); // degrees/s
     public abstract double mass(); // kg
     public abstract double height();
+
+    // platform specific control parameters: see page 78 of http://www.msh-tools.com/ardrone/ARDrone_Developer_Guide.pdf
+    private double windt;
+    private Vector3f wind = new Vector3f(); // mm/s
+    private Vector3f windNoise = new Vector3f();
 
     // Drone control directions
     public double yaw;

@@ -76,12 +76,12 @@ public class MotionAutomaton_Drone extends RobotMotion {
 
     @Override
     public void run() {
-        super.run();
         gvh.threadCreated(this);
         // some control parameters
-        double kpx,kpy,kpz, kdx,kdy,kdz;
-        kpx = kpy = kpz = 0.00033;
-        kdx = kdy = kdz = 0.0006;
+        double kp = 0.00033;
+        double kd = 0.0006;
+        double kpz = 0.00033;
+        double kdz = 0.0006;
         while(true) {
             //			gvh.gps.getObspointPositions().updateObs();
             if(running) {
@@ -129,17 +129,16 @@ public class MotionAutomaton_Drone extends RobotMotion {
                                 next = STAGE.GOAL;
                             }
                             else{
-                                double Ax_d, Ay_d = 0.0;
                                 double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
-                                //		System.out.println(destination.getX - drone.getX + " , " + drone.v_x);
-                                Ax_d = (kpx * (destination.getX() - drone.getX()) - kdx * drone.getV_x()) ;
-                                Ay_d = (kpy * (destination.getY() - drone.getY()) - kdy * drone.getV_y()) ;
+                                //		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
+                                Vector3f A_d = destination.getPos().subtract(drone.getPos()).toVector3f().scale(kp)
+                                        .subtract(drone.getVelocity().scale(kd));
                                 Ryaw = Math.atan2(destination.getY() - drone.getY(), destination.getX() - drone.getX());
                                 //Ryaw = Math.atan2((destination.getY - drone.getX), (destination.getX - drone.getY));
                                 Ryawsp = kpz * ((Ryaw - Math.toRadians(drone.yaw)));
-                                Rroll = Math.asin((Ay_d * Math.cos(Math.toRadians(drone.yaw)) - Ax_d * Math.sin(Math.toRadians(drone.yaw))) %1);
-                                Rpitch = Math.asin( (-Ay_d * Math.sin(Math.toRadians(drone.yaw)) - Ax_d * Math.cos(Math.toRadians(drone.yaw))) / (Math.cos(Rroll)) %1);
-                                Rvs = (kpz * (destination.getZ() - drone.getZ()) - kdz * drone.getV_z());
+                                Rroll = Math.asin((A_d.getY() * Math.cos(Math.toRadians(drone.yaw)) - A_d.getX() * Math.sin(Math.toRadians(drone.yaw))) %1);
+                                Rpitch = Math.asin( (-A_d.getY() * Math.sin(Math.toRadians(drone.yaw)) - A_d.getX() * Math.cos(Math.toRadians(drone.yaw))) / (Math.cos(Rroll)) %1);
+                                Rvs = (kpz * (destination.getZ() - drone.getZ()) - kdz * drone.getVelocity().getZ());
                                 //	System.out.println(Ryaw + " , " + Ryawsp + " , " +  Rroll  + " , " +  Rpitch + " , " + Rvs);
 
 
