@@ -1,5 +1,7 @@
 package edu.illinois.mitra.starl.objects;
 
+import android.support.annotation.NonNull;
+
 import java.util.HashMap;
 
 import edu.illinois.mitra.starl.interfaces.Traceable;
@@ -9,9 +11,9 @@ import edu.illinois.mitra.starl.interfaces.Traceable;
  */
 public final class Vector3f implements Traceable {
 
-    private double x;
-    private double y;
-    private double z;
+    private final double x;
+    private final double y;
+    private final double z;
 
     /**
      * Construct a Vector3f with default value (0, 0, 0).
@@ -40,7 +42,7 @@ public final class Vector3f implements Traceable {
      * Construct a Vector3f with the values of other.
      * @param other Another Vector3f instance.
      */
-    public Vector3f(Vector3f other) {
+    public Vector3f(@NonNull Vector3f other) {
         this(other.getX(), other.getY(), other.getZ());
     }
 
@@ -48,7 +50,7 @@ public final class Vector3f implements Traceable {
      * Add vec to this.
      * @return a new Vector3f
      */
-    public Vector3f add(Vector3f vec) {
+    public Vector3f add(@NonNull Vector3f vec) {
         return new Vector3f(x + vec.x, y + vec.y, z + vec.z);
     }
 
@@ -56,7 +58,7 @@ public final class Vector3f implements Traceable {
      * Subtract vec from this.
      * @return a new Vector3f
      */
-    public Vector3f subtract(Vector3f vec) {
+    public Vector3f subtract(@NonNull Vector3f vec) {
         return new Vector3f(x - vec.x, y - vec.y, z - vec.z);
     }
 
@@ -100,9 +102,13 @@ public final class Vector3f implements Traceable {
         return false;
     }
 
+    public boolean isZero() {
+        return magnitudeSq() < 1E-12;
+    }
+
     @Override
     public String toString() {
-        return "Vector3f: " + getX() + ", " + getY() + ", " + getZ();
+        return getX() + ", " + getY() + ", " + getZ();
     }
 
     @Override
@@ -135,6 +141,4 @@ public final class Vector3f implements Traceable {
     public double getZ() {
         return z;
     }
-
-    public static Vector3f ZERO = new Vector3f();
 }

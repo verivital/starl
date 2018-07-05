@@ -38,7 +38,7 @@ public abstract class Model_Drone extends Model {
     public double gaz;
 
     // Velocity, translational and rotational
-    private Vector3f vel;
+    private Vector3f vel = new Vector3f();
     private double v_yaw;
 
     private Point3i pos_p = new Point3i();
@@ -257,7 +257,7 @@ public abstract class Model_Drone extends Model {
 
     @Override
     public final boolean inMotion() {
-        return (!getVelocity().equals(Vector3f.ZERO) || v_yaw != 0);
+        return !getVelocity().isZero() || Math.abs(v_yaw) < 1E-6;
     }
 
     @Override

@@ -62,7 +62,7 @@ public class RaceApp extends LogicThread {
 			//	gvh.log.i("POSITION", log_p.name + " " + log_p.getX  + " " +log_p.getY  + " " +log_p.getZ  + " " +log_p.angle);
 
 			if(gvh.plat.model instanceof Model_Drone){
-				gvh.log.i("WIND", ((Model_Drone) gvh.plat.model).getWindNoise());
+				gvh.log.i("WIND", ((Model_Drone) gvh.plat.model).getWindNoise().toString());
 			}
 			switch(stage) {
 				case PICK:

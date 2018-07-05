@@ -1,5 +1,7 @@
 package edu.illinois.mitra.starl.objects;
 
+import android.support.annotation.NonNull;
+
 /**
  * This class represents an immutable point in XYZ plane.
  * Robots or any other points with extra properties should be sub classed from this class
@@ -9,7 +11,9 @@ package edu.illinois.mitra.starl.objects;
 
 public class Point3i {
 
-	private int x, y, z;
+	private final int x;
+	private final int y;
+	private final int z;
 
 	public final int getX(){
 		return x;
@@ -48,7 +52,7 @@ public class Point3i {
 	 * Construct a Point3i with the values of other.
 	 * @param other Another Point3i instance.
 	 */
-	public Point3i(Point3i other) {
+	public Point3i(@NonNull Point3i other) {
 		this(other.getX(), other.getY(), other.getZ());
 	}
 
@@ -56,7 +60,7 @@ public class Point3i {
 	 * Add vec to this.
 	 * @return a reference to this
 	 */
-	public final Point3i add(Vector3i vec) {
+	public final Point3i add(@NonNull Vector3i vec) {
 		return new Point3i(x + vec.getX(), y + vec.getY(), z + vec.getZ());
 	}
 
@@ -64,14 +68,14 @@ public class Point3i {
 	 * Subtract vec from this.
 	 * @return a reference to this
 	 */
-	public final Point3i subtract(Vector3i vec) {
+	public final Point3i subtract(@NonNull Vector3i vec) {
 		return new Point3i(x - vec.getX(), y - vec.getY(), z - vec.getZ());
 	}
 
 	/**
 	 * @return a new vector from point to this.
 	 */
-	public final Vector3i subtract(Point3i point) {
+	public final Vector3i subtract(@NonNull Point3i point) {
 		return new Vector3i(x - point.x, y - point.y, z - point.z);
 	}
 	
@@ -79,11 +83,11 @@ public class Point3i {
 	 * @param other The Point3i to measure against
 	 * @return Euclidean distance to Point3i other
 	 */
-	public double distanceTo(Point3i other) {
+	public double distanceTo(@NonNull Point3i other) {
 		return subtract(other).magnitude();
 	}
 
-    public double distanceTo2D(Point3i other) {
+    public double distanceTo2D(@NonNull Point3i other) {
         return subtract(other).magnitude2D();
     }
 	
@@ -94,6 +98,10 @@ public class Point3i {
 			return getX() == point.getX() && getY() == point.getY() && getZ() == point.getZ();
 		}
 		return false;
+	}
+
+	public boolean isZero() {
+		return x == 0 && y == 0 && z == 0;
 	}
 
 	@Override
