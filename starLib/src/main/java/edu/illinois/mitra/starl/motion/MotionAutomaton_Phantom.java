@@ -24,7 +24,8 @@ public class MotionAutomaton_Phantom extends RobotMotion {
     private boolean abort = false;
 
     protected GlobalVarHolder gvh;
-    protected DjiController bti;
+    //protected DjiController bti;
+    protected DroneBTI bti;
 
     // Motion tracking
     protected ItemPosition destination;
@@ -262,7 +263,7 @@ public class MotionAutomaton_Phantom extends RobotMotion {
 
     protected void rotateDrone(){
         bti.setVelocityMode(true);
-        bti.setInputs((float)rescale(calculateYaw(), 5), 0, 0, 0);
+        bti.setInputs((float)rescale(calculateYaw(), 5), 0.0, 0.0, 0.0);
     }
 
     private void startMotion() {
@@ -280,7 +281,7 @@ public class MotionAutomaton_Phantom extends RobotMotion {
     protected void setControlInput(double yaw_v, double pitch, double roll, double gaz){
         //Bluetooth command to control the drone
         bti.setVelocityMode(false);
-        bti.setInputs((float)yaw_v, (float)pitch, (float)roll, (float)gaz);
+        bti.setInputs(yaw_v, pitch, roll, gaz);
         gvh.log.i(TAG, "control input as, yaw, pitch, roll, thrust " + yaw_v + ", " + pitch + ", " +roll + ", " +gaz);
     }
 

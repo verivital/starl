@@ -22,7 +22,8 @@ public class MotionAutomatonMiniDrone extends RobotMotion {
     private boolean landed = true;
 
     protected GlobalVarHolder gvh;
-    protected MiniDroneBTI bti;
+    //protected MiniDroneBTI bti;
+    protected DroneBTI bti;
 
     // Motion tracking
     protected ItemPosition destination;
@@ -238,12 +239,7 @@ public class MotionAutomatonMiniDrone extends RobotMotion {
 
     protected void setControlInput(double yaw_v, double pitch, double roll, double gaz){
         //Bluetooth command to control the drone
-        bti.setRoll((byte) roll);
-        bti.setPitch((byte) pitch);
-        bti.setYaw((byte) yaw_v);
-        // currently not moving to 3-D waypoints, so not sending a gaz command
-        // if in the future you want to send one, uncomment the following line
-        bti.setThrottle((byte) gaz);
+        bti.setControlInput(yaw_v, pitch, roll, gaz);
         gvh.log.i(TAG, "control input as, yaw, pitch, roll, thrust " + yaw_v + ", " + pitch + ", " +roll + ", " +gaz);
     }
 

@@ -23,7 +23,7 @@ public class MotionAutomaton_Mavic extends RobotMotion {
     private boolean landed = true;
 
     protected GlobalVarHolder gvh;
-    protected DjiController bti;
+    protected DroneBTI bti;
 
     // Motion tracking
     protected ItemPosition destination;
@@ -387,7 +387,7 @@ public class MotionAutomaton_Mavic extends RobotMotion {
 
     protected void setControlInput(double yaw_v, double pitch, double roll, double gaz){
         //Bluetooth command to control the drone
-        bti.setInputs((float) yaw_v, (float) pitch, (float) roll, (float) gaz);
+        bti.setControlInput(yaw_v, pitch, roll, gaz);
         gvh.log.i(TAG, "control input as, yaw, pitch, roll, thrust " + yaw_v + ", " + pitch + ", " +roll + ", " +gaz);
     }
 

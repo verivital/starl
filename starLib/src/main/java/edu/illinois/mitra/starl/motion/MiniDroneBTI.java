@@ -133,6 +133,13 @@ public class MiniDroneBTI implements DroneBTI, ARDiscoveryServicesDevicesListUpd
         }
     }
 
+    public void setControlInput(float yaw, float pitch, float roll, float gaz) {
+        setYaw(yaw);
+        setPitch(pitch);
+        setRoll(roll);
+        setThrottle(gaz);
+    }
+
     public void sendLanding() {
         if (deviceController != null)
         {

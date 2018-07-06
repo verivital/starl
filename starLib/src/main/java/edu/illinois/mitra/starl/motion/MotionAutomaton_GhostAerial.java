@@ -25,7 +25,8 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
     private boolean landed = true;
 
     protected GlobalVarHolder gvh;
-    protected GhostAerialBTI bti;
+    //protected GhostAerialBTI bti;
+    protected DroneBTI bti;
 
     // Motion tracking
     protected ItemPosition destination;
@@ -322,10 +323,7 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
     }
 
     protected void setControlInput(double yaw_v, double pitch, double roll, double gaz){
-        bti.setYaw(yaw_v);
-        bti.setPitch(pitch);
-        bti.setRoll(roll);
-        bti.setThrottle(gaz);
+        bti.setControlInput(yaw_v, pitch, roll, gaz);
         gvh.log.i(TAG, "control input as, yaw, pitch, roll, thrust " + yaw_v + ", " + pitch + ", " +roll + ", " +gaz);
     }
 

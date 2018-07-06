@@ -1,5 +1,7 @@
 package edu.illinois.mitra.starl.motion;
 
+import com.o3dr.android.client.Drone;
+
 import java.util.*;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
@@ -24,7 +26,8 @@ public class MotionAutomaton_quadcopter extends RobotMotion {
 	final int safeHeight = 500;
 
 	protected GlobalVarHolder gvh;
-	protected BluetoothInterface bti;
+	//protected BluetoothInterface bti;
+	protected DroneBTI bti;
 
 	// Motion tracking
 	protected ItemPosition destination;

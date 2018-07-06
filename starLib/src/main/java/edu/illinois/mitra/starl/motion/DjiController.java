@@ -93,6 +93,11 @@ public class DjiController implements DroneBTI {
         }
     }
 
+    // Alias for setInputs to conform to DroneBTI interface
+    public void setControlInput(float yaw, float pitch, float roll, float gaz) {
+        setInputs(yaw, pitch, roll, gaz);
+    }
+
     public void sendLanding() {
         if (mFlightController != null && mFlightController.getState().isFlying())
         {
@@ -137,23 +142,6 @@ public class DjiController implements DroneBTI {
 
     public void setMaxTilt(float maxTilt) {
         this.maxTilt = maxTilt;
-    }
-
-    // the following wrap other functionality to satisfy the DroneBTI interface
-    public void setPitch(double pitch) {
-        // TODO
-    }
-
-    public void setRoll(double roll) {
-        // TODO
-    }
-
-    public void setYaw(double yaw) {
-        // TODO
-    }
-
-    public void setThrottle(double throttle) {
-        // TODO
     }
 
     public void disconnect() {

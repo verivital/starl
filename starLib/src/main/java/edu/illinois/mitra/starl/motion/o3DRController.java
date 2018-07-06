@@ -420,6 +420,13 @@ public class o3DRController extends AppCompatActivity implements DroneBTI, Tower
         });
     }
 
+    public void setControlInput(float yaw, float pitch, float roll, float gaz) {
+        setYaw(yaw);
+        setPitch(pitch);
+        setRoll(roll);
+        setThrottle(gaz);
+    }
+
     public void connectDrone(){
             int selectedConnectionType = ConnectionType.TYPE_UDP;
 
