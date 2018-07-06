@@ -198,7 +198,7 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
                                 double yawCommand = calculateYaw();
                                 setControlInput(yawCommand, 0, 0, 0);
                             }
-                            else{
+                            else {
                                 double rollCommand = PID_x.getCommand(mypos.getX(), destination.getX());
                                 double pitchCommand = PID_y.getCommand(mypos.getY(), destination.getY());
                                 double yawCommand = calculateYaw();

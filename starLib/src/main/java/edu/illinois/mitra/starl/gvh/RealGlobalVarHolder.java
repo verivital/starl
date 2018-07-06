@@ -67,6 +67,7 @@ public class RealGlobalVarHolder extends GlobalVarHolder {
 		else if (initpos instanceof Model_GhostAerial){
 			plat.moat = new MotionAutomaton_GhostAerial(this, new GhostAerialBTI(this, context, robotMac));
 		}
+		
 /*
 //TD_NATHAN: resolve - resolved above
         if(type == Common.IROBOT) {

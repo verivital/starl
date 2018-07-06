@@ -383,7 +383,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
     }
 
     /**
-     * Receives string representing which key was pressed. "forward" for up arrow, "back" for down arrow,
+     * Receves string representing which key was pressed. "forward" for up arrow, "back" for down arrow,
      * "left" and "right" for arrows, "up" for W, "down" for S, "turnL" for A, "turnR" for D. Once a key is released,
      * String key returns "stop".
      * @param key -- String representing which key was pressed. Changed to "stop" when released.
