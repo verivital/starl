@@ -257,7 +257,7 @@ public abstract class Model_Drone extends Model {
 
     @Override
     public final boolean inMotion() {
-        return (!getVelocity().equals(Vector3f.ZERO) || v_yaw != 0);
+        return !getVelocity().isZero() || Math.abs(v_yaw) < 1E-6;
     }
 
     @Override

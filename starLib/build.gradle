@@ -51,7 +51,4 @@ dependencies {
     implementation 'com.parrot:libARDiscovery:3.12.6'
     implementation 'com.parrot:libARNetwork:3.12.2'
     implementation 'com.parrot:libARSAL:3.12.6'
-
-
-
 }

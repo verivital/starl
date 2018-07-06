@@ -1,17 +1,19 @@
 package edu.illinois.mitra.starl.objects;
 
+import android.support.annotation.NonNull;
+
 import java.util.HashMap;
 
 import edu.illinois.mitra.starl.interfaces.Traceable;
 
 /**
- * Represents a 3-dimensional immutablevector with int elements.
+ * Represents a 3-dimensional immutable vector with int elements.
  */
 public final class Vector3i implements Traceable {
 
-    private int x;
-    private int y;
-    private int z;
+    private final int x;
+    private final int y;
+    private final int z;
 
     /**
      * Construct a Vector3i with default value (0, 0, 0).
@@ -40,7 +42,7 @@ public final class Vector3i implements Traceable {
      * Construct a Vector3i with the values of other.
      * @param other Another Vector3i instance.
      */
-    public Vector3i(Vector3i other) {
+    public Vector3i(@NonNull Vector3i other) {
         this(other.getX(), other.getY(), other.getZ());
     }
 
@@ -48,7 +50,7 @@ public final class Vector3i implements Traceable {
      * Add vec to this.
      * @return a new Vector3i
      */
-    public Vector3i add(Vector3i vec) {
+    public Vector3i add(@NonNull Vector3i vec) {
         return new Vector3i(x + vec.x, y + vec.y, z + vec.z);
     }
 
@@ -56,7 +58,7 @@ public final class Vector3i implements Traceable {
      * Subtract vec from this.
      * @return a new Vector3i
      */
-    public Vector3i subtract(Vector3i vec) {
+    public Vector3i subtract(@NonNull Vector3i vec) {
         return new Vector3i(x - vec.x, y - vec.y, z - vec.z);
     }
 
@@ -100,9 +102,13 @@ public final class Vector3i implements Traceable {
         return false;
     }
 
+    public boolean isZero() {
+        return x == 0 && y == 0 && z == 0;
+    }
+
     @Override
     public String toString() {
-        return "Vector3i: " + getX() + ", " + getY() + ", " + getZ();
+        return getX() + ", " + getY() + ", " + getZ();
     }
 
     @Override
@@ -135,7 +141,4 @@ public final class Vector3i implements Traceable {
     public int getZ() {
         return z;
     }
-
-    public static Vector3i ZERO = new Vector3i();
-
 }
