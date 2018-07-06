@@ -1,6 +1,8 @@
 package edu.illinois.mitra.starl.models;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
+import edu.illinois.mitra.starl.motion.DjiController;
+import edu.illinois.mitra.starl.motion.DroneBTI;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Point3i;
@@ -56,5 +58,8 @@ public class Model_Phantom extends Model_Drone {
 	@Override
 	public double max_yaw_speed() { return 200; }
 
-
+	@Override
+	public Class<? extends DroneBTI> getBluetoothInterface() {
+		return DjiController.class;
+	}
 }

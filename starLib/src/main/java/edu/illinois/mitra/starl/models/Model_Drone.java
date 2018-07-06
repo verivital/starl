@@ -3,6 +3,8 @@ package edu.illinois.mitra.starl.models;
 import org.bouncycastle.pqc.math.linearalgebra.Vector;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
+import edu.illinois.mitra.starl.motion.BTI;
+import edu.illinois.mitra.starl.motion.DroneBTI;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Point3i;
@@ -25,6 +27,8 @@ public abstract class Model_Drone extends Model {
     public abstract double max_yaw_speed(); // degrees/s
     public abstract double mass(); // kg
     public abstract double height();
+
+    public abstract Class<? extends DroneBTI> getBluetoothInterface();
 
     // platform specific control parameters: see page 78 of http://www.msh-tools.com/ardrone/ARDrone_Developer_Guide.pdf
     private double windt;

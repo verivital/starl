@@ -27,7 +27,7 @@ public class MotionAutomaton_Mavic extends RobotMotion {
 
     // Motion tracking
     protected ItemPosition destination;
-    private Model_Mavic mypos; // //todo complete model for mavic
+    private Model_Mavic mypos; // TODO complete model for mavic
 
     //PID controller parameters
     double saturationLimit = 50;

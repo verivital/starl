@@ -8,15 +8,20 @@ import android.os.Handler;
 import edu.illinois.mitra.starl.comms.SmartUdpComThread;
 import edu.illinois.mitra.starl.comms.UdpGpsReceiver;
 import edu.illinois.mitra.starl.models.Model;
+import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.models.Model_GhostAerial;
+import edu.illinois.mitra.starl.models.Model_Ground;
 import edu.illinois.mitra.starl.models.Model_Mavic;
 import edu.illinois.mitra.starl.models.Model_Phantom;
 import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starl.models.Model_quadcopter;
+import edu.illinois.mitra.starl.motion.BTI;
 import edu.illinois.mitra.starl.motion.BluetoothInterface;
 import edu.illinois.mitra.starl.motion.DjiController;
 import edu.illinois.mitra.starl.motion.GhostAerialBTI;
+import edu.illinois.mitra.starl.motion.MotionAutomaton_Drone;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_GhostAerial;
+import edu.illinois.mitra.starl.motion.MotionAutomaton_Ground;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_Mavic;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_Phantom;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_iRobot;
@@ -48,10 +53,25 @@ public class RealGlobalVarHolder extends GlobalVarHolder {
 		super.plat = new RealAndroidPlatform(handler);
 		super.comms = new Comms(this, new SmartUdpComThread(this));
 		//super.gps = new Gps(this, new UdpGpsReceiver(this,"192.168.1.100",4000,new PositionList(),new PositionList(), new ObstacleList(), new Vector<ObstacleList>(3,2) ));
-		super.gps = new Gps(this, new UdpGpsReceiver(this,"10.255.24.100",4000,new PositionList(),new PositionList(), new ObstacleList(), new Vector<ObstacleList>(3,2) ));
+		super.gps = new Gps(this, new UdpGpsReceiver(this,"10.255.24.100",4000,new PositionList(),new PositionList<>(), new ObstacleList(), new Vector<ObstacleList>(3,2) ));
 		plat.model = initpos;
 		plat.reachAvoid = new ReachAvoid(this);
 
+		BTI bti; // bluetooth interface
+		try {
+			bti = plat.model.getBluetoothInterface().newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new IllegalArgumentException("Could not access bluetooth interface. " + e);
+		}
+
+		if (initpos instanceof Model_Drone) {
+			plat.moat = new MotionAutomaton_Drone(this, bti);
+		} else if (initpos instanceof Model_Ground) {
+			plat.moat = new MotionAutomaton_Ground(this, bti);
+		} else {
+			throw new IllegalArgumentException("No known MotionAutomaton for type " + plat.model.getTypeName());
+		}
+		/*
 		if(initpos instanceof Model_iRobot) {
 			plat.moat = new MotionAutomaton_iRobot(this, new BluetoothInterface(this, robotMac.trim()));
 		}
@@ -67,6 +87,7 @@ public class RealGlobalVarHolder extends GlobalVarHolder {
 		else if (initpos instanceof Model_GhostAerial){
 			plat.moat = new MotionAutomaton_GhostAerial(this, new GhostAerialBTI(this, context, robotMac));
 		}
+		*/
 /*
 //TD_NATHAN: resolve - resolved above
         if(type == Common.IROBOT) {

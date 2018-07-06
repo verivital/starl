@@ -19,7 +19,7 @@ import edu.illinois.mitra.starl.objects.HandlerMessage;
  * Created by wangcs2 on 6/1/2017.
  */
 
-public class GhostAerialBTI implements DeviceControllerListener {
+public class GhostAerialBTI implements DroneBTI, DeviceControllerListener {
 
 
     private static String TAG = "GADroneBTI";
@@ -146,6 +146,8 @@ public class GhostAerialBTI implements DeviceControllerListener {
     public void setMaxTilt(float maxTilt) {
         deviceController.sendMaxTilt(maxTilt);
     }
+
+    public void disconnect() {}
 
 
 /*

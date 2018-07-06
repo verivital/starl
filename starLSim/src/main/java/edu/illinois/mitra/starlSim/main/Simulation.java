@@ -28,6 +28,7 @@ import edu.illinois.mitra.starl.harness.SimulationEngine;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
 import edu.illinois.mitra.starl.models.Model_3DR;
 import edu.illinois.mitra.starl.models.Model_GhostAerial;
+import edu.illinois.mitra.starl.models.Model_Ground;
 import edu.illinois.mitra.starl.models.Model_Mavic;
 import edu.illinois.mitra.starl.models.Model_Phantom;
 import edu.illinois.mitra.starl.models.Model_iRobot;
@@ -190,11 +191,11 @@ public class Simulation {
 				}
 			}
 			if (i < settings.N_DBOTS) {
-				initialPosition.type = Model_iRobot.Type.EXPLORE_AREA;
+				initialPosition.type = Model_Ground.Type.EXPLORE_AREA;
 			} else if ((i >= settings.N_DBOTS) && (i < (settings.N_DBOTS + settings.N_RBOTS))) {
-				initialPosition.type = Model_iRobot.Type.RANDOM_MOVING_OBSTACLE;
+				initialPosition.type = Model_Ground.Type.RANDOM_MOVING_OBSTACLE;
 			} else {
-				initialPosition.type = Model_iRobot.Type.GET_TO_GOAL;
+				initialPosition.type = Model_Ground.Type.GET_TO_GOAL;
 				//default robot type is get to goal
 			}
 

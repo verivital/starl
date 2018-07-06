@@ -1,7 +1,10 @@
 package edu.illinois.mitra.starl.motion;
 
+import android.content.Context;
+
 import java.util.*;
 
+import edu.illinois.mitra.starl.BuildConfig;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener.Event;
 import edu.illinois.mitra.starl.models.Model_Drone;
@@ -13,25 +16,24 @@ import edu.illinois.mitra.starl.objects.*;
 public class MotionAutomaton_Drone extends RobotMotion {
     protected static final String TAG = "MotionAutomaton";
     protected static final String ERR = "Critical Error";
-    final int safeHeight = 500;
+    private static final int safeHeight = 500;
 
     protected GlobalVarHolder gvh;
-    protected BluetoothInterface bti;
+    private DroneBTI bti;
 
     // Motion tracking
     protected ItemPosition destination;
     private Model_Drone drone;
 
-
     protected enum STAGE {
-        INIT, MOVE, HOVER, TAKEOFF, LAND, GOAL, STOP, USER_CONTROL
+        INIT, MOVE, ROTATO, HOVER, TAKEOFF, LAND, GOAL, STOP, USER_CONTROL
     }
 
     private STAGE next = null;
     protected STAGE stage = STAGE.INIT;
     private STAGE prev = null;
     protected boolean running = false;
-    boolean colliding = false;
+    private boolean colliding = false;
 
     private enum OPMODE {
         GO_TO, USER_CONTROL
@@ -47,11 +49,10 @@ public class MotionAutomaton_Drone extends RobotMotion {
 
     //	private volatile MotionParameters param = settings.build();
 
-    public MotionAutomaton_Drone(GlobalVarHolder gvh, BluetoothInterface bti) {
+    public MotionAutomaton_Drone(GlobalVarHolder gvh, BTI bti) {
         super(gvh.id.getName());
         this.gvh = gvh;
-        this.bti = bti;
-
+        this.bti = (DroneBTI)bti;
     }
 
     public void goTo(ItemPosition dest, ObstacleList obsList) {
