@@ -207,6 +207,8 @@ public class MotionAutomaton_Drone extends RobotMotion {
                             if(curKey.equals("forward") && drone.pitch <= .9){
                                 drone.pitch = drone.pitch + .01;
                             }
+                            System.out.println(drone.yaw);
+                            setControlInput(drone.yaw,drone.pitch,drone.roll,drone.gaz);
                     }
                     if(next != null) {
                         prev = stage;
@@ -367,8 +369,11 @@ public class MotionAutomaton_Drone extends RobotMotion {
     protected void setMaxTilt(float val){}
 
     @Override
-    public void userControl(){
+    public void userControl(ItemPosition dest, ObstacleList obs){
+
         done = false;
+        running = true;
+        this.destination = new ItemPosition(dest);
         this.mode = OPMODE.USER_CONTROL;
         startMotion();
     }
@@ -376,7 +381,6 @@ public class MotionAutomaton_Drone extends RobotMotion {
     @Override
     public void receivedKeyInput(String key){
         curKey = key;
-        System.out.println(curKey);
     }
 
 

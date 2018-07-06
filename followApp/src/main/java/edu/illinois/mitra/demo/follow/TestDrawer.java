@@ -19,7 +19,7 @@ public class TestDrawer extends Drawer {
 
     @Override
     public void draw(LogicThread lt, Graphics2D g) {
-        UserChooseApp app = (UserChooseApp) lt;
+        TestApp app = (TestApp) lt;
 
         g.setColor(Color.RED);
 
@@ -60,15 +60,15 @@ public class TestDrawer extends Drawer {
 			for (int j = 0; j < currobs.obstacle.size() - 1; j++) {
 				curpoint = currobs.obstacle.get(j);
 				nextpoint = currobs.obstacle.get(j + 1);
-				g.drawLine(curpoint.x, curpoint.y, nextpoint.x, nextpoint.y);
+				g.drawLine(curpoint.getX(), curpoint.getY(), nextpoint.getX(), nextpoint.getY());
 
-				xs[j] = curpoint.x;
-				ys[j] = curpoint.y;
+				xs[j] = curpoint.getX();
+				ys[j] = curpoint.getY();
 			}
-			xs[currobs.obstacle.size() - 1] = nextpoint.x;
-			ys[currobs.obstacle.size() - 1] = nextpoint.y;
+			xs[currobs.obstacle.size() - 1] = nextpoint.getX();
+			ys[currobs.obstacle.size() - 1] = nextpoint.getY();
 
-			g.drawLine(nextpoint.x, nextpoint.y, currobs.obstacle.firstElement().x, currobs.obstacle.firstElement().y);
+			g.drawLine(nextpoint.getX(), nextpoint.getY(), currobs.obstacle.firstElement().getX(), currobs.obstacle.firstElement().getY());
 			g.fillPolygon(xs, ys, currobs.obstacle.size());
 
 

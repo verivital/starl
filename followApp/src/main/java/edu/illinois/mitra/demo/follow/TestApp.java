@@ -30,7 +30,7 @@ import edu.illinois.mitra.starl.objects.PositionList;
 public class TestApp extends LogicThread {
     private static final String TAG = "Test App";
     private static final boolean RANDOM_DESTINATION = false;
-    private static final boolean USER_CONTROL = false;
+    private static final boolean USER_CONTROL = true;
     public static final int ARRIVED_MSG = 22;
     private boolean arrived = true;
     private int messageCount = 0;
@@ -127,12 +127,12 @@ public class TestApp extends LogicThread {
                             gvh.plat.reachAvoid.doReachAvoid(gvh.gps.getMyPosition(), currentDestination, obs);
                         } else {
                             //TODO: Add support for userControl in RobotMotion class.
-                            //gvh.plat.moat.userControl(currentDestination, obs);
+                            gvh.plat.moat.userControl(currentDestination, obs);
                         }
 
                         //Deals with log.
-                        gvh.log.i("DoReachAvoid", currentDestination.x + " " + currentDestination.y);
-                        doReachavoidCalls.update(new ItemPosition(name + "'s " + "doReachAvoid Call to destination: " + currentDestination.name, gvh.gps.getMyPosition().x, gvh.gps.getMyPosition().y));
+                        gvh.log.i("DoReachAvoid", currentDestination.getX() + " " + currentDestination.getY());
+                        doReachavoidCalls.update(new ItemPosition(name + "'s " + "doReachAvoid Call to destination: " + currentDestination.name, gvh.gps.getMyPosition().getX(), gvh.gps.getMyPosition().getY()));
                         System.out.println(name + " going to " + currentDestination.getName());
                         stage = Stage.GO;
 

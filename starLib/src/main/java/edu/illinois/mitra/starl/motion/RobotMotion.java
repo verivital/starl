@@ -54,7 +54,7 @@ public abstract class RobotMotion extends Thread implements Cancellable, Accepts
 	 */
 	public abstract void setParameters(MotionParameters param);
 
-	public abstract void userControl();
+	public abstract void userControl(ItemPosition dest, ObstacleList obs);
 
 
 

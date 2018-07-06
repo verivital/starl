@@ -402,7 +402,7 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
     }
 
     @Override
-    public void userControl(){ }
+    public void userControl(ItemPosition dest, ObstacleList obs){ }
 
     @Override
     public void receivedKeyInput(String key){

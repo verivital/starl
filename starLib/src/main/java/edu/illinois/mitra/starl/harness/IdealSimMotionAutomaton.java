@@ -83,7 +83,7 @@ public class IdealSimMotionAutomaton extends RobotMotion implements RobotEventLi
 		curKey = key;
 	}
 	@Override
-	public void userControl(){ }
+	public void userControl(ItemPosition dest, ObstacleList obs){ }
 
 
 }

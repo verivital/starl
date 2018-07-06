@@ -488,7 +488,7 @@ public class MotionAutomaton_Mavic extends RobotMotion {
 	 */
 
     @Override
-    public void userControl(){ }
+    public void userControl(ItemPosition dest, ObstacleList obs){ }
 
     @Override
     public void receivedKeyInput(String key){
