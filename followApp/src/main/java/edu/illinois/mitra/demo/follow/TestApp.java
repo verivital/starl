@@ -126,7 +126,6 @@ public class TestApp extends LogicThread {
                             kdTree = gvh.plat.reachAvoid.kdTree;
                             gvh.plat.reachAvoid.doReachAvoid(gvh.gps.getMyPosition(), currentDestination, obs);
                         } else {
-                            //TODO: Add support for userControl in RobotMotion class.
                             gvh.plat.moat.userControl(currentDestination, obs);
                         }
 

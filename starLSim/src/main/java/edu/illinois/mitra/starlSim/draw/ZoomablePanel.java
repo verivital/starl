@@ -105,6 +105,8 @@ MouseListener, MouseMotionListener, ExplicitlyDrawable, KeyListener
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
+
+		//Must request focus here in order for keyListeners to have focus.
 		setFocusable(true);
         requestFocus();
 		
@@ -500,7 +502,6 @@ MouseListener, MouseMotionListener, ExplicitlyDrawable, KeyListener
 	}
 
 
-
 	@Override
 	public void keyPressed(KeyEvent e){
     }
@@ -511,10 +512,16 @@ MouseListener, MouseMotionListener, ExplicitlyDrawable, KeyListener
 	public void keyTyped(KeyEvent e){
     }
 
-	public String getKeyType(){
+    /**
+     * @return - Returns string of most recently pressed key.
+     */
+    public String getKeyType(){
 	    return key;
     }
 
+    /**
+     * Sets key to a String representing the most recently typed key.
+     */
     public void setKey(String key){
 	    this.key = key;
     }

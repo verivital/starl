@@ -34,8 +34,8 @@ public class SimApp implements Callable<List<Object>> {
 			logic = app.getConstructor(GlobalVarHolder.class).newInstance(gvh);
 			rob = gvh.plat.moat;
 			if(drawFrame != null){
-				drawFrame.addPointInputAccepter(logic);
-				drawFrame.addKeyInputAccepter(rob);
+				drawFrame.addPointInputAccepter(logic);		//Adds PointInputAccepter to the logic thread which all Apps extend.
+				drawFrame.addKeyInputAccepter(rob);			//Adds keyInputAccepter to the RobotMotion class, which MotionAutomaton extends.
 
 			}
 		} catch(InstantiationException e) {

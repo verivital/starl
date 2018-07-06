@@ -368,9 +368,13 @@ public class MotionAutomaton_Drone extends RobotMotion {
 
     protected void setMaxTilt(float val){}
 
+    /**
+     * Enables user control when called from App.
+     * @param dest -- Location of waypoint
+     * @param obs -- Location of obstacles
+     */
     @Override
     public void userControl(ItemPosition dest, ObstacleList obs){
-
         done = false;
         running = true;
         this.destination = new ItemPosition(dest);
@@ -378,6 +382,12 @@ public class MotionAutomaton_Drone extends RobotMotion {
         startMotion();
     }
 
+    /**
+     * Receives string representing which key was pressed. "forward" for up arrow, "back" for down arrow,
+     * "left" and "right" for arrows, "up" for W, "down" for S, "turnL" for A, "turnR" for D. Once a key is released,
+     * String key returns "stop".
+     * @param key -- String representing which key was pressed. Changed to "stop" when released.
+     */
     @Override
     public void receivedKeyInput(String key){
         curKey = key;

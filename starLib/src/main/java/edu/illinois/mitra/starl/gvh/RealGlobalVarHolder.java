@@ -51,10 +51,10 @@ public class RealGlobalVarHolder extends GlobalVarHolder {
 		super.gps = new Gps(this, new UdpGpsReceiver(this,"10.255.24.100",4000,new PositionList(),new PositionList(), new ObstacleList(), new Vector<ObstacleList>(3,2) ));
 		plat.model = initpos;
 		plat.reachAvoid = new ReachAvoid(this);
+
 		if(initpos instanceof Model_iRobot) {
 			plat.moat = new MotionAutomaton_iRobot(this, new BluetoothInterface(this, robotMac.trim()));
 		}
-
 		else if (initpos instanceof Model_quadcopter) {
 			plat.moat = new MotionAutomatonMiniDrone(this, new MiniDroneBTI(this, context, robotMac));
 		}

@@ -42,8 +42,8 @@ public class DrawPanel extends ZoomablePanel
 	private final Color TRACE_COLOR = Color.gray;
 	
 	private LinkedList <Drawer> preDrawers = new LinkedList <Drawer>();
-	private LinkedList <AcceptsPointInput> clickListeners = new LinkedList <AcceptsPointInput>();
-	private LinkedList <AcceptsKeyInput> keyListeners = new LinkedList <AcceptsKeyInput>();
+	private LinkedList <AcceptsPointInput> clickListeners = new LinkedList <AcceptsPointInput>();       //List of mouse listeners, use addClickListener()
+	private LinkedList <AcceptsKeyInput> keyListeners = new LinkedList <AcceptsKeyInput>();           //List of keyboard listeners, use addKeyListener()
 	
 	// wireless interface
 	RoundRectangle2D.Double toggle = new RoundRectangle2D.Double(5,5,20,20,15,15);
@@ -230,7 +230,10 @@ public class DrawPanel extends ZoomablePanel
 			drawWireless(g);
 		}
 	}
-	
+
+    /**
+     * Sends point where mouse was clicked to all clickListeners
+     */
 	public void notifyClickListeners()
 	{
 		if (clicked != null)
@@ -242,6 +245,9 @@ public class DrawPanel extends ZoomablePanel
 		}
 	}
 
+    /**
+     * Sends string of most recently typed key to all keyListeners
+     */
 	public void notifyKeyListeners() {
 		for (AcceptsKeyInput k : keyListeners)
 		    if(!keyListeners.isEmpty()) {
@@ -250,7 +256,11 @@ public class DrawPanel extends ZoomablePanel
             }
 	}
 
-    @Override
+    /**
+     * Checks which key was just pressed, then sets Key to a string representing one of the arrow keys or WASD.
+     * @param e - KeyEvent used to determine which key was pressed. Value used in MotionAutomaton classes for user interface.
+     */
+	@Override
     public void keyPressed(KeyEvent e){
         if(e.getKeyCode() == KeyEvent.VK_UP){ setKey("forward"); }
         if(e.getKeyCode() == KeyEvent.VK_DOWN){ setKey("back"); }
@@ -262,6 +272,11 @@ public class DrawPanel extends ZoomablePanel
         if(e.getKeyCode() == KeyEvent.VK_D){ setKey("turnR"); }
 
     }
+
+    /**
+     * On release of the key, sets Key to "stop". Value used in MotionAutomaton classes for user interface.
+     * @param e
+     */
     @Override
     public void keyReleased(KeyEvent e){
         if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_LEFT ||
