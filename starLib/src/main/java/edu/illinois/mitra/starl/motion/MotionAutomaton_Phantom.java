@@ -57,7 +57,6 @@ public class MotionAutomaton_Phantom extends RobotMotion {
     PIDController PID_x = new PIDController(Kpx, Kix, Kdx, saturationLimit, windUpLimit, filterLength);
     PIDController PID_y = new PIDController(Kpy, Kiy, Kdy, saturationLimit, windUpLimit, filterLength);
 
-
     protected enum STAGE {
         INIT, MOVE, ROTATO, HOVER, TAKEOFF, LAND, GOAL, STOP
     }

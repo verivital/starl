@@ -29,7 +29,7 @@ import java.util.List;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.objects.HandlerMessage;
 
-public class MiniDroneBTI implements ARDiscoveryServicesDevicesListUpdatedReceiverDelegate, DeviceControllerListener {
+public class MiniDroneBTI implements DroneBTI, ARDiscoveryServicesDevicesListUpdatedReceiverDelegate, DeviceControllerListener {
 
     private static String TAG = "MiniDroneBTI";
 
@@ -80,7 +80,7 @@ public class MiniDroneBTI implements ARDiscoveryServicesDevicesListUpdatedReceiv
     }
 
 
-    public void connect() {
+    private void connect() {
 
         initBroadcastReceiver();
         initServiceConnection();
@@ -163,6 +163,8 @@ public class MiniDroneBTI implements ARDiscoveryServicesDevicesListUpdatedReceiv
     public void setMaxTilt(float maxTilt) {
         deviceController.sendMaxTilt(maxTilt);
     }
+
+    public void disconnect() {}
 
 
     // The following methods come from the Parrot SDK and allow connection to the drone

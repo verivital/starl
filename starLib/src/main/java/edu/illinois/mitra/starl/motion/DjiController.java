@@ -29,7 +29,7 @@ import dji.sdk.sdkmanager.DJISDKManager;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.objects.HandlerMessage;
 
-public class DjiController {
+public class DjiController implements DroneBTI {
 
     private static final String FLAG_CONNECTION_CHANGE = "dji_sdk_connection_change";
     private static final boolean USING_WIFI_BRIDGE = false;
@@ -137,6 +137,27 @@ public class DjiController {
 
     public void setMaxTilt(float maxTilt) {
         this.maxTilt = maxTilt;
+    }
+
+    // the following wrap other functionality to satisfy the DroneBTI interface
+    public void setPitch(double pitch) {
+        // TODO
+    }
+
+    public void setRoll(double roll) {
+        // TODO
+    }
+
+    public void setYaw(double yaw) {
+        // TODO
+    }
+
+    public void setThrottle(double throttle) {
+        // TODO
+    }
+
+    public void disconnect() {
+        // no-op, most likely
     }
 
     private void initConnection() {

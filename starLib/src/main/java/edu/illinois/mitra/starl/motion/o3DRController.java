@@ -59,7 +59,7 @@ import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.models.Model_3DR;
 
 
-public class o3DRController extends AppCompatActivity implements TowerListener, DroneListener, LinkListener {
+public class o3DRController extends AppCompatActivity implements DroneBTI, TowerListener, DroneListener, LinkListener {
     private static final String TAG = o3DRController.class.getSimpleName();
 
     private Drone drone;
@@ -450,7 +450,7 @@ public class o3DRController extends AppCompatActivity implements TowerListener, 
         });
     }
 
-    public void sendLanding(){
+    public void sendLanding() {
         // Land
         VehicleApi.getApi(this.drone).setVehicleMode(VehicleMode.COPTER_LAND, new SimpleCommandListener() {
             @Override
@@ -465,9 +465,15 @@ public class o3DRController extends AppCompatActivity implements TowerListener, 
         });
     }
 
-    public void setMaxTilt(float val){
+    public void sendEmergency() {
+        sendLanding();
+    }
+
+    public void setMaxTilt(float val) {
 
     }
+
+    public void disconnect() {}
 }
 
 
