@@ -17,6 +17,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
     protected static final String TAG = "MotionAutomaton";
     protected static final String ERR = "Critical Error";
     private static final int safeHeight = 500;
+    private boolean abort = false;
 
     protected GlobalVarHolder gvh;
     private DroneBTI bti;
@@ -26,7 +27,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
     private Model_Drone drone;
 
     protected enum STAGE {
-        INIT, MOVE, ROTATO, HOVER, TAKEOFF, LAND, GOAL, STOP, USER_CONTROL
+        INIT, MOVE, ROTATOR, HOVER, TAKEOFF, LAND, GOAL, STOP, USER_CONTROL
     }
 
     private STAGE next = null;
@@ -34,6 +35,33 @@ public class MotionAutomaton_Drone extends RobotMotion {
     private STAGE prev = null;
     protected boolean running = false;
     private boolean colliding = false;
+
+    //PID controller parameters
+    double saturationLimit = 50;
+    double windUpLimit = 185;
+    int filterLength = 8;
+    /*double Kpx = 0.2;
+    double Kpy = 0.2;
+    double Kix = 0.04;
+    double Kiy = 0.04;
+    double Kdx = 0.4;
+    double Kdy = 0.45;*/
+    // the ones below work pretty well
+//    double Kpx = 0.0114669809792096; //314....
+//    double Kpy = 0.0114669809792096;
+//    double Kix = 0.0110786899216426; //011...
+//    double Kiy = 0.0110786899216426;
+//    double Kdx = 0.189205037832174; //113....
+//    double Kdy = 0.189205037832174;
+    double Kpx = 0.0714669809792096/4;
+    double Kpy = 0.0714669809792096/4;
+    double Kix = 0.0110786899216426;
+    double Kiy = 0.0110786899216426;
+    double Kdx = 0.189205037832174;
+    double Kdy = 0.189205037832174;
+
+    PIDController PID_x = new PIDController(Kpx, Kix, Kdx, saturationLimit, windUpLimit, filterLength);
+    PIDController PID_y = new PIDController(Kpy, Kiy, Kdy, saturationLimit, windUpLimit, filterLength);
 
     private enum OPMODE {
         GO_TO, USER_CONTROL
@@ -86,6 +114,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
         while(true) {
             //			gvh.gps.getObspointPositions().updateObs();
             if(running) {
+
                 drone = (Model_Drone) gvh.plat.getModel();
 //				System.out.println(drone.toString());
                 System.out.printf("drone (%d, %d) \n", drone.getX(), drone.getY());
@@ -101,6 +130,10 @@ public class MotionAutomaton_Drone extends RobotMotion {
                 if(!colliding && stage != null) {
                     switch(stage) {
                         case INIT:
+
+                            PID_x.reset();
+                            PID_y.reset();
+                            bti.setMaxTilt(2.5f); // TODO: add max tilt to motion paramters cla
 
                             if(drone.getZ() < safeHeight){
                                 // just a safe distance from ground
@@ -147,11 +180,41 @@ public class MotionAutomaton_Drone extends RobotMotion {
                                 setControlInputRescale(Math.toDegrees(Ryawsp),Math.toDegrees(Rpitch)%360,Math.toDegrees(Rroll)%360,Rvs);
                                 //setControlInput(Ryawsp/param.max_yaw_speed, Rpitch%param.max_pitch_roll, Rroll%param.max_pitch_roll, Rvs/param.max_gaz);
                                 //next = STAGE.INIT;
+
+                                /*double rollCommand = PID_x.getCommand(drone.getX(), destination.getX());
+                                double pitchCommand = PID_y.getCommand(drone.getY(), destination.getY());
+                                double yawCommand = calculateYaw();
+                                double gazCommand = 0;
+                                gvh.log.d("POSITION DEBUG", "My Position: " + drone.getX() + " " + drone.getY());
+                                gvh.log.d("POSITION DEBUG", "Destination: " + destination.getX() + " " + destination.getY());
+
+                                setControlInputRescale(yawCommand, pitchCommand, rollCommand, gazCommand);*/
+                                // TD_NATHAN: check and resolve: was mypos.angle
+                                // that was the correct solution, has been resolved
+                            }
+                            break;
+                        case ROTATOR:
+                            if(drone.yaw <= 93 && drone.yaw >= 87){
+                                next = STAGE.MOVE;
+                            }
+                            else{
+                                rotateDrone();
                             }
                             break;
                         case HOVER:
                             setControlInput(0,0,0, 0);
                             // do nothing
+
+                            if(distance <= param.GOAL_RADIUS) {
+                                hover();
+                            }
+                            else{
+                                double rollCommand = PID_x.getCommand(drone.getX(), destination.getX());
+                                double pitchCommand = PID_y.getCommand(drone.getY(), destination.getY());
+                                double yawCommand = calculateYaw();
+                                double gazCommand = 0;
+                                setControlInputRescale(yawCommand, pitchCommand, rollCommand, gazCommand);
+                            }
                             break;
                         case TAKEOFF:
                             switch(drone.getZ()/(safeHeight/2)){
@@ -211,6 +274,12 @@ public class MotionAutomaton_Drone extends RobotMotion {
                             System.out.println(drone.yaw);
                             setControlInput(drone.yaw,drone.pitch,drone.roll,drone.gaz);
                     }
+                    if((drone.yaw >= 100 || drone.yaw <= 80) && (drone.getZ() < safeHeight) && stage != STAGE.ROTATOR){
+                        next = STAGE.ROTATOR;
+                    }
+                    if(abort){
+                        next = STAGE.LAND;
+                    }
                     if(next != null) {
                         prev = stage;
                         stage = next;
@@ -236,23 +305,26 @@ public class MotionAutomaton_Drone extends RobotMotion {
 
     public void cancel() {
         running = false;
-        bti.disconnect();
+        land();
     }
 
     @Override
     public void motion_stop() {
-        //land();
-        //stage = STAGE.LAND;
+        abort = true;
+        inMotion = false;
         this.destination = null;
         running = false;
-        inMotion = false;
     }
 
-    public void takePicture(){}
 
     @Override
     public void motion_resume() {
         running = true;
+    }
+
+    protected void rotateDrone(){
+        bti.setVelocityMode(true);
+        bti.setInputs((float)rescale(calculateYaw(), 5), 0, 0, 0);
     }
 
     private void startMotion() {
@@ -267,52 +339,25 @@ public class MotionAutomaton_Drone extends RobotMotion {
         gvh.sendRobotEvent(Event.MOTION, motiontype);
     }
 
+    protected void setControlInput(double yaw_v, double pitch, double roll, double gaz){
+        //Bluetooth command to control the drone
+        bti.setVelocityMode(false);
+        bti.setInputs((float)yaw_v, (float)pitch, (float)roll, (float)gaz);
+        gvh.log.i(TAG, "control input as, yaw, pitch, roll, thrust " + yaw_v + ", " + pitch + ", " +roll + ", " +gaz);
+    }
+
     private void setControlInputRescale(double yaw_v, double pitch, double roll, double gaz){
         setControlInput(rescale(yaw_v, drone.max_yaw_speed()), rescale(pitch, drone.max_pitch_roll()), rescale(roll, drone.max_pitch_roll()), rescale(gaz, drone.max_gaz()));
     }
 
-    private double rescale(double value, double max_value){
-        if(Math.abs(value) > max_value){
-            return (Math.signum(value));
-        }
-        else{
-            return value/max_value;
-        }
-    }
-
-    protected void setControlInput(double yaw_v, double pitch, double roll, double gaz){
-        if(yaw_v > 1 || yaw_v < -1){
-            throw new IllegalArgumentException("yaw speed must be between -1 to 1");
-        }
-        if(pitch > 1 || pitch < -1){
-            throw new IllegalArgumentException("pitch must be between -1 to 1");
-        }
-        if(roll > 1 || roll < -1){
-            throw new IllegalArgumentException("roll speed must be between -1 to 1");
-        }
-        if(gaz > 1 || gaz < -1){
-            throw new IllegalArgumentException("gaz, vertical speed must be between -1 to 1");
-        }
-        //Bluetooth command to control the drone
-        //	gvh.log.i(TAG, "control input as, yaw, pitch, roll, thrust " + yaw_v + ", " + pitch + ", " +roll + ", " +gaz);
-		/*
-		if(running) {
-			if(velocity != 0) {
-				sendMotionEvent(Common.MOT_STRAIGHT, velocity);
-			} else {
-				sendMotionEvent(Common.MOT_STOPPED, 0);
-			}
-			bti.send(BluetoothCommands.straight(velocity));
-		}
-		 */
-    }
 
     /**
      *  	take off from ground
      */
     protected void takeOff(){
         //Bluetooth command to control the drone
-        gvh.log.i(TAG, "Drone taking off");
+        bti.sendTakeoff();
+        gvh.log.i("POSITION DEBUG", "Drone taking off");
     }
 
     /**
@@ -320,6 +365,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
      */
     protected void land(){
         //Bluetooth command to control the drone
+        bti.sendLanding();
         gvh.log.i(TAG, "Drone landing");
     }
 
@@ -328,7 +374,26 @@ public class MotionAutomaton_Drone extends RobotMotion {
      */
     protected void hover(){
         //Bluetooth command to control the drone
+        bti.setVelocityMode(true);
+        bti.setInputs(0,0,0,0);
         gvh.log.i(TAG, "Drone hovering");
+    }
+
+    protected double calculateYaw() {
+        // this method calculates a yaw correction, to keep the drone's yaw angle near 90 degrees
+        if(drone.yaw > 93) {
+            return 5;
+        }
+        else if(drone.yaw < 87) {
+            return -5;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    protected void setMaxTilt(float val) {
+        bti.setMaxTilt(val);
     }
 
     @Override
@@ -341,33 +406,16 @@ public class MotionAutomaton_Drone extends RobotMotion {
         // TODO Auto-generated method stub
     }
 
+    private double rescale(double value, double max_value){
+        if(Math.abs(value) > max_value){
+            return (Math.signum(value));
+        }
+        else{
+            return value/max_value;
+        }
+    }
 
-    /**
-     * Slow down linearly upon coming within R_slowfwd of the goal
-     *
-     * @param
-     * @return
-     */
-	/*
-	private int LinSpeed(int distance) {
-		if(distance > param.SLOWFWD_RADIUS)
-			return param.LINSPEED_MAX;
-		if(distance > param.GOAL_RADIUS && distance <= param.SLOWFWD_RADIUS) {
-			return param.LINSPEED_MIN + (int) ((distance - param.GOAL_RADIUS) * linspeed);
-		}
-		return param.LINSPEED_MIN;
-	}
-
-	// Detects an imminent collision with another robot or with any obstacles
-
-	@Override
-	public void setParameters(MotionParameters param) {
-		this.param = param;/		this.linspeed = (double) (param.LINSPEED_MAX - param.LINSPEED_MIN) / Math.abs((param.SLOWFWD_RADIUS - param.GOAL_RADIUS));
-		this.turnspeed = (param.TURNSPEED_MAX - param.TURNSPEED_MIN) / (param.SLOWTURN_ANGLE - param.SMALLTURN_ANGLE);
-	}
-	 */
-
-    protected void setMaxTilt(float val){}
+    public void takePicture(){}
 
     /**
      * Enables user control when called from App.
