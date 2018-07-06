@@ -222,7 +222,6 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
 					int dX = (int)(vX * totalTimeInMotion)/1000;
 					int dY = (int)(vY * totalTimeInMotion)/1000;
 					iRobot.setPosAndAngle(start.getX()+dX+xNoise, start.getX()+dY+yNoise, (int)Math.toDegrees(motAngle));
-					iRobot.velocity = velocity;
 				} else {
 					
 				

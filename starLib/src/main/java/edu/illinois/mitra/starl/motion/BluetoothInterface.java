@@ -23,8 +23,8 @@ public class BluetoothInterface {
 
 	private static final String ERR = "Critical Error";
 	private static final String TAG = "BluetoothInterface";
-	private static byte[] ENABLE_CONTROL = { (byte) 128, (byte) 132 };
-	private static byte[] PROGRAM_SONG = { (byte) 140, 0x00, 0x02, (byte) 79, (byte) 16, (byte) 84, (byte) 16, (byte) 140, 0x01, 0x01, (byte) 96, (byte) 10, (byte) 140, 0x02, 0x01, (byte) 84, (byte) 10 };
+	private final static byte[] ENABLE_CONTROL = { (byte) 128, (byte) 132 };
+	private final static byte[] PROGRAM_SONG = { (byte) 140, 0x00, 0x02, (byte) 79, (byte) 16, (byte) 84, (byte) 16, (byte) 140, 0x01, 0x01, (byte) 96, (byte) 10, (byte) 140, 0x02, 0x01, (byte) 84, (byte) 10 };
 	
 	// Standard serial port UUID (from Android documentation)
 	private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -42,7 +42,7 @@ public class BluetoothInterface {
 
 	private boolean running = true;
 
-	public boolean isConnected = false;
+	private boolean isConnected = false;
 
 	public BluetoothInterface(GlobalVarHolder gvh, String mac) {
 		this.gvh = gvh;

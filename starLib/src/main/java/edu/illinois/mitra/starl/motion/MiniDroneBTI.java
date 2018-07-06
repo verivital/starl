@@ -91,7 +91,7 @@ public class MiniDroneBTI implements ARDiscoveryServicesDevicesListUpdatedReceiv
         //task.execute();
     }
 
-    public void stopScan() {
+    private void stopScan() {
         unregisterReceivers();
         closeServices();
     }

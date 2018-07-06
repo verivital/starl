@@ -31,7 +31,7 @@ public class GhostAerialBTI implements DeviceControllerListener {
     */
     public IBinder bluetoothServiceBinder;
     private BluetoothDevice GADrone;
-    public GhostAerialDeviceController deviceController;
+    private GhostAerialDeviceController deviceController;
     private boolean bound;
 
     //private DeviceFinder devicesListUpdatedReceiver;
@@ -55,11 +55,11 @@ public class GhostAerialBTI implements DeviceControllerListener {
         return this.mac;
     }*/
 
-    public void myConnect() {
+    private void myConnect() {
         bound = false;
         //BTAdapter = BluetoothAdapter.getDefaultAdapter();
         initReceivers();
-        CopterControl.getInstance().getConnection().connect(mac,GBoxListener);
+        CopterControl.getInstance().getConnection().connect(mac, GBoxListener);
 
 
         //registerReceivers();
@@ -76,77 +76,76 @@ public class GhostAerialBTI implements DeviceControllerListener {
     }*/
 
     public void stopScan() {
-            unregisterReceivers();
-            //closeServices();
-        }
+        unregisterReceivers();
+        //closeServices();
+    }
 
-        // sets pitch to val percent of max angle
-        // positive value moves forward, negative backward
-        public void setPitch(double val) {
-            if (deviceController != null) {
-                deviceController.setPitch(val);
+    // sets pitch to val percent of max angle
+    // positive value moves forward, negative backward
+    public void setPitch(double val) {
+        if (deviceController != null) {
+            deviceController.setPitch(val);
+        }
+    }
+
+    // sets roll to val percent of max angle
+    // positive value moves right, negative left
+    public void setRoll(double val) {
+        if (deviceController != null) {
+            deviceController.setRoll(val);
+        }
+    }
+
+    // sets yaw to val percent of max angular rotation
+    // positive value turns right (clockwise from above), negative turns left
+    public void setYaw(double val) {
+        if (deviceController != null) {
+            if (val > 1) {
+                deviceController.setYaw(1);
+            } else if (val < -1) {
+                deviceController.setYaw(-1);
+            } else {
+                deviceController.setYaw(val);
             }
-        }
 
-        // sets roll to val percent of max angle
-        // positive value moves right, negative left
-        public void setRoll(double val) {
-            if (deviceController != null) {
-                deviceController.setRoll(val);
-            }
         }
+    }
 
-        // sets yaw to val percent of max angular rotation
-        // positive value turns right (clockwise from above), negative turns left
-        public void setYaw(double val) {
-            if (deviceController != null) {
-                if(val > 1 )
-                {
-                    deviceController.setYaw(1);
-                }else if (val < -1){
-                    deviceController.setYaw(-1);
-                }else{
-                    deviceController.setYaw(val);
-                }
-
-            }
+    // moves the drone up (+ val) or down (- val)
+    public void setThrottle(double val) {
+        int tmp = (int) val;
+        if (deviceController != null) {
+            deviceController.setGaz(tmp);
         }
+    }
 
-        // moves the drone up (+ val) or down (- val)
-        public void setThrottle(double val) {
-            int tmp = (int) val;
-            if (deviceController != null) {
-                deviceController.setGaz(tmp);
-            }
+    public void sendLanding() {
+        if (deviceController != null) {
+            deviceController.sendLanding();
         }
+    }
 
-        public void sendLanding() {
-            if (deviceController != null) {
-                deviceController.sendLanding();
-            }
+    public void sendTakeoff() {
+        if (deviceController != null) {
+            deviceController.sendTakeoff();
         }
+    }
 
-        public void sendTakeoff() {
-            if (deviceController != null) {
-                deviceController.sendTakeoff();
-            }
+    // make the drone stop and fall to the ground
+    public void sendEmergency() {
+        if (deviceController != null) {
+            deviceController.sendEmergency();
         }
+    }
 
-        // make the drone stop and fall to the ground
-        public void sendEmergency() {
-            if (deviceController != null) {
-                deviceController.sendEmergency();
-            }
-        }
+    public void hover() {
+        // setting this flag to 0 causes the drone to ignore roll/pitch commands and attempt to hover
+        deviceController.setFlag(true);
+    }
 
-        public void hover() {
-            // setting this flag to 0 causes the drone to ignore roll/pitch commands and attempt to hover
-            deviceController.setFlag(true);
-        }
-
-        public void setMaxTilt(float maxTilt) {
-            deviceController.sendMaxTilt(maxTilt);
-        }
+    public void setMaxTilt(float maxTilt) {
+        deviceController.sendMaxTilt(maxTilt);
+    }
 
 
 /*
@@ -177,28 +176,29 @@ public class GhostAerialBTI implements DeviceControllerListener {
         }
 */
 
-        private void initReceivers() {
-            final Context context = this.context;
-            GBoxListener = new OnConnectionListener(){
-                @Override
-                public void onSuccess() {
-                    Toast.makeText(context, "Bluetooth Connected", Toast.LENGTH_SHORT).show();
-                    Log.i(TAG,"connected " + CopterControl.getInstance().isCopterConnected());
-                    gvh.plat.sendMainMsg(HandlerMessage.COPTER_CONNECTED,CopterControl.getInstance().isCopterConnected());
-                    setupController();
-                }
-                @Override
-                public void onFailure() {
-                    Toast.makeText(context, "Bluetooth Disconnected", Toast.LENGTH_SHORT).show();
-                }
-            };
-            //devicesListUpdatedReceiver = new DeviceFinder();
+    private void initReceivers() {
+        final Context context = this.context;
+        GBoxListener = new OnConnectionListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(context, "Bluetooth Connected", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "connected " + CopterControl.getInstance().isCopterConnected());
+                gvh.plat.sendMainMsg(HandlerMessage.COPTER_CONNECTED, CopterControl.getInstance().isCopterConnected());
+                setupController();
+            }
 
-        }
+            @Override
+            public void onFailure() {
+                Toast.makeText(context, "Bluetooth Disconnected", Toast.LENGTH_SHORT).show();
+            }
+        };
+        //devicesListUpdatedReceiver = new DeviceFinder();
+
+    }
 
     private void setupController() {
         Log.d(TAG, "Setup Controller");
-        Log.i(TAG,"connected " + CopterControl.getInstance().isCopterConnected());
+        Log.i(TAG, "connected " + CopterControl.getInstance().isCopterConnected());
         deviceController = new GhostAerialDeviceController(context);
         deviceController.setListener(this);
         // start the device controller
@@ -227,55 +227,55 @@ public class GhostAerialBTI implements DeviceControllerListener {
         }
 */
 
-        private void registerReceivers() {
-            //IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            //this.context.registerReceiver(devicesListUpdatedReceiver, filter);
+    private void registerReceivers() {
+        //IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        //this.context.registerReceiver(devicesListUpdatedReceiver, filter);
 
+    }
+
+    private void unregisterReceivers() {
+        //this.context.unregisterReceiver(devicesListUpdatedReceiver);
+    }
+
+    private void startDeviceController() {
+        Log.d(TAG, "staring device controller");
+
+        if (deviceController != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //TODO: Assumes connection; Change A.
+                    deviceController.start();
+                }
+            }).start();
         }
 
-        private void unregisterReceivers() {
-            //this.context.unregisterReceiver(devicesListUpdatedReceiver);
+    }
+
+    private void stopDeviceController() {
+        if (deviceController != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    deviceController.stop();
+                }
+            }).start();
         }
+    }
 
-        private void startDeviceController() {
-            Log.d(TAG, "staring device controller");
-
-            if (deviceController != null) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //TODO: Assumes connection; Change A.
-                        deviceController.start();
-                    }
-                }).start();
-            }
-
-        }
-
-        private void stopDeviceController() {
-            if (deviceController != null) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        deviceController.stop();
-                    }
-                }).start();
-            }
-        }
-
-        @Override
-        public void onUpdateBattery(final byte percent) {
-            // this method has to be implemented
-            // maybe make a toast if battery is getting low
-        }
+    @Override
+    public void onUpdateBattery(final byte percent) {
+        // this method has to be implemented
+        // maybe make a toast if battery is getting low
+    }
 
 
-        @Override
-        public void onDisconnect() {
-            stopDeviceController();
-            CopterControl.getInstance().getConnection().disconnect();
-            // context.unbindService(ardiscoveryServiceConnection);
-        }
+    @Override
+    public void onDisconnect() {
+        stopDeviceController();
+        CopterControl.getInstance().getConnection().disconnect();
+        // context.unbindService(ardiscoveryServiceConnection);
+    }
 
        /* private class DeviceFinder extends BroadcastReceiver {
 

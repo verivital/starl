@@ -34,21 +34,21 @@ import java.util.concurrent.Semaphore;
 
 public class DeviceController implements ARCommandCommonCommonStateBatteryStateChangedListener, ARCommandMiniDronePilotingSettingsMaxTiltListener, ARCommandMiniDronePilotingSettingsMaxAltitudeListener
 {
-    private static String TAG = "DeviceController";
+    private static final String TAG = "DeviceController";
 
-    private static int iobufferC2dNack = 10;
-    private static int iobufferC2dAck = 11;
-    private static int iobufferC2dEmergency = 12;
-    private static int iobufferD2cNavdata = (ARNetworkALManager.ARNETWORKAL_MANAGER_BLE_ID_MAX / 2) - 1;
-    private static int iobufferD2cEvents = (ARNetworkALManager.ARNETWORKAL_MANAGER_BLE_ID_MAX / 2) - 2;
+    private static final int iobufferC2dNack = 10;
+    private static final int iobufferC2dAck = 11;
+    private static final int iobufferC2dEmergency = 12;
+    private static final int iobufferD2cNavdata = (ARNetworkALManager.ARNETWORKAL_MANAGER_BLE_ID_MAX / 2) - 1;
+    private static final int iobufferD2cEvents = (ARNetworkALManager.ARNETWORKAL_MANAGER_BLE_ID_MAX / 2) - 2;
 
-    private static int ackOffset = (ARNetworkALManager.ARNETWORKAL_MANAGER_BLE_ID_MAX / 2);
+    private static final int ackOffset = (ARNetworkALManager.ARNETWORKAL_MANAGER_BLE_ID_MAX / 2);
 
-    protected static List<ARNetworkIOBufferParam> c2dParams = new ArrayList<ARNetworkIOBufferParam>();
-    protected static List<ARNetworkIOBufferParam> d2cParams = new ArrayList<ARNetworkIOBufferParam>();
-    protected static int commandsBuffers[] = {};
+    private static final List<ARNetworkIOBufferParam> c2dParams = new ArrayList<ARNetworkIOBufferParam>();
+    private static final List<ARNetworkIOBufferParam> d2cParams = new ArrayList<ARNetworkIOBufferParam>();
+    private static int commandsBuffers[] = {};
 
-    protected static int bleNotificationIDs[] = new int[]{iobufferD2cNavdata, iobufferD2cEvents, (iobufferC2dAck + ackOffset) ,(iobufferC2dEmergency + ackOffset) };
+    private static final int bleNotificationIDs[] = new int[]{iobufferD2cNavdata, iobufferD2cEvents, (iobufferC2dAck + ackOffset) ,(iobufferC2dEmergency + ackOffset) };
 
     private android.content.Context context;
 
@@ -738,7 +738,7 @@ public class DeviceController implements ARCommandCommonCommonStateBatteryStateC
     private class ReaderThread extends LooperThread
     {
         int bufferId;
-        ARCommand dataRecv = new ARCommand(128 * 1024);//TODO define
+        ARCommand dataRecv;
 
         public ReaderThread (int bufferId)
         {

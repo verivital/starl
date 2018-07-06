@@ -413,12 +413,12 @@ public class Simulation {
 
 								Model_iRobot ip = (Model_iRobot) targetList.get(i);
 								if (i < 12) {
-									RobotData nextBot = new RobotData(ip.name, ip.getX(), ip.getY(), ip.angle, c[i-settings.N_GHOSTS-settings.N_o3DR], views.elementAt(i-settings.N_GHOSTS-settings.N_o3DR), ip.leftbump, ip.rightbump);
+									RobotData nextBot = new RobotData(ip.name, ip.getX(), ip.getY(), ip.angle, c[i-settings.N_GHOSTS-settings.N_o3DR], views.elementAt(i-settings.N_GHOSTS-settings.N_o3DR), ip.leftBump, ip.rightBump);
 									nextBot.radius = settings.BOT_RADIUS;
 									nextBot.type = ip.type;
 									rd.add(nextBot);
 								} else {
-									RobotData nextBot = new RobotData(ip.name, ip.getX(), ip.getY(), ip.angle, c[0], views.elementAt(iiRobot), ip.leftbump, ip.rightbump);
+									RobotData nextBot = new RobotData(ip.name, ip.getX(), ip.getY(), ip.angle, c[0], views.elementAt(iiRobot), ip.leftBump, ip.rightBump);
 									nextBot.radius = settings.BOT_RADIUS;
 									rd.add(nextBot);
 								}

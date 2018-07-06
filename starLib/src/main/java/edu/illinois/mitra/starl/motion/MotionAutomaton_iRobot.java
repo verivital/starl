@@ -685,19 +685,17 @@ public class MotionAutomaton_iRobot extends RobotMotion {
 	}
 
 	private boolean collision_mem_less(){
-		if(iRobot.leftbump || iRobot.rightbump){
+		if(iRobot.leftBump || iRobot.rightBump){
 			double ColPoint_x, ColPoint_y;
-			if(iRobot.leftbump&& iRobot.rightbump){
+			if(iRobot.leftBump && iRobot.rightBump){
 				ColPoint_x = iRobot.radius()*(Math.cos(Math.toRadians(iRobot.angle))) + iRobot.getX();
 				ColPoint_y = iRobot.radius()*(Math.sin(Math.toRadians(iRobot.angle))) + iRobot.getY();
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);
 			}
-			else if(iRobot.leftbump){
+			else if(iRobot.leftBump){
 				ColPoint_x = iRobot.radius()*(Math.cos(Math.toRadians(iRobot.angle+45))) + iRobot.getX();
 				ColPoint_y = iRobot.radius()*(Math.sin(Math.toRadians(iRobot.angle+45))) + iRobot.getY();
 				blocker = new ItemPosition("detected", (int) ColPoint_x, (int) ColPoint_y, 0);
-				
-				
 			}
 			else{
 				ColPoint_x = iRobot.radius()*(Math.cos(Math.toRadians(iRobot.angle-45))) + iRobot.getX();

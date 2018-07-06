@@ -42,7 +42,7 @@ public class DjiController {
     private FlightControlData mFlightControlData;
 
 
-    private static String TAG = "DjiController";
+    private static final String TAG = "DjiController";
     
     private Context context;
     private String mac;
@@ -139,7 +139,7 @@ public class DjiController {
         this.maxTilt = maxTilt;
     }
 
-    public void initConnection() {
+    private void initConnection() {
         //Initiates API verification
         mHandler = new Handler(Looper.getMainLooper());
 		DJISDKManager.getInstance().registerApp(context, mDJISDKManagerCallback);
