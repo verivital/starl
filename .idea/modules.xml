@@ -3,20 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ClientLib/ClientLib.iml" filepath="$PROJECT_DIR$/ClientLib/ClientLib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ClientLib/ClientLib.iml" filepath="$PROJECT_DIR$/ClientLib/ClientLib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Mavlink/Mavlink.iml" filepath="$PROJECT_DIR$/Mavlink/Mavlink.iml" />
       <module fileurl="file://$PROJECT_DIR$/Mavlink/Mavlink.iml" filepath="$PROJECT_DIR$/Mavlink/Mavlink.iml" />
       <module fileurl="file://$PROJECT_DIR$/followApp/followApp.iml" filepath="$PROJECT_DIR$/followApp/followApp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/followApp/followApp.iml" filepath="$PROJECT_DIR$/followApp/followApp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/raceApp/raceApp.iml" filepath="$PROJECT_DIR$/raceApp/raceApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/raceApp/raceApp.iml" filepath="$PROJECT_DIR$/raceApp/raceApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/starLSim/starLSim.iml" filepath="$PROJECT_DIR$/starLSim/starLSim.iml" />
-      <module fileurl="file://$PROJECT_DIR$/starLSim/starLSim.iml" filepath="$PROJECT_DIR$/starLSim/starLSim.iml" />
-      <module fileurl="file://$PROJECT_DIR$/starLib/starLib.iml" filepath="$PROJECT_DIR$/starLib/starLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/starLib/starLib.iml" filepath="$PROJECT_DIR$/starLib/starLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/starl.iml" filepath="$PROJECT_DIR$/starl.iml" />
-      <module fileurl="file://$PROJECT_DIR$/starl.iml" filepath="$PROJECT_DIR$/starl.iml" />
-      <module fileurl="file://$PROJECT_DIR$/starlTemplate/starlTemplate.iml" filepath="$PROJECT_DIR$/starlTemplate/starlTemplate.iml" />
       <module fileurl="file://$PROJECT_DIR$/starlTemplate/starlTemplate.iml" filepath="$PROJECT_DIR$/starlTemplate/starlTemplate.iml" />
     </modules>
   </component>
