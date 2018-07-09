@@ -58,7 +58,7 @@ public class MotionAutomaton_quadcopter extends RobotMotion {
 
 	//	private volatile MotionParameters param = settings.build();
 
-	public MotionAutomaton_quadcopter(GlobalVarHolder gvh, BluetoothInterface bti) {
+	public MotionAutomaton_quadcopter(GlobalVarHolder gvh, DroneBTI bti) {
 		super(gvh.id.getName());
 		this.gvh = gvh;
 		this.bti = bti;

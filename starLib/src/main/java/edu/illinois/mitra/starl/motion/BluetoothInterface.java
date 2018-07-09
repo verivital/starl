@@ -19,7 +19,7 @@ import edu.illinois.mitra.starl.objects.HandlerMessage;
  * @author Adam Zimmerman
  * 
  */
-public class BluetoothInterface implements GroundBTI {
+public class BluetoothInterface {
 
 	private static final String ERR = "Critical Error";
 	private static final String TAG = "BluetoothInterface";

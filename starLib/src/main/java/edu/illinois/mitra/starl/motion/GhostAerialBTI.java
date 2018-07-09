@@ -119,7 +119,7 @@ public class GhostAerialBTI implements DroneBTI, DeviceControllerListener {
         }
     }
 
-    public void setControlInput(float yaw, float pitch, float roll, float gaz) {
+    public void setControlInput(double yaw, double pitch, double roll, double gaz) {
         setYaw(yaw);
         setPitch(pitch);
         setRoll(roll);

@@ -1,8 +1,8 @@
 package edu.illinois.mitra.starl.models;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.motion.BluetoothInterface;
 import edu.illinois.mitra.starl.motion.GroundBTI;
+import edu.illinois.mitra.starl.motion.IRobotBTI;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 
 /**
@@ -63,6 +63,6 @@ public class Model_iRobot extends Model_Ground {
 
 	@Override
 	public Class<? extends GroundBTI> getBluetoothInterface() {
-		return BluetoothInterface.class;
+		return IRobotBTI.class;
 	}
 }

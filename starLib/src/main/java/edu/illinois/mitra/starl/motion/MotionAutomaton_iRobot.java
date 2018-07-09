@@ -32,7 +32,7 @@ import edu.illinois.mitra.starl.objects.*;
  */
 public class MotionAutomaton_iRobot extends MotionAutomaton_Ground {
 
-	public MotionAutomaton_iRobot(GlobalVarHolder gvh, BluetoothInterface bti) {
+	public MotionAutomaton_iRobot(GlobalVarHolder gvh, BTI bti) {
 		super(gvh, bti);
 	}
 

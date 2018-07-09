@@ -574,9 +574,7 @@ public class MotionAutomaton_Ground extends RobotMotion {
 
     public void cancel() {
         running = false;
-        // 7 is the reset opcode for the create
-        byte[] reset = new byte[]{(byte) 7};
-        bti.send(reset);
+        bti.sendReset();
         bti.disconnect();
     }
 
@@ -621,7 +619,7 @@ public class MotionAutomaton_Ground extends RobotMotion {
     protected void curve(int velocity, int radius) {
         if(running) {
             sendMotionEvent(Common.MOT_ARCING, velocity, radius);
-            bti.send(BluetoothCommands.curve(velocity, radius));
+            bti.sendCurve(velocity, radius);
         }
     }
 
@@ -633,14 +631,14 @@ public class MotionAutomaton_Ground extends RobotMotion {
             } else {
                 sendMotionEvent(Common.MOT_STOPPED, 0);
             }
-            bti.send(BluetoothCommands.straight(velocity));
+            bti.sendStraight(velocity);
         }
     }
 
     protected void turn(int velocity, int angle) {
         if(running) {
             sendMotionEvent(Common.MOT_TURNING, velocity, angle);
-            bti.send(BluetoothCommands.turn(velocity, angle));
+            bti.sendTurn(velocity, angle);
         }
     }
 

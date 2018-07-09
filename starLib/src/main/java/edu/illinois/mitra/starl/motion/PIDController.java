@@ -4,22 +4,24 @@ package edu.illinois.mitra.starl.motion;
  * Created by VerivitalLab on 1/22/2016.
  */
 public class PIDController {
-    double Kp;
-    double Ki;
-    double Kd;
-    double saturationLimit;
-    double windUpLimit;
-    int filterLength;
+    private double Kp;
+    private double Ki;
+    private double Kd;
+    private double saturationLimit;
+    private double windUpLimit;
+    private int filterLength;
     // filtArray is used as a window filter
-    double[] filtArray;
-    int filtIndex;
-    int numCommands;
-    double prevError;
-    double error;
-    double cumError;
-    double deltaError;
-    double filtDeltaError;
-    long prevTime;
+    private double[] filtArray;
+    private int filtIndex;
+    private int numCommands;
+    private double prevError;
+    private double error;
+    private double cumError;
+    private double deltaError;
+    private double filtDeltaError;
+    private long prevTime;
+
+
 
     public PIDController(double Kp, double Ki, double Kd, double saturationLimit, double windUpLimit, int filterLength) {
         this.Kp = Kp;

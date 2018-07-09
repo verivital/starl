@@ -60,14 +60,7 @@ public class DjiController implements DroneBTI {
         return DJISDKManager.getInstance().hasSDKRegistered();
     }
 
-    public void setVelocityMode(boolean velocityMode){
-        if(mFlightController != null){
-            mFlightController.setRollPitchControlMode(velocityMode?
-                    RollPitchControlMode.VELOCITY: RollPitchControlMode.ANGLE);
-        }
-    }
-
-    public void setInputs(float yaw, float pitch, float roll, float gaz){
+    private void setInputs(float yaw, float pitch, float roll, float gaz){
         if(mFlightController != null){
             //mFlightController.setVerticalControlMode(VerticalControlMode.POSITION);
             gvh.log.e("POSITION DEBUG", "Control mode: " + mFlightController.getRollPitchControlMode());
@@ -94,8 +87,8 @@ public class DjiController implements DroneBTI {
     }
 
     // Alias for setInputs to conform to DroneBTI interface
-    public void setControlInput(float yaw, float pitch, float roll, float gaz) {
-        setInputs(yaw, pitch, roll, gaz);
+    public void setControlInput(double yaw, double pitch, double roll, double gaz) {
+        setInputs((float)yaw, (float)pitch, (float)roll, (float)gaz);
     }
 
     public void sendLanding() {

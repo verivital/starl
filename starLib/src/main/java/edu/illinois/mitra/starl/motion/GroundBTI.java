@@ -2,11 +2,14 @@ package edu.illinois.mitra.starl.motion;
 
 public interface GroundBTI extends BTI {
 
-    void connect();
+    void sendCurve(int velocity, int radius);
 
-    void send(byte[] to_send);
+    void sendStraight(int velocity);
 
-    byte[] readBuffer(int n_bytes);
+    void sendTurn(int velocity, int angle);
+
+    void sendReset();
 
     void disconnect();
+
 }

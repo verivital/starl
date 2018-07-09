@@ -145,10 +145,10 @@ public class MotionAutomatonMiniDrone extends RobotMotion {
                                 next = STAGE.GOAL;
                             }
                             else{
-                                double rollCommand = PID_x.getCommand(mypos.getX(), destination.getX());
-                                double pitchCommand = PID_y.getCommand(mypos.getY(), destination.getY());
-                                double yawCommand = calculateYaw();
-                                double gazCommand = 0;
+                                float rollCommand = (float)PID_x.getCommand(mypos.getX(), destination.getX());
+                                float pitchCommand = (float)PID_y.getCommand(mypos.getY(), destination.getY());
+                                float yawCommand = calculateYaw();
+                                float gazCommand = 0;
                                 setControlInput(yawCommand, pitchCommand, rollCommand, gazCommand);
                                 // TD_NATHAN: check and resolve: was mypos.angle
                                 // that was the correct solution, has been resolved
@@ -157,14 +157,14 @@ public class MotionAutomatonMiniDrone extends RobotMotion {
                         case HOVER:
                             if(distance <= param.GOAL_RADIUS) {
                                 hover();
-                                double yawCommand = calculateYaw();
+                                float yawCommand = calculateYaw();
                                 setControlInput(yawCommand, 0, 0, 0);
                             }
                             else{
-                                double rollCommand = PID_x.getCommand(mypos.getX(), destination.getX());
-                                double pitchCommand = PID_y.getCommand(mypos.getY(), destination.getY());
-                                double yawCommand = calculateYaw();
-                                double gazCommand = 0;
+                                float rollCommand = (float)PID_x.getCommand(mypos.getX(), destination.getX());
+                                float pitchCommand = (float)PID_y.getCommand(mypos.getY(), destination.getY());
+                                float yawCommand = calculateYaw();
+                                float gazCommand = 0;
                                 setControlInput(yawCommand, pitchCommand, rollCommand, gazCommand);
                             }
                             break;
@@ -270,7 +270,7 @@ public class MotionAutomatonMiniDrone extends RobotMotion {
         gvh.log.i(TAG, "Drone hovering");
     }
 
-    private double calculateYaw() {
+    private float calculateYaw() {
         // this method calculates a yaw correction, to keep the drone's yaw angle near 90 degrees
         if(mypos.yaw > 93) {
             return 5;

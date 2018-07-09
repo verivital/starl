@@ -180,10 +180,10 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
                                         rescale(Math.toDegrees(Rpitch)%360, mypos.max_pitch_roll),
                                         rescale(Math.toDegrees(Rroll)%360, mypos.max_pitch_roll),
                                         rescale(Rvs, mypos.max_gaz));*/
-                                double rollCommand = PID_x.getCommand(mypos.getX(), destination.getX())*-1;
-                                double pitchCommand = PID_y.getCommand(mypos.getY(), destination.getY())*-1;
-                                double yawCommand = calculateYaw();
-                                double gazCommand = 0;
+                                float rollCommand = (float)PID_x.getCommand(mypos.getX(), destination.getX())*-1;
+                                float pitchCommand = (float)PID_y.getCommand(mypos.getY(), destination.getY())*-1;
+                                float yawCommand = calculateYaw();
+                                float gazCommand = 0;
                                 setControlInputRescale(yawCommand, pitchCommand, rollCommand, gazCommand);
                                 double maxVal = 50;
                                 System.out.printf("Input commands (-1 to 1): %f %f %f %f \n",
@@ -196,14 +196,14 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
                         case HOVER:
                             if(distance <= param.GOAL_RADIUS) {
                                 hover();
-                                double yawCommand = calculateYaw();
+                                float yawCommand = calculateYaw();
                                 setControlInput(yawCommand, 0, 0, 0);
                             }
                             else {
-                                double rollCommand = PID_x.getCommand(mypos.getX(), destination.getX());
-                                double pitchCommand = PID_y.getCommand(mypos.getY(), destination.getY());
-                                double yawCommand = calculateYaw();
-                                double gazCommand = 0;
+                                float rollCommand = (float)PID_x.getCommand(mypos.getX(), destination.getX());
+                                float pitchCommand = (float)PID_y.getCommand(mypos.getY(), destination.getY());
+                                float yawCommand = calculateYaw();
+                                float gazCommand = 0;
                                 setControlInput(yawCommand, pitchCommand, rollCommand, gazCommand);
                             }
                             break;
@@ -322,6 +322,10 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
         }
     }
 
+    private float rescale(float value, float max_value) {
+        return (float)rescale((double)value, (double)max_value);
+    }
+
     protected void setControlInput(double yaw_v, double pitch, double roll, double gaz){
         bti.setControlInput(yaw_v, pitch, roll, gaz);
         gvh.log.i(TAG, "control input as, yaw, pitch, roll, thrust " + yaw_v + ", " + pitch + ", " +roll + ", " +gaz);
@@ -386,7 +390,7 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
 		this.turnspeed = (param.TURNSPEED_MAX - param.TURNSPEED_MIN) / (param.SLOWTURN_ANGLE - param.SMALLTURN_ANGLE);
 	}
 	 */
-    private double calculateYaw() {
+    private float calculateYaw() {
         // this method calculates a yaw correction, to keep the drone's yaw angle near 90 degrees
         if(mypos.yaw > 93) {
             return 5;

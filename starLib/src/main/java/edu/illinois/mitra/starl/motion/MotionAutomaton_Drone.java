@@ -37,9 +37,9 @@ public class MotionAutomaton_Drone extends RobotMotion {
     private boolean colliding = false;
 
     //PID controller parameters
-    double saturationLimit = 50;
-    double windUpLimit = 185;
-    int filterLength = 8;
+    private double saturationLimit = 50;
+    private double windUpLimit = 185;
+    private int filterLength = 8;
     /*double Kpx = 0.2;
     double Kpy = 0.2;
     double Kix = 0.04;
@@ -322,9 +322,8 @@ public class MotionAutomaton_Drone extends RobotMotion {
         running = true;
     }
 
-    protected void rotateDrone(){
-        bti.setVelocityMode(true);
-        bti.setInputs((float)rescale(calculateYaw(), 5), 0, 0, 0);
+    private void rotateDrone(){
+        bti.setControlInput(rescale(calculateYaw(), 5), 0, 0, 0);
     }
 
     private void startMotion() {
@@ -341,8 +340,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
 
     protected void setControlInput(double yaw_v, double pitch, double roll, double gaz){
         //Bluetooth command to control the drone
-        bti.setVelocityMode(false);
-        bti.setInputs((float)yaw_v, (float)pitch, (float)roll, (float)gaz);
+        bti.setControlInput(yaw_v, pitch, roll, gaz);
         gvh.log.i(TAG, "control input as, yaw, pitch, roll, thrust " + yaw_v + ", " + pitch + ", " +roll + ", " +gaz);
     }
 
@@ -374,8 +372,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
      */
     protected void hover(){
         //Bluetooth command to control the drone
-        bti.setVelocityMode(true);
-        bti.setInputs(0,0,0,0);
+        bti.setControlInput(0,0,0,0);
         gvh.log.i(TAG, "Drone hovering");
     }
 
