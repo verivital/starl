@@ -1,10 +1,7 @@
 package edu.illinois.mitra.starl.motion;
 
-import android.content.Context;
-
 import java.util.*;
 
-import edu.illinois.mitra.starl.BuildConfig;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener.Event;
 import edu.illinois.mitra.starl.models.Model_Drone;
@@ -24,7 +21,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
 
     // Motion tracking
     protected ItemPosition destination;
-    private Model_Drone drone;
+    protected final Model_Drone drone;
 
     protected enum STAGE {
         INIT, MOVE, ROTATOR, HOVER, TAKEOFF, LAND, GOAL, STOP, USER_CONTROL
@@ -81,6 +78,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
         super(gvh.id.getName());
         this.gvh = gvh;
         this.bti = (DroneBTI)bti;
+        this.drone = (Model_Drone)gvh.plat.model;
     }
 
     public void goTo(ItemPosition dest, ObstacleList obsList) {

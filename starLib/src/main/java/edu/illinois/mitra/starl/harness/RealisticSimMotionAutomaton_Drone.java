@@ -15,14 +15,12 @@ public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
     private SimGpsProvider gpsp;
     private String name;
     private String typeName;
-    private Model_Drone my_model;
 
     public RealisticSimMotionAutomaton_Drone(GlobalVarHolder gvh, SimGpsProvider gpsp) {
         super(gvh, null);
         this.name = gvh.id.getName();
         this.gpsp = gpsp;
-        this.my_model = (Model_Drone)gvh.plat.model;
-        this.typeName = my_model.getTypeName();
+        this.typeName = drone.getTypeName();
     }
 
     @Override
