@@ -36,22 +36,24 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
     double saturationLimit = 50;
     double windUpLimit = 185;
     int filterLength = 8;
-    /*double Kpx = 0.2;
-    double Kpy = 0.2;
-    double Kix = 0.04;
-    double Kiy = 0.04;
-    double Kdx = 0.4;
-    double Kdy = 0.45;*/
-    // the ones below work pretty well
-    double Kpx = 0.0314669809792096;
-    double Kpy = 0.0314669809792096;
-    double Kix = 0.0110786899216426;
-    double Kiy = 0.0110786899216426;
-    double Kdx = 0.113205037832174;
-    double Kdy = 0.113205037832174;
+    /*double Kp = 0.2;
 
-    PIDController PID_x = new PIDController(Kpx, Kix, Kdx, saturationLimit, windUpLimit, filterLength);
-    PIDController PID_y = new PIDController(Kpy, Kiy, Kdy, saturationLimit, windUpLimit, filterLength);
+    double Ki = 0.04;
+
+    double Kd = 0.4;
+    */
+    // the ones below work pretty well
+    //To start the tuning, set Ki and Kd to 0 and Kp around 0.02. From there, raise/lower Kp until the quadcopter stops shaking
+
+    double Kp = -0.0314669809792096;
+
+    double Ki = -0.0110786899216426;
+
+    double Kd = -0.113205037832174;
+
+
+    PIDController PID_x = new PIDController(Kp, Ki, Kd, saturationLimit, windUpLimit, filterLength);
+    PIDController PID_y = new PIDController(Kp, Ki, Kd, saturationLimit, windUpLimit, filterLength);
 
 
     protected enum STAGE {
@@ -162,8 +164,8 @@ public class MotionAutomaton_GhostAerial extends RobotMotion {
                                 /*double Ax_d, Ay_d = 0.0;
                                 double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
                                 //		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
-                                Ax_d = (kpx * (destination.getX - mypos.getX) - kdx * mypos.v_x) ;
-                                Ay_d = (kpy * (destination.getY - mypos.getY) - kdy * mypos.v_y) ;
+                                Ax_d = (kp * (destination.getX - mypos.getX) - kdx * mypos.v_x) ;
+                                Ay_d = (kp * (destination.getY - mypos.getY) - kdy * mypos.v_y) ;
                                 Ryaw = Math.atan2(destination.getY - mypos.getY, destination.getX - mypos.getX);
                                 //Ryaw = Math.atan2((destination.getY - mypos.getX), (destination.getX - mypos.getY));
                                 Ryawsp = kpz * ((Ryaw - Math.toRadians(mypos.yaw)));
