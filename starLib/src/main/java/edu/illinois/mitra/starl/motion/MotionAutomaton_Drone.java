@@ -29,9 +29,9 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
     }
 
     private STAGE next = null;
-    protected STAGE stage = STAGE.INIT;
+    protected volatile STAGE stage = STAGE.INIT;
     private STAGE prev = null;
-    protected boolean running = false;
+    protected volatile boolean running = false;
     private boolean colliding = false;
 
     final PIDController PID_x;
@@ -66,7 +66,7 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
     }
 
     public void goTo(ItemPosition dest) {
-        if((inMotion && !this.destination.equals(dest)) || !inMotion) {
+        if(!inMotion || !this.destination.equals(dest)) {
             done = false;
             this.destination = dest;
             this.mode = OPMODE.GO_TO;
@@ -159,8 +159,8 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
                                 //setControlInput(Ryawsp/param.max_yaw_speed, Rpitch%param.max_pitch_roll, Rroll%param.max_pitch_roll, Rvs/param.max_gaz);
                                 //next = STAGE.INIT;*/
 
-                                double rollCommand = PID_x.getCommand(drone.getX(), destination.getX());
-                                double pitchCommand = PID_y.getCommand(drone.getY(), destination.getY());
+                                /*double rollCommand = PID_x.getOutput(drone.getX(), destination.getX());
+                                double pitchCommand = PID_y.getOutput(drone.getY(), destination.getY());
                                 double yawCommand = calculateYaw();
                                 double gazCommand = 0;
                                 gvh.log.d("POSITION DEBUG", "My Position: " + drone.getX() + " " + drone.getY());
@@ -186,8 +186,8 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
                                 hover();
                             }
                             else{
-                                double rollCommand = PID_x.getCommand(drone.getX(), destination.getX());
-                                double pitchCommand = PID_y.getCommand(drone.getY(), destination.getY());
+                                double rollCommand = PID_x.getOutput(drone.getX(), destination.getX());
+                                double pitchCommand = PID_y.getOutput(drone.getY(), destination.getY());
                                 double yawCommand = calculateYaw();
                                 double gazCommand = 0;
                                 setControlInputRescale(yawCommand, pitchCommand, rollCommand, gazCommand);
