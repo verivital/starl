@@ -112,9 +112,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
         while(true) {
             //			gvh.gps.getObspointPositions().updateObs();
             if(running) {
-
-                drone = (Model_Drone) gvh.plat.getModel();
-//				System.out.println(drone.toString());
+                //				System.out.println(drone.toString());
                 System.out.printf("drone (%d, %d) \n", drone.getX(), drone.getY());
                 System.out.printf("destination (%d, %d) \n", destination.getX(), destination.getY());
                 int distance = (int)drone.distanceTo2D(destination);
@@ -131,7 +129,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
 
                             PID_x.reset();
                             PID_y.reset();
-                            bti.setMaxTilt(2.5f); // TODO: add max tilt to motion paramters cla
+                            bti.setMaxTilt(2.5f); // TODO: add max tilt to motion parameters class
 
                             if(drone.getZ() < safeHeight){
                                 // just a safe distance from ground

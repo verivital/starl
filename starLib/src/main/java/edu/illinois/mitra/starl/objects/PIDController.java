@@ -48,7 +48,8 @@ public class PIDController {
     }
 
     /**
-     * Constructor for a PI (proportional-integral) controller with no modifications.
+     * Constructor for a standard PI (proportional-integral) controller with no
+     * modifications. The derivative coefficient is often not necessary.
      *
      * @param Kp Proportional coefficient, implements command += Kp * error
      * @param Ki Integral coefficient, implements command += Ki * cumsum(error)
