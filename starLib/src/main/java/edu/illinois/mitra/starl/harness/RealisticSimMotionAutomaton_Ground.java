@@ -1,15 +1,15 @@
 package edu.illinois.mitra.starl.harness;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
-import edu.illinois.mitra.starl.motion.MotionAutomaton_iRobot;
+import edu.illinois.mitra.starl.motion.MotionAutomaton_Ground;
 import edu.illinois.mitra.starl.objects.Common;
 
-public class RealisticSimMotionAutomaton_iRobot extends MotionAutomaton_iRobot {
+public class RealisticSimMotionAutomaton_Ground extends MotionAutomaton_Ground {
 	private SimGpsProvider gpsp;
 	private String name;
 	private String typeName;
 	
-	public RealisticSimMotionAutomaton_iRobot(GlobalVarHolder gvh, SimGpsProvider gpsp) {
+	public RealisticSimMotionAutomaton_Ground(GlobalVarHolder gvh, SimGpsProvider gpsp) {
 		super(gvh, null);
 		name = gvh.id.getName();
 		typeName = "Model_iRobot";
@@ -20,7 +20,7 @@ public class RealisticSimMotionAutomaton_iRobot extends MotionAutomaton_iRobot {
 	public void motion_stop() {
 		gpsp.setVelocity(typeName, name, 0, 0);
 		super.running = false;
-		super.stage = MotionAutomaton_iRobot.STAGE.INIT;
+		super.stage = STAGE.INIT;
 		super.destination = null;
 		super.inMotion = false;
 	}

@@ -2,9 +2,7 @@ package edu.illinois.mitra.starl.harness;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.models.Model_Drone;
-import edu.illinois.mitra.starl.models.Model_quadcopter;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_Drone;
-import edu.illinois.mitra.starl.motion.MotionAutomaton_quadcopter;
 
 //TODO: setControlInput() is not compatible with every drone, see below.
 
@@ -15,12 +13,10 @@ public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
     private SimGpsProvider gpsp;
     private String name;
     private String typeName;
-    protected Model_Drone drone;
 
     public RealisticSimMotionAutomaton_Drone(GlobalVarHolder gvh, SimGpsProvider gpsp) {
         super(gvh, null);
         this.name = gvh.id.getName();
-        drone = (Model_Drone)gvh.plat.getModel();
         this.gpsp = gpsp;
         this.typeName = drone.getTypeName();
     }
@@ -42,7 +38,8 @@ public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
 
         //TODO: Have to change SimGpsProvider class, because setControlInput is only for quadCopters, setControlInput3DR is only for 3DR, etc.
         //TODO: In order to change it, need to have one list of all robots just for motion settings, investigate more.
-        gpsp.setControlInput(typeName,name, yaw_v*drone.max_yaw_speed(), pitch*drone.max_pitch_roll(), roll*drone.max_pitch_roll(), gaz*drone.max_gaz());
+        gpsp.setControlInput(typeName,name, yaw_v*drone.max_yaw_speed(),
+                pitch*drone.max_pitch_roll(), roll*drone.max_pitch_roll(), gaz*drone.max_gaz());
     }
 
     /**
