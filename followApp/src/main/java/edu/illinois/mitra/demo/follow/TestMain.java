@@ -9,9 +9,9 @@ public class TestMain {
         SimSettings.Builder settings = new SimSettings.Builder();
 
         //Robots
-        settings.N_IROBOTS(1);  //works in all increments
+        settings.N_IROBOTS(0);  //works in all increments
         settings.N_QUADCOPTERS(0);  //Works unless multiple crash.
-        settings.N_o3DR(0);     //Works
+        settings.N_o3DR(1);     //Works
 
         //Don't work, utilize PID controller
         settings.N_GHOSTS(0);   //Doesn't target correctly

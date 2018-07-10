@@ -3,6 +3,7 @@ package edu.illinois.mitra.starl.motion;
 import java.util.*;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
+import edu.illinois.mitra.starl.harness.SimGpsProvider;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener.Event;
 import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.objects.*;
@@ -10,14 +11,13 @@ import edu.illinois.mitra.starl.objects.*;
 /**
  * TODO: Remove unncessary methods/cleanup, add PID Controller.
  */
-public class MotionAutomaton_Drone extends RobotMotion {
+public abstract class MotionAutomaton_Drone extends RobotMotion {
     protected static final String TAG = "MotionAutomaton";
     protected static final String ERR = "Critical Error";
     private static final int safeHeight = 500;
-    private boolean abort = false;
+    protected boolean abort = false;
 
     protected GlobalVarHolder gvh;
-    private DroneBTI bti;
 
     // Motion tracking
     protected ItemPosition destination;
@@ -74,10 +74,9 @@ public class MotionAutomaton_Drone extends RobotMotion {
 
     //	private volatile MotionParameters param = settings.build();
 
-    public MotionAutomaton_Drone(GlobalVarHolder gvh, BTI bti) {
+    public MotionAutomaton_Drone(GlobalVarHolder gvh) {
         super(gvh.id.getName());
         this.gvh = gvh;
-        this.bti = (DroneBTI)bti;
         this.drone = (Model_Drone)gvh.plat.model;
     }
 
@@ -130,7 +129,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
 
                             PID_x.reset();
                             PID_y.reset();
-                            bti.setMaxTilt(2.5f); // TODO: add max tilt to motion parameters class
+//                            setMaxTilt(2.5f); // TODO: add max tilt to motion parameters class
 
                             if(drone.getZ() < safeHeight){
                                 // just a safe distance from ground
@@ -308,6 +307,12 @@ public class MotionAutomaton_Drone extends RobotMotion {
         land();
     }
 
+    private void startMotion() {
+        running = true;
+        stage = STAGE.INIT;
+        inMotion = true;
+    }
+
     @Override
     public void motion_stop() {
         abort = true;
@@ -316,20 +321,9 @@ public class MotionAutomaton_Drone extends RobotMotion {
         running = false;
     }
 
-
     @Override
     public void motion_resume() {
         running = true;
-    }
-
-    private void rotateDrone(){
-        bti.setControlInput(rescale(calculateYaw(), 5), 0, 0, 0);
-    }
-
-    private void startMotion() {
-        running = true;
-        stage = STAGE.INIT;
-        inMotion = true;
     }
 
     protected void sendMotionEvent(int motiontype, int... argument) {
@@ -338,42 +332,8 @@ public class MotionAutomaton_Drone extends RobotMotion {
         gvh.sendRobotEvent(Event.MOTION, motiontype);
     }
 
-    protected void setControlInput(double yaw_v, double pitch, double roll, double gaz){
-        //Bluetooth command to control the drone
-        bti.setControlInput(yaw_v, pitch, roll, gaz);
-        gvh.log.i(TAG, "control input as, yaw, pitch, roll, thrust " + yaw_v + ", " + pitch + ", " +roll + ", " +gaz);
-    }
-
     private void setControlInputRescale(double yaw_v, double pitch, double roll, double gaz){
         setControlInput(rescale(yaw_v, drone.max_yaw_speed()), rescale(pitch, drone.max_pitch_roll()), rescale(roll, drone.max_pitch_roll()), rescale(gaz, drone.max_gaz()));
-    }
-
-
-    /**
-     *  	take off from ground
-     */
-    protected void takeOff(){
-        //Bluetooth command to control the drone
-        bti.sendTakeoff();
-        gvh.log.i("POSITION DEBUG", "Drone taking off");
-    }
-
-    /**
-     * land on the ground
-     */
-    protected void land(){
-        //Bluetooth command to control the drone
-        bti.sendLanding();
-        gvh.log.i(TAG, "Drone landing");
-    }
-
-    /**
-     * hover at current position
-     */
-    protected void hover(){
-        //Bluetooth command to control the drone
-        bti.setControlInput(0,0,0,0);
-        gvh.log.i(TAG, "Drone hovering");
     }
 
     protected double calculateYaw() {
@@ -389,10 +349,6 @@ public class MotionAutomaton_Drone extends RobotMotion {
         }
     }
 
-    protected void setMaxTilt(float val) {
-        bti.setMaxTilt(val);
-    }
-
     @Override
     public void turnTo(ItemPosition dest) {
         throw new IllegalArgumentException("quadcopter does not have a corresponding turn to");
@@ -403,7 +359,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
         // TODO Auto-generated method stub
     }
 
-    private double rescale(double value, double max_value){
+    protected double rescale(double value, double max_value){
         if(Math.abs(value) > max_value){
             return (Math.signum(value));
         }
@@ -411,8 +367,6 @@ public class MotionAutomaton_Drone extends RobotMotion {
             return value/max_value;
         }
     }
-
-    public void takePicture(){}
 
     /**
      * Enables user control when called from App.
@@ -438,6 +392,33 @@ public class MotionAutomaton_Drone extends RobotMotion {
     public void receivedKeyInput(String key){
         curKey = key;
     }
+
+    public void takePicture(){}
+
+    protected abstract void rotateDrone();
+
+    protected abstract void setControlInput(double yaw_v, double pitch, double roll, double gaz);
+
+    /**
+     *  	take off from ground
+     */
+    protected abstract void takeOff();
+
+    /**
+     * land on the ground
+     */
+    protected abstract void land();
+
+    /**
+     * hover at current position
+     */
+    protected abstract void hover();
+
+    protected abstract void setMaxTilt(float val);
+
+
+
+
 
 
 }

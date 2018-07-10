@@ -247,6 +247,7 @@ public class MotionAutomaton_Ground extends RobotMotion {
                         case TURN:
                             if(stage != prev) {
                                 gvh.log.e(TAG, "Sending turn command");
+                                System.out.println("here");
                                 turn(TurnSpeed(absangle), angle);
                             } else {
                                 if(absangle <= param.SMALLTURN_ANGLE) {
@@ -632,6 +633,7 @@ public class MotionAutomaton_Ground extends RobotMotion {
             } else {
                 sendMotionEvent(Common.MOT_STOPPED, 0);
             }
+            System.out.println("straight");
             bti.sendStraight(velocity);
         }
     }
@@ -639,6 +641,7 @@ public class MotionAutomaton_Ground extends RobotMotion {
     protected void turn(int velocity, int angle) {
         if(running) {
             sendMotionEvent(Common.MOT_TURNING, velocity, angle);
+            System.out.println("turn");
             bti.sendTurn(velocity, angle);
         }
     }

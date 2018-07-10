@@ -4,7 +4,6 @@ import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_Drone;
 
-//TODO: setControlInput() is not compatible with every drone, see below.
 
 /**
  * RealisticSimMotion
@@ -15,7 +14,7 @@ public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
     private String typeName;
 
     public RealisticSimMotionAutomaton_Drone(GlobalVarHolder gvh, SimGpsProvider gpsp) {
-        super(gvh, null);
+        super(gvh);
         this.name = gvh.id.getName();
         this.gpsp = gpsp;
         this.typeName = drone.getTypeName();
@@ -70,7 +69,13 @@ public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
     }
 
     @Override
-    public void cancel() {
-        super.running = false;
+    protected void rotateDrone(){
+        setControlInput(rescale(calculateYaw(), 5), 0, 0, 0);
     }
+
+    @Override
+    protected void setMaxTilt(float val){
+    //TODO: Implement
+    }
+
 }
