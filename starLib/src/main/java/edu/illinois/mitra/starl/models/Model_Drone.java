@@ -7,6 +7,7 @@ import edu.illinois.mitra.starl.motion.BTI;
 import edu.illinois.mitra.starl.motion.DroneBTI;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
+import edu.illinois.mitra.starl.objects.PIDParams;
 import edu.illinois.mitra.starl.objects.Point3i;
 import edu.illinois.mitra.starl.objects.PositionList;
 import edu.illinois.mitra.starl.objects.Vector3f;
@@ -29,6 +30,7 @@ public abstract class Model_Drone extends Model {
     public abstract double height();
 
     public abstract Class<? extends DroneBTI> getBluetoothInterface();
+    public abstract PIDParams getPIDParams();
 
     // platform specific control parameters: see page 78 of http://www.msh-tools.com/ardrone/ARDrone_Developer_Guide.pdf
     private double windt;

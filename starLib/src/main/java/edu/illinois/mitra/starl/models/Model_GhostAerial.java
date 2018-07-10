@@ -6,6 +6,7 @@ import edu.illinois.mitra.starl.motion.DroneBTI;
 import edu.illinois.mitra.starl.motion.GhostAerialBTI;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
+import edu.illinois.mitra.starl.objects.PIDParams;
 import edu.illinois.mitra.starl.objects.Point3i;
 import edu.illinois.mitra.starl.objects.PositionList;
 
@@ -60,5 +61,20 @@ public class Model_GhostAerial extends Model_Drone {
     @Override
     public Class<? extends DroneBTI> getBluetoothInterface() {
         return GhostAerialBTI.class;
+    }
+
+    @Override
+    public PIDParams getPIDParams() {
+        //PID controller parameters
+        double saturationLimit = 50;
+        double windUpLimit = 185;
+        int filterLength = 8;
+        // the ones below work pretty well
+        // To start the tuning, set Ki and Kd to 0 and Kp around 0.02. From there, raise/lower Kp
+        // until the quadcopter stops shaking
+        double Kp = 0.0314669809792096;
+        double Ki = 0.0110786899216426;
+        double Kd = 0.113205037832174;
+        return new PIDParams(Kp, Ki, Kd, saturationLimit, windUpLimit, filterLength);
     }
 }

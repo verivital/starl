@@ -33,32 +33,8 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
     protected boolean running = false;
     private boolean colliding = false;
 
-    //PID controller parameters
-    private double saturationLimit = 50;
-    private double windUpLimit = 185;
-    private int filterLength = 8;
-    /*double Kpx = 0.2;
-    double Kpy = 0.2;
-    double Kix = 0.04;
-    double Kiy = 0.04;
-    double Kdx = 0.4;
-    double Kdy = 0.45;*/
-    // the ones below work pretty well
-//    double Kpx = 0.0114669809792096; //314....
-//    double Kpy = 0.0114669809792096;
-//    double Kix = 0.0110786899216426; //011...
-//    double Kiy = 0.0110786899216426;
-//    double Kdx = 0.189205037832174; //113....
-//    double Kdy = 0.189205037832174;
-    double Kpx = 0.0714669809792096/4;
-    double Kpy = 0.0714669809792096/4;
-    double Kix = 0.0110786899216426;
-    double Kiy = 0.0110786899216426;
-    double Kdx = 0.189205037832174;
-    double Kdy = 0.189205037832174;
-
-    PIDController PID_x = new PIDController(Kpx, Kix, Kdx, saturationLimit, windUpLimit, filterLength);
-    PIDController PID_y = new PIDController(Kpy, Kiy, Kdy, saturationLimit, windUpLimit, filterLength);
+    final PIDController PID_x;
+    final PIDController PID_y;
 
     private enum OPMODE {
         GO_TO, USER_CONTROL
@@ -78,6 +54,10 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
         super(gvh.id.getName());
         this.gvh = gvh;
         this.drone = (Model_Drone)gvh.plat.model;
+
+        PIDParams pidParams = drone.getPIDParams();
+        PID_x = new PIDController(pidParams);
+        PID_y = new PIDController(pidParams);
     }
 
     public void goTo(ItemPosition dest, ObstacleList obsList) {

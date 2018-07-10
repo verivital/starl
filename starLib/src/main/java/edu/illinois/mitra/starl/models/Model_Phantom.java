@@ -5,6 +5,7 @@ import edu.illinois.mitra.starl.motion.DjiController;
 import edu.illinois.mitra.starl.motion.DroneBTI;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
+import edu.illinois.mitra.starl.objects.PIDParams;
 import edu.illinois.mitra.starl.objects.Point3i;
 import edu.illinois.mitra.starl.objects.PositionList;
 
@@ -61,5 +62,17 @@ public class Model_Phantom extends Model_Drone {
 	@Override
 	public Class<? extends DroneBTI> getBluetoothInterface() {
 		return DjiController.class;
+	}
+
+	@Override
+	public PIDParams getPIDParams() {
+		//PID controller parameters
+		double saturationLimit = 50;
+		double windUpLimit = 185;
+		int filterLength = 8;
+		double Kp = 0.0714669809792096/4;
+		double Ki = 0.0110786899216426;
+		double Kd = 0.189205037832174;
+		return new PIDParams(Kp, Ki, Kd, saturationLimit, windUpLimit, filterLength);
 	}
 }
