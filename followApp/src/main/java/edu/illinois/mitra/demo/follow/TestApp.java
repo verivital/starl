@@ -30,7 +30,7 @@ import edu.illinois.mitra.starl.objects.PositionList;
 public class TestApp extends LogicThread {
     private static final String TAG = "Test App";
     private static final boolean RANDOM_DESTINATION = false;
-    private static final boolean USER_CONTROL = true;
+    private static final boolean USER_CONTROL = false;
     public static final int ARRIVED_MSG = 22;
     private boolean arrived = true;
     private int messageCount = 0;

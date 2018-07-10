@@ -8,7 +8,7 @@ import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.objects.*;
 
 /**
- * TODO: Right now its a basic copy of quadcopter, remove unncessary methods/cleanup, also PID Controller.
+ * TODO: Remove unncessary methods/cleanup, add PID Controller.
  */
 public class MotionAutomaton_Drone extends RobotMotion {
     protected static final String TAG = "MotionAutomaton";
@@ -21,7 +21,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
 
     // Motion tracking
     protected ItemPosition destination;
-    protected final Model_Drone drone;
+    protected Model_Drone drone;
 
     protected enum STAGE {
         INIT, MOVE, ROTATOR, HOVER, TAKEOFF, LAND, GOAL, STOP, USER_CONTROL
@@ -88,8 +88,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
     public void goTo(ItemPosition dest) {
         if((inMotion && !this.destination.equals(dest)) || !inMotion) {
             done = false;
-            this.destination = new ItemPosition(dest);
-            //this.destination = dest;
+            this.destination = dest;
             this.mode = OPMODE.GO_TO;
             startMotion();
         }
@@ -104,22 +103,23 @@ public class MotionAutomaton_Drone extends RobotMotion {
     @Override
     public void run() {
         gvh.threadCreated(this);
+
         // some control parameters
         double kp = 0.00033;
         double kd = 0.0006;
         double kpz = 0.00033;
         double kdz = 0.0006;
+
         while(true) {
             //			gvh.gps.getObspointPositions().updateObs();
             if(running) {
 
                 drone = (Model_Drone) gvh.plat.getModel();
-//				System.out.println(drone.toString());
                 System.out.printf("drone (%d, %d) \n", drone.getX(), drone.getY());
                 System.out.printf("destination (%d, %d) \n", destination.getX(), destination.getY());
                 int distance = (int)drone.distanceTo2D(destination);
                 System.out.println("distance:" + distance);
-
+//here
                 if (drone.gaz < -50){
                     // System.out.println("going down");
                 }
@@ -131,11 +131,13 @@ public class MotionAutomaton_Drone extends RobotMotion {
 
                             PID_x.reset();
                             PID_y.reset();
-                            bti.setMaxTilt(2.5f); // TODO: add max tilt to motion paramters cla
+                            bti.setMaxTilt(2.5f); // TODO: add max tilt to motion parameters class
+                            System.out.println(drone.getZ() + " k");
 
                             if(drone.getZ() < safeHeight){
                                 // just a safe distance from ground
                                 takeOff();
+                                System.out.println("here");
                                 next = STAGE.TAKEOFF;
                             }
                             else{
@@ -151,12 +153,14 @@ public class MotionAutomaton_Drone extends RobotMotion {
                             }
                             break;
                         case MOVE:
+//Here
                             if(drone.getZ() < safeHeight){
                                 // just a safe distance from ground
                                 takeOff();
                                 next = STAGE.TAKEOFF;
                                 break;
                             }
+
                             if(distance <= param.GOAL_RADIUS) {
                                 System.out.println(">>>Distance: " + distance + " - GOAL_RADIUS " + param.GOAL_RADIUS);
                                 next = STAGE.GOAL;
@@ -194,8 +198,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
                         case ROTATOR:
                             if(drone.yaw <= 93 && drone.yaw >= 87){
                                 next = STAGE.MOVE;
-                            }
-                            else{
+                            } else{
                                 rotateDrone();
                             }
                             break;
@@ -271,6 +274,7 @@ public class MotionAutomaton_Drone extends RobotMotion {
                             }
                             System.out.println(drone.yaw);
                             setControlInput(drone.yaw,drone.pitch,drone.roll,drone.gaz);
+                            break;
                     }
                     if((drone.yaw >= 100 || drone.yaw <= 80) && (drone.getZ() < safeHeight) && stage != STAGE.ROTATOR){
                         next = STAGE.ROTATOR;

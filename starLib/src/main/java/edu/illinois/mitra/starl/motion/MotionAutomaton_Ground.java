@@ -166,6 +166,7 @@ public class MotionAutomaton_Ground extends RobotMotion {
     public void run() {
         gvh.threadCreated(this);
 
+
         while(true) {
 //			gvh.gps.getObspointPositions().updateObs();
             if(running) {

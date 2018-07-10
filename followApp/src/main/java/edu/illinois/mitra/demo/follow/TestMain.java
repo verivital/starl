@@ -9,8 +9,8 @@ public class TestMain {
         SimSettings.Builder settings = new SimSettings.Builder();
 
         //Robots
-        settings.N_IROBOTS(0);  //works in all increments
-        settings.N_QUADCOPTERS(1);  //Works unless multiple crash.
+        settings.N_IROBOTS(1);  //works in all increments
+        settings.N_QUADCOPTERS(0);  //Works unless multiple crash.
         settings.N_o3DR(0);     //Works
 
         //Don't work, utilize PID controller
@@ -19,7 +19,7 @@ public class TestMain {
         settings.N_PHANTOMS(0); //Doesn't move
 
         //Files
-        settings.WAYPOINT_FILE("two.wpt");     //Found in top level waypoints directory, key must be #-iRob, #-quad, or # for others
+        settings.WAYPOINT_FILE("RobotSpecific.wpt");     //Found in top level waypoints directory, key must be #-iRob, #-quad, or # for others
         //settings.OBSPOINT_FILE("ObstacleCourse.wpt");
         //settings.INITIAL_POSITIONS_FILE("start.wpt");
 
