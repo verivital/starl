@@ -11,13 +11,11 @@ import edu.illinois.mitra.starl.motion.MotionAutomaton_Drone;
 public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
     private SimGpsProvider gpsp;
     private String name;
-    private String typeName;
 
     public RealisticSimMotionAutomaton_Drone(GlobalVarHolder gvh, SimGpsProvider gpsp) {
         super(gvh);
         this.name = gvh.id.getName();
         this.gpsp = gpsp;
-        this.typeName = drone.getTypeName();
     }
 
     @Override
@@ -37,12 +35,12 @@ public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
 
         //TODO: Have to change SimGpsProvider class, because setControlInput is only for quadCopters, setControlInput3DR is only for 3DR, etc.
         //TODO: In order to change it, need to have one list of all robots just for motion settings, investigate more.
-        gpsp.setControlInput(typeName,name, yaw_v*drone.max_yaw_speed(),
+        gpsp.setControlInput(drone.getTypeName(), name, yaw_v*drone.max_yaw_speed(),
                 pitch*drone.max_pitch_roll(), roll*drone.max_pitch_roll(), gaz*drone.max_gaz());
     }
 
     /**
-     *  	take off from ground
+     * take off from ground
      */
     @Override
     protected void takeOff(){

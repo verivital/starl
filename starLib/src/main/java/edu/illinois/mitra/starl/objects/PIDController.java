@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 /**
  * A PID (proportional-integral-derivative) controller implementation, with
- * additional modifications of saturation limit, wind-up limit, and lowpass
- * filtering of the derivative signal.
+ * additional modifications of saturation limit, wind-up limit, output slope limit,
+ * stored setpoint, and lowpass filtering of the derivative signal.
  *
  * Given a setpoint value and a current value, the PID controller will return command values
  * that smoothly bring the current value to the setpoint value, depending on the three constants
@@ -13,26 +13,32 @@ import java.util.Arrays;
  * on how to find optimal values.
  *
  * Created by VerivitalLab on 1/22/2016, updated 7/10/18.
+ * Some inspiration from https://github.com/tekdemo/MiniPID-Java.
  */
 public class PIDController {
 
     // PID coefficients -- small, nonnegative coefficients that tune the controller.
-    private final double Kp;
-    private final double Ki;
-    private final double Kd;
+    private double Kp;
+    private double Ki;
+    private double Kd;
 
-    // see getSaturationLimit(), getWindUpLimit(), getFilterLength()
-    private final double saturationLimit;
-    private final double windUpLimit;
+    // see configuration methods
+    private double saturationLimit; // the maximum absolute value of the output signal
+    private double windUpLimit; // the maximum allowed accumulated error
+    private double outputSlopeLimit; // the maximum allowed slope of the output signal, per second
+    private double setpoint; // the stored set point
+    private boolean reversed; // negate the output values
 
-    private final double[] filtArray; // the array implementing the filter ring buffer
+    private double[] filtArray; // the array implementing the filter ring buffer
     private double filtRunningSum; // the running sum of the elements in filtArray
     private int filtIndex; // the next index to write to in filtArray
 
+    // temporary data
     private boolean notFirstCall; // true implies prevError and prevTime are valid
-    private double prevError; // the error recorded on the last call to getCommand()
+    private double prevError; // the error recorded on the last call to getOutput()
     private double cumError; // the accumulated error so far
-    private long prevTime; // the time recorded on the last call to getCommand()
+    private long prevTime; // the time recorded on the last call to getOutput()
+    private double prevOutput; // the last recorded output (not reversed)
 
 
     /**
@@ -44,7 +50,9 @@ public class PIDController {
      * @param Kd Derivative coefficient, implements command += Kd * delta(error)
      */
     public PIDController(double Kp, double Ki, double Kd) {
-        this(Kp, Ki, Kd, 0, 0, 1);
+        setKp(Kp);
+        setKi(Ki);
+        setKd(Kd);
     }
 
     /**
@@ -62,48 +70,28 @@ public class PIDController {
      * Constructor for a standard PID (proportional-integral-derivative) controller with
      * modifications.
      *
-     * @param Kp Proportional coefficient, implements command += Kp * error
-     * @param Ki Integral coefficient, implements command += Ki * cumsum(error)
-     * @param Kd Derivative coefficient, implements command += Kd * delta(error)
-     *
-     * @param saturationLimit Represents the cap on command values this controller is allowed to produce.
-     *                        If 0 or negative, command values will not be capped.
-     *
-     * @param windUpLimit Represents the limit on the cumulative error, capping it from growing larger in
-     *                    magnitude. If 0 or negative, the cumulative error will not be capped.
-     *
-     * @param filterLength Represents the length of the lowpass filter (moving average) used to
-     *                     compensate for high-frequency changes in the setpoint. Larger values
-     *                     will smooth out the derivative term at the expense of slower response.
-     *                     The default length is 1 (no smoothing), but larger lengths (~8) are recommended.
-     */
-    public PIDController(double Kp, double Ki, double Kd, double saturationLimit, double windUpLimit, int filterLength) {
-        // initialize PID coefficients, keeping them positive
-        this.Kp = Math.abs(Kp);
-        this.Kd = Math.abs(Kd);
-        this.Ki = Math.abs(Ki);
-
-        // 0 is used as sentinel value to disable limiting of command values,
-        // large value recommended instead
-        this.saturationLimit = saturationLimit > 0.0 ? saturationLimit : 0.0;
-
-        // 0 is used as sentinel value to disable limiting of the cumulative error value,
-        // large value recommended instead
-        this.windUpLimit = windUpLimit > 0.0 ? windUpLimit : 0.0;
-
-        // length of filter array must be positive
-        this.filtArray = new double[filterLength >= 1 ? filterLength : 1];
-    }
-
-    /**
-     * Constructor for a standard PID (proportional-integral-derivative) controller with
-     * modifications.
-     *
      * @param params PIDParams object containing all relevant parameters for a PID controller
      */
     public PIDController(PIDParams params) {
-        this(params.Kp, params.Ki, params.Kd, params.saturationLimit, params.windUpLimit,
-                params.filterLength);
+        this(params.Kp, params.Ki, params.Kd);
+        setSaturationLimit(params.saturationLimit);
+        setWindUpLimit(params.windUpLimit);
+        setFilterLength(params.filterLength);
+        setSetpoint(params.setpoint);
+        setOutputSlopeLimit(params.outputSlopeLimit);
+        setReversed(params.reversed);
+    }
+
+    /**
+     * Execute the PID algorithm, using the last recorded setpoint. Call repeatedly and
+     * apply the returned value to the actuator, in order to physically move the current
+     * value closer to the set point.
+     *
+     * @param currentVal the current value of some system property
+     * @return a command value used to bring the current value closer to the set point
+     */
+    public double getOutput(double currentVal) {
+        return getOutput(currentVal, getSetpoint());
     }
 
     /**
@@ -111,45 +99,41 @@ public class PIDController {
      * in order to physically move the current value closer to the set point.
      *
      * @param currentVal the current value of some system property
-     * @param setPoint the desired value for the system property
+     * @param setpoint the desired value for the system property
      * @return a command value used to bring the current value closer to the set point
      */
-    public double getCommand(double currentVal, double setPoint) {
-        return getCommand(currentVal, setPoint, System.nanoTime());
-    }
-
-    /**
-     * Execute the PID algorithm, using currentTime instead of System.nanoTime() for the current
-     * time. Call repeatedly and apply the returned value to the actuator, in order to physically
-     * move the current value closer to the set point.
-     *
-     * @param currentVal the current value of some system property
-     * @param setPoint the desired value for the system property
-     * @param currentTime the current time, in nanoseconds as a long
-     * @return a command value used to bring the current value closer to the set point
-     */
-    public double getCommand(double currentVal, double setPoint, long currentTime) {
+    public double getOutput(double currentVal, double setpoint) {
+        setSetpoint(setpoint);
         // find error
-        double error = setPoint - currentVal;
+        double error = setpoint - currentVal;
 
         // find change in error (junk if this is the first call to this method)
         double deltaError = error - prevError;
         prevError = error;
 
         // find change in time (0 if this is the first call to this method)
-        double deltaTime = getDeltaTime(currentTime);
+        double deltaTime = getDeltaTime();
 
-        // calculate the command value, adding the P, I, and D components
-        double command = getPComponent(error)
+        // calculate the output value, adding the P, I, and D components
+        double output = getPComponent(error)
                        + getIComponent(error, deltaTime)
                        + getDComponent(deltaError, deltaTime);
 
-        // limit command value if needed
-        command = cap(command, saturationLimit);
-        // lastly, record that this method has been called => prevError and prevTime are valid
-        notFirstCall = true;
+        // limit output value if needed
+        output = cap(output, saturationLimit); // limits to absolute range
+        if (notFirstCall) {
+            output = cap(output, outputSlopeLimit * deltaTime, prevOutput); // limits slope of output
+        }
+        prevOutput = output;
 
-        return command;
+        // reverse output value if needed
+        if (reversed) {
+            output = -output;
+        }
+
+        // lastly, record that this method has been called => prev* variables are valid
+        notFirstCall = true;
+        return output;
     }
 
     /**
@@ -163,18 +147,44 @@ public class PIDController {
         prevError = 0;
         cumError = 0;
         prevTime = 0;
+        setpoint = 0;
     }
 
+    /**
+     * Access the P coefficient. Setting takes the absolute value.
+     */
     public double getKp() {
         return Kp;
     }
+    public void setKp(double Kp) {
+        this.Kp = Math.abs(Kp);
+    }
 
+    /**
+     * Access the I coefficient. Setting takes the absolute value. The cumulative
+     * error is scaled so that the output does not spike.
+     */
     public double getKi() {
         return Ki;
     }
+    public void setKi(double Ki) {
+        Ki = Math.abs(Ki);
+        // scale cumError so that the output does not change instantaneously
+        if (Ki != 0) {
+            cumError *= this.Ki / Ki;
+        }
+        cumError = cap(cumError, windUpLimit);
+        this.Ki = Ki;
+    }
 
+    /**
+     * Access the D coefficient. Setting takes the absolute value.
+     */
     public double getKd() {
         return Kd;
+    }
+    public void setKd(double Kd) {
+        this.Kd = Math.abs(Kd);
     }
 
     /**
@@ -184,6 +194,11 @@ public class PIDController {
     public double getSaturationLimit() {
         return saturationLimit;
     }
+    public void setSaturationLimit(double saturationLimit) {
+        // 0 is used as sentinel value to disable limiting of command values,
+        // large value recommended instead
+        this.saturationLimit = saturationLimit > 0.0 ? saturationLimit : 0.0;
+    }
 
     /**
      * Represents the limit on the cumulative error, capping it from growing larger in
@@ -192,19 +207,69 @@ public class PIDController {
     public double getWindUpLimit() {
         return windUpLimit;
     }
+    public void setWindUpLimit(double windUpLimit) {
+        // 0 is used as sentinel value to disable limiting of the cumulative error value,
+        // large value recommended instead
+        this.windUpLimit = windUpLimit > 0.0 ? windUpLimit : 0.0;
+    }
 
     /**
      * Represents the length of the lowpass filter (moving average) used to
      * compensate for high-frequency changes in the setpoint. Larger values
      * will smooth out the derivative term at the expense of slower response.
      * The default length is 1 (no smoothing), but larger lengths (~8) are recommended.
+     *
+     * Note: setting the filter length resets the D component of the controller and
+     * should only be used during initialization/configuration.
      */
     public double getFilterLength() {
         return filtArray.length;
     }
+    public void setFilterLength(int filterLength) {
+        // length of filter array must be positive
+        this.filtArray = new double[filterLength >= 1 ? filterLength : 1];
+        filtRunningSum = 0;
+        filtIndex = 0;
+    }
+
+    /**
+     * Represents the limit on how quickly the output is allowed to change, in units
+     * per second.
+     */
+    public double getOutputSlopeLimit() {
+        return outputSlopeLimit;
+    }
+    public void setOutputSlopeLimit(double outputSlopeLimit) {
+        this.outputSlopeLimit = Math.abs(outputSlopeLimit);
+    }
+
+    /**
+     * Returns the current setpoint, which was set with either setSetpoint() or
+     * getOutput(setpoint).
+     */
+    public double getSetpoint() {
+        return setpoint;
+    }
+    public void setSetpoint(double setpoint) {
+        this.setpoint = setpoint;
+    }
+
+    /**
+     * Returns whether the output is negated or not
+     */
+    public boolean isReversed() {
+        return reversed;
+    }
+    public void setReversed(boolean reversed) {
+        this.reversed = reversed;
+    }
 
 
-    private double getDeltaTime(long currentTime) {
+    /*
+     * Private methods
+     */
+    private double getDeltaTime() {
+        long currentTime = System.nanoTime();
         // find change in time (0 if this is the first call to this method)
         long deltaTimeLong = currentTime - prevTime;
         prevTime = currentTime;
@@ -245,12 +310,17 @@ public class PIDController {
 
     private static double cap(double value, double absLimit) {
         // limits the absolute value of 'value' to positive or negative absLimit, if absLimit is positive
+        return cap(value, absLimit, 0.0);
+    }
+
+    private static double cap(double value, double absLimit, double center) {
+        // limits the absolute value of 'value' to center plus or minus absLimit, if absLimit is positive
         if (absLimit > 0) {
-            if (value > absLimit) {
-                return absLimit;
+            if (value > center + absLimit) {
+                return center + absLimit;
             }
-            if (value < -absLimit) {
-                return -absLimit;
+            if (value < center - absLimit) {
+                return center - absLimit;
             }
         }
         return value;

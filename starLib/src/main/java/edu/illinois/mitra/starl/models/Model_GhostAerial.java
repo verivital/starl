@@ -65,16 +65,13 @@ public class Model_GhostAerial extends Model_Drone {
 
     @Override
     public PIDParams getPIDParams() {
-        //PID controller parameters
-        double saturationLimit = 50;
-        double windUpLimit = 185;
-        int filterLength = 8;
-        // the ones below work pretty well
-        // To start the tuning, set Ki and Kd to 0 and Kp around 0.02. From there, raise/lower Kp
-        // until the quadcopter stops shaking
-        double Kp = 0.0314669809792096;
-        double Ki = 0.0110786899216426;
-        double Kd = 0.113205037832174;
-        return new PIDParams(Kp, Ki, Kd, saturationLimit, windUpLimit, filterLength);
+        PIDParams p = new PIDParams();
+        p.Kp = 0.0314669809792096;
+        p.Ki = 0.0110786899216426;
+        p.Kd = 0.113205037832174;
+        p.saturationLimit = 50;
+        p.windUpLimit = 185;
+        p.filterLength = 8;
+        return p;
     }
 }
