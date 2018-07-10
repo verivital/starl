@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener;
+import edu.illinois.mitra.starl.motion.BTI;
 import edu.illinois.mitra.starl.motion.DroneBTI;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_Drone;
 import edu.illinois.mitra.starl.motion.MotionParameters;
@@ -12,9 +13,9 @@ import edu.illinois.mitra.starl.objects.ItemPosition;
 public class RealisticMotionAutomaton_Drone extends MotionAutomaton_Drone {
     private DroneBTI bti;
 
-    public RealisticMotionAutomaton_Drone(GlobalVarHolder gvh, DroneBTI bti) {
+    public RealisticMotionAutomaton_Drone(GlobalVarHolder gvh, BTI bti) {
         super(gvh);
-        this.bti = bti;
+        this.bti = (DroneBTI)bti;
     }
 
     @Override

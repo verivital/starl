@@ -5,6 +5,7 @@ import edu.illinois.mitra.starl.motion.BluetoothInterface;
 import edu.illinois.mitra.starl.motion.DjiController;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
+import edu.illinois.mitra.starl.objects.PIDParams;
 import edu.illinois.mitra.starl.objects.Point3i;
 import edu.illinois.mitra.starl.objects.PositionList;
 import java.util.*;
@@ -28,9 +29,8 @@ public abstract class Model extends ItemPosition {
 	// This would be a static factory function if it didn't have to be polymorphic.
 	public abstract Class<? extends BTI> getBluetoothInterface();
 
-	public Model() {
+	public Model() {}
 
-	}
 	public Model(String name, int x, int y){
 		super(name, x, y);
 	}

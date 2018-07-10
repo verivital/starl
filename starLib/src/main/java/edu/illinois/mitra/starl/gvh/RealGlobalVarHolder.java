@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Handler;
 import edu.illinois.mitra.starl.comms.SmartUdpComThread;
 import edu.illinois.mitra.starl.comms.UdpGpsReceiver;
+import edu.illinois.mitra.starl.harness.RealisticMotionAutomaton_Drone;
 import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.models.Model_Ground;
@@ -55,7 +56,7 @@ public class RealGlobalVarHolder extends GlobalVarHolder {
 		}
 
 		if (initpos instanceof Model_Drone) {
-			plat.moat = new MotionAutomaton_Drone(this, bti);
+			plat.moat = new RealisticMotionAutomaton_Drone(this, bti);
 		} else if (initpos instanceof Model_Ground) {
 			plat.moat = new MotionAutomaton_Ground(this, bti);
 		} else {

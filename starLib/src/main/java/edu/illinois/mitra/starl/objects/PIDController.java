@@ -75,7 +75,7 @@ public class PIDController {
      * @param filterLength Represents the length of the lowpass filter (moving average) used to
      *                     compensate for high-frequency changes in the setpoint. Larger values
      *                     will smooth out the derivative term at the expense of slower response.
-     *                     The default length is 1 (no smoothing), but larger lengths are recommended.
+     *                     The default length is 1 (no smoothing), but larger lengths (~8) are recommended.
      */
     public PIDController(double Kp, double Ki, double Kd, double saturationLimit, double windUpLimit, int filterLength) {
         // initialize PID coefficients, keeping them positive
@@ -96,6 +96,17 @@ public class PIDController {
     }
 
     /**
+     * Constructor for a standard PID (proportional-integral-derivative) controller with
+     * modifications.
+     *
+     * @param params PIDParams object containing all relevant parameters for a PID controller
+     */
+    public PIDController(PIDParams params) {
+        this(params.Kp, params.Ki, params.Kd, params.saturationLimit, params.windUpLimit,
+                params.filterLength);
+    }
+
+    /**
      * Execute the PID algorithm. Call repeatedly and apply the returned value to the actuator,
      * in order to physically move the current value closer to the set point.
      *
@@ -104,24 +115,29 @@ public class PIDController {
      * @return a command value used to bring the current value closer to the set point
      */
     public double getCommand(double currentVal, double setPoint) {
-        return getCommand(setPoint - currentVal);
+        return getCommand(currentVal, setPoint, System.nanoTime());
     }
 
     /**
-     * Execute the PID algorithm. Call repeatedly and apply the returned value to the actuator,
-     * in order to physically move the current value closer to the set point.
+     * Execute the PID algorithm, using currentTime instead of System.nanoTime() for the current
+     * time. Call repeatedly and apply the returned value to the actuator, in order to physically
+     * move the current value closer to the set point.
      *
-     * @param error the difference between the desired value and the current value
-     *              of some system property
-     * @return a command value used to reduce the error
+     * @param currentVal the current value of some system property
+     * @param setPoint the desired value for the system property
+     * @param currentTime the current time, in nanoseconds as a long
+     * @return a command value used to bring the current value closer to the set point
      */
-    public double getCommand(double error) {
+    public double getCommand(double currentVal, double setPoint, long currentTime) {
+        // find error
+        double error = setPoint - currentVal;
+
         // find change in error (junk if this is the first call to this method)
         double deltaError = error - prevError;
         prevError = error;
 
         // find change in time (0 if this is the first call to this method)
-        double deltaTime = getDeltaTime();
+        double deltaTime = getDeltaTime(currentTime);
 
         // calculate the command value, adding the P, I, and D components
         double command = getPComponent(error)
@@ -188,9 +204,8 @@ public class PIDController {
     }
 
 
-    private double getDeltaTime() {
+    private double getDeltaTime(long currentTime) {
         // find change in time (0 if this is the first call to this method)
-        long currentTime = System.nanoTime();
         long deltaTimeLong = currentTime - prevTime;
         prevTime = currentTime;
         // convert deltaTime to double and seconds
