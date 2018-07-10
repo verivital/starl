@@ -8,6 +8,11 @@ import edu.illinois.mitra.starl.motion.DroneBTI;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_Drone;
 import edu.illinois.mitra.starl.motion.MotionParameters;
 
+
+/**
+ * Motion Automaton class for drones that extends MotionAutomaton_Drone. Used to send motion commands via bluetooth for real applications.
+ * Each robot model has a unique bluetooth interface.
+ */
 public class RealisticMotionAutomaton_Drone extends MotionAutomaton_Drone {
     private DroneBTI bti;
 
@@ -23,7 +28,6 @@ public class RealisticMotionAutomaton_Drone extends MotionAutomaton_Drone {
 
     @Override
     protected void setControlInput(double yaw_v, double pitch, double roll, double gaz){
-        //Bluetooth command to control the drone
         bti.setControlInput(yaw_v, pitch, roll, gaz);
         gvh.log.i(TAG, "control input as, yaw, pitch, roll, thrust " + yaw_v + ", " + pitch + ", " +roll + ", " +gaz);
     }

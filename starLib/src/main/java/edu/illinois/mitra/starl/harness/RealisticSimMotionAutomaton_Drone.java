@@ -6,7 +6,8 @@ import edu.illinois.mitra.starl.motion.MotionAutomaton_Drone;
 
 
 /**
- * RealisticSimMotion
+ * Motion Automaton class for drones that extends MotionAutomaton_Drone.
+ * Used to send motion commands to the SimGpsProvider to simulate motion.
  */
 public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
     private SimGpsProvider gpsp;
@@ -35,10 +36,9 @@ public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
             throw new IllegalArgumentException("gaz, vertical speed must be between -1 to 1");
         }
 
-        //TODO: Have to change SimGpsProvider class, because setControlInput is only for quadCopters, setControlInput3DR is only for 3DR, etc.
-        //TODO: In order to change it, need to have one list of all robots just for motion settings, investigate more.
         gpsp.setControlInput(typeName,name, yaw_v*drone.max_yaw_speed(),
                 pitch*drone.max_pitch_roll(), roll*drone.max_pitch_roll(), gaz*drone.max_gaz());
+
     }
 
     /**
