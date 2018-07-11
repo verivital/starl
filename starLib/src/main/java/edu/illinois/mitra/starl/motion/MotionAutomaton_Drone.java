@@ -194,15 +194,12 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
 
     protected double calculateYaw() {
         // this method calculates a yaw correction, to keep the drone's yaw angle near 90 degrees
-        if(drone.getYaw() > 93) {
+        if (drone.getYaw() > 93 && drone.getYaw() <= 270) {
+            return -5;
+        } else if (drone.getYaw() < 87 || drone.getYaw() > 270) {
             return 5;
         }
-        else if(drone.getYaw() < 87) {
-            return -5;
-        }
-        else {
-            return 0;
-        }
+        return 0;
     }
 
     @Override
@@ -320,7 +317,7 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
             next = STAGE.GOAL;
         } else {
             double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
-            //		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
+            /*//		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
             Vector3f A_d = destination.getPos().subtract(drone.getPos()).toVector3f().scale(kp)
                     .subtract(drone.getVelocity().scale(kd));
             Ryaw = atan2(destination.getY() - drone.getY(), destination.getX() - drone.getX());
@@ -344,6 +341,8 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
             double gazCommand = 0;
             gvh.log.d("POSITION DEBUG", "My Position: " + drone.getX() + " " + drone.getY());
             gvh.log.d("POSITION DEBUG", "Destination: " + destination.getX() + " " + destination.getY());
+
+            System.out.println(rollCommand + " roll " + pitchCommand + " pitch");
 
             setControlInputRescale(yawCommand, pitchCommand, rollCommand, gazCommand);
             // TD_NATHAN: check and resolve: was mypos.angle

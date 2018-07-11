@@ -77,6 +77,7 @@ public class Model_Mavic extends Model_Drone {
 		p.saturationLimit = 50;
 		p.windUpLimit = 185;
 		p.filterLength = 8;
+		p.reversed = true;
 		return p;
 	}
 }
