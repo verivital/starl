@@ -54,7 +54,7 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
     public MotionAutomaton_Drone(GlobalVarHolder gvh) {
         super(gvh.id.getName());
         this.gvh = gvh;
-        this.drone = (Model_Drone)gvh.plat.model;
+        this.drone = (Model_Drone) gvh.plat.model;
 
         PIDParams pidParams = drone.getPIDParams();
         PID_x = new PIDController(pidParams);
@@ -66,7 +66,7 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
     }
 
     public void goTo(ItemPosition dest) {
-        if(!inMotion || !this.destination.equals(dest)) {
+        if (!inMotion || !this.destination.equals(dest)) {
             done = false;
             this.destination = dest;
             this.mode = OPMODE.GO_TO;
@@ -90,58 +90,55 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
         double kpz = 0.00033;
         double kdz = 0.0006;
 
-        while(true) {
+        while (true) {
             //			gvh.gps.getObspointPositions().updateObs();
-            if(running) {
+            if (running) {
                 //				System.out.println(drone.toString());
                 System.out.printf("drone (%d, %d) \n", drone.getX(), drone.getY());
                 System.out.printf("destination (%d, %d) \n", destination.getX(), destination.getY());
-                int distance = (int)drone.distanceTo2D(destination);
+                int distance = (int) drone.distanceTo2D(destination);
                 System.out.println("distance:" + distance);
 
-                if (drone.gaz < -50){
+                if (drone.gaz < -50) {
                     // System.out.println("going down");
                 }
                 colliding = (stage != STAGE.LAND && drone.gaz < -50);
 
-                if(!colliding && stage != null) {
-                    switch(stage) {
+                if (!colliding && stage != null) {
+                    switch (stage) {
                         case INIT:
 
                             PID_x.reset();
                             PID_y.reset();
 //                            setMaxTilt(2.5f); // TODO: add max tilt to motion parameters class
 
-                            if(drone.getZ() < safeHeight){
+                            if (drone.getZ() < safeHeight) {
                                 // just a safe distance from ground
                                 takeOff();
                                 next = STAGE.TAKEOFF;
-                            }
-                            else{
-                                if(distance <= param.GOAL_RADIUS) {
+                            } else {
+                                if (distance <= param.GOAL_RADIUS) {
                                     System.out.println(">>>Distance: " + distance + " - GOAL_RADIUS " + param.GOAL_RADIUS);
                                     next = STAGE.GOAL;
-                                }
-                                else if(mode == OPMODE.GO_TO) {
+                                } else if (mode == OPMODE.GO_TO) {
                                     next = STAGE.MOVE;
-                                } else if(mode == OPMODE.USER_CONTROL){
+                                } else if (mode == OPMODE.USER_CONTROL) {
                                     next = STAGE.USER_CONTROL;
                                 }
                             }
                             break;
                         case MOVE:
-                            if(drone.getZ() < safeHeight){
+                            if (drone.getZ() < safeHeight) {
                                 // just a safe distance from ground
                                 takeOff();
                                 next = STAGE.TAKEOFF;
                                 break;
                             }
 
-                            if(distance <= param.GOAL_RADIUS) {
+                            if (distance <= param.GOAL_RADIUS) {
                                 System.out.println(">>>Distance: " + distance + " - GOAL_RADIUS " + param.GOAL_RADIUS);
                                 next = STAGE.GOAL;
-                            }
-                            else{
+                            } else {
                                 /*double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
                                 //		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
                                 Vector3f A_d = destination.getPos().subtract(drone.getPos()).toVector3f().scale(kp)
@@ -258,29 +255,31 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
                     /*if((drone.yaw >= 100 || drone.yaw <= 80) && (drone.getZ() < safeHeight) && stage != STAGE.ROTATOR){
                         next = STAGE.ROTATOR;
                     }*/
-                    if(abort){
-                        next = STAGE.LAND;
-                    }
-                    if(next != null) {
-                        prev = stage;
-                        stage = next;
-						System.out.println("Stage transition to " + stage.toString() + ", the previous stage is "+ prev);
+                                if (abort) {
+                                    next = STAGE.LAND;
+                                }
+                                if (next != null) {
+                                    prev = stage;
+                                    stage = next;
+                                    System.out.println("Stage transition to " + stage.toString() + ", the previous stage is " + prev);
 
-                        gvh.log.i(TAG, "Stage transition to " + stage.toString());
-                        gvh.trace.traceEvent(TAG, "Stage transition", stage.toString(), gvh.time());
-                    }
-                    next = null;
-                }
+                                    gvh.log.i(TAG, "Stage transition to " + stage.toString());
+                                    gvh.trace.traceEvent(TAG, "Stage transition", stage.toString(), gvh.time());
+                                }
+                                next = null;
+                            }
 
-                if((colliding || stage == null) ) {
-                    gvh.log.i("FailFlag", "write");
-                    done = false;
-                    motion_stop();
-                    //	land();
-                    //	stage = STAGE.LAND;
+                            if ((colliding || stage == null)) {
+                                gvh.log.i("FailFlag", "write");
+                                done = false;
+                                motion_stop();
+                                //	land();
+                                //	stage = STAGE.LAND;
+                            }
+                    }
+                    gvh.sleep(param.AUTOMATON_PERIOD);
                 }
             }
-            gvh.sleep(param.AUTOMATON_PERIOD);
         }
     }
 
@@ -314,19 +313,18 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
         gvh.sendRobotEvent(Event.MOTION, motiontype);
     }
 
-    private void setControlInputRescale(double yaw_v, double pitch, double roll, double gaz){
+    private void setControlInputRescale(double yaw_v, double pitch, double roll,
+                                        double gaz) {
         setControlInput(rescale(yaw_v, drone.max_yaw_speed()), rescale(pitch, drone.max_pitch_roll()), rescale(roll, drone.max_pitch_roll()), rescale(gaz, drone.max_gaz()));
     }
 
     protected double calculateYaw() {
         // this method calculates a yaw correction, to keep the drone's yaw angle near 90 degrees
-        if(drone.yaw > 93) {
+        if (drone.yaw > 93) {
             return 5;
-        }
-        else if(drone.yaw < 87) {
+        } else if (drone.yaw < 87) {
             return -5;
-        }
-        else {
+        } else {
             return 0;
         }
     }
@@ -341,22 +339,22 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
         // TODO Auto-generated method stub
     }
 
-    protected double rescale(double value, double max_value){
-        if(Math.abs(value) > max_value){
+    protected double rescale(double value, double max_value) {
+        if (Math.abs(value) > max_value) {
             return (Math.signum(value));
-        }
-        else{
-            return value/max_value;
+        } else {
+            return value / max_value;
         }
     }
 
     /**
      * Enables user control when called from App.
+     *
      * @param dest -- Location of waypoint
-     * @param obs -- Location of obstacles
+     * @param obs  -- Location of obstacles
      */
     @Override
-    public void userControl(ItemPosition dest, ObstacleList obs){
+    public void userControl(ItemPosition dest, ObstacleList obs) {
         done = false;
         running = true;
         this.destination = new ItemPosition(dest);
@@ -368,21 +366,24 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
      * Receves string representing which key was pressed. "forward" for up arrow, "back" for down arrow,
      * "left" and "right" for arrows, "up" for W, "down" for S, "turnL" for A, "turnR" for D. Once a key is released,
      * String key returns "stop".
+     *
      * @param key -- String representing which key was pressed. Changed to "stop" when released.
      */
     @Override
-    public void receivedKeyInput(String key){
+    public void receivedKeyInput(String key) {
         curKey = key;
     }
 
-    public void takePicture(){}
+    public void takePicture() {
+    }
 
     protected abstract void rotateDrone();
 
-    protected abstract void setControlInput(double yaw_v, double pitch, double roll, double gaz);
+    protected abstract void setControlInput(double yaw_v, double pitch, double roll,
+                                            double gaz);
 
     /**
-     *  	take off from ground
+     * take off from ground
      */
     protected abstract void takeOff();
 
@@ -397,10 +398,6 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
     protected abstract void hover();
 
     protected abstract void setMaxTilt(float val);
-
-
-
-
 
 
 }
