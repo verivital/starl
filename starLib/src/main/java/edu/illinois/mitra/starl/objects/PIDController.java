@@ -211,6 +211,7 @@ public class PIDController {
         // 0 is used as sentinel value to disable limiting of the cumulative error value,
         // large value recommended instead
         this.windUpLimit = windUpLimit > 0.0 ? windUpLimit : 0.0;
+        cumError = cap(cumError, this.windUpLimit);
     }
 
     /**
@@ -227,8 +228,10 @@ public class PIDController {
     }
     public void setFilterLength(int filterLength) {
         // length of filter array must be positive
-        this.filtArray = new double[filterLength >= 1 ? filterLength : 1];
-        filtRunningSum = 0;
+        double[] newFiltArray = new double[filterLength >= 1 ? filterLength : 1];
+        // fill array with equivalent average value to avoid a sharp jump
+        Arrays.fill(newFiltArray, filtRunningSum * filtArray.length / newFiltArray.length);
+        filtArray = newFiltArray;
         filtIndex = 0;
     }
 
@@ -297,9 +300,9 @@ public class PIDController {
             filtArray[filtIndex] = deltaError;
             // add newest entry
             filtRunningSum += filtArray[filtIndex];
-            // increment filtIndex and reset to zero if too large, index of oldest entry or 0
+            // increment filtIndex and reset to zero if too large, index of oldest entry
             filtIndex = (filtIndex + 1) % filtArray.length;
-            // subtract oldest entry or 0
+            // subtract oldest entry
             filtRunningSum -= filtArray[filtIndex];
 
             // calculate D component of command value

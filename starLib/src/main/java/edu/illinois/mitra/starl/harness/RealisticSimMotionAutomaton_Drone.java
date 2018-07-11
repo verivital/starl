@@ -1,7 +1,6 @@
 package edu.illinois.mitra.starl.harness;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
-import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_Drone;
 
 

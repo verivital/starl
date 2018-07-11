@@ -32,7 +32,6 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
     protected volatile STAGE stage = STAGE.INIT;
     private STAGE prev = null;
     protected volatile boolean running = false;
-    private boolean colliding = false;
 
     final PIDController PID_x;
     final PIDController PID_y;
@@ -102,7 +101,7 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
                 if (drone.gaz < -50){
                     // System.out.println("going down");
                 }
-                colliding = (stage != STAGE.LAND && drone.gaz < -50);
+                boolean colliding = (stage != STAGE.LAND && drone.gaz < -50);
 
                 if(!colliding && stage != null) {
                     switch(stage) {
@@ -142,7 +141,7 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
                                 next = STAGE.GOAL;
                             }
                             else{
-                                /*double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
+                                double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
                                 //		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
                                 Vector3f A_d = destination.getPos().subtract(drone.getPos()).toVector3f().scale(kp)
                                         .subtract(drone.getVelocity().scale(kd));
@@ -159,7 +158,7 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
                                 //setControlInput(Ryawsp/param.max_yaw_speed, Rpitch%param.max_pitch_roll, Rroll%param.max_pitch_roll, Rvs/param.max_gaz);
                                 //next = STAGE.INIT;*/
 
-                                /*double rollCommand = PID_x.getOutput(drone.getX(), destination.getX());
+                                double rollCommand = PID_x.getOutput(drone.getX(), destination.getX());
                                 double pitchCommand = PID_y.getOutput(drone.getY(), destination.getY());
                                 double yawCommand = calculateYaw();
                                 double gazCommand = 0;
