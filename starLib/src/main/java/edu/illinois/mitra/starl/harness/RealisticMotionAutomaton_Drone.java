@@ -66,14 +66,5 @@ public class RealisticMotionAutomaton_Drone extends MotionAutomaton_Drone {
         // TODO Auto-generated method stub
     }
 
-    protected double rescale(double value, double max_value){
-        if(Math.abs(value) > max_value){
-            return (Math.signum(value));
-        }
-        else{
-            return value/max_value;
-        }
-    }
-
     public void takePicture(){}
 }

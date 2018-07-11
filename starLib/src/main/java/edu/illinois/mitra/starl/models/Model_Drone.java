@@ -1,10 +1,8 @@
 package edu.illinois.mitra.starl.models;
 
-import org.bouncycastle.pqc.math.linearalgebra.Vector;
-
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.motion.BTI;
 import edu.illinois.mitra.starl.motion.DroneBTI;
+import edu.illinois.mitra.starl.objects.Common;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.PIDParams;
@@ -38,10 +36,10 @@ public abstract class Model_Drone extends Model {
     private Vector3f windNoise = new Vector3f();
 
     // Drone control directions
-    public double yaw;
-    public double pitch;
-    public double roll;
-    public double gaz;
+    private double yaw;
+    private double pitch;
+    private double roll;
+    private double gaz;
 
     // Velocity, translational and rotational
     private Vector3f vel = new Vector3f();
@@ -52,10 +50,10 @@ public abstract class Model_Drone extends Model {
     private double yaw_p;
     private double v_yaw_p;
 
-    public double v_yawR = 0;
-    public double pitchR = 0;
-    public double gazR = 0;
-    public double rollR = 0;
+    private double v_yawR = 0;
+    private double pitchR = 0;
+    private double gazR = 0;
+    private double rollR = 0;
 
     public Model_Drone() {}
 
@@ -72,9 +70,9 @@ public abstract class Model_Drone extends Model {
             this.setPos(Integer.parseInt(parts[2]),
                     Integer.parseInt(parts[3]),
                     Integer.parseInt(parts[4]));
-            this.yaw = Integer.parseInt(parts[5]);
-            this.pitch = Integer.parseInt(parts[6]);
-            this.roll = Integer.parseInt(parts[7]);
+            this.setYaw(Integer.parseInt(parts[5]));
+            this.setPitch(Integer.parseInt(parts[6]));
+            this.setRoll(Integer.parseInt(parts[7]));
         } else {
             throw new ItemFormattingException("Should be length 9, is length " + parts.length);
         }
@@ -90,13 +88,13 @@ public abstract class Model_Drone extends Model {
 
     public Model_Drone(String name, int x, int y, int z, double yaw) {
         this(name, x, y, z);
-        this.yaw = yaw;
+        this.setYaw(yaw);
     }
 
     public Model_Drone(String name, int x, int y, int z, double yaw, double pitch, double roll) {
         this(name, x, y, z, yaw);
-        this.pitch = pitch;
-        this.roll = roll;
+        this.setPitch(pitch);
+        this.setRoll(roll);
     }
 
     public Model_Drone(ItemPosition t_pos) {
@@ -106,7 +104,7 @@ public abstract class Model_Drone extends Model {
     @Override
     public String toString() {
         return name + " (" + getTypeName() + "): " + getPos()
-                + "; yaw, pitch, roll, gaz: " + yaw + ", " + pitch + ", " + roll + " ," + gaz;
+                + "; yaw, pitch, roll, gaz: " + getYaw() + ", " + getPitch() + ", " + getRoll() + " ," + getGaz();
     }
 
     public Vector3f getVelocity() { return vel; }
@@ -174,7 +172,7 @@ public abstract class Model_Drone extends Model {
 		v_z_p = gaz;
 
 		double dYaw = (v_yaw*timeSinceUpdate);
-		yaw_p = (yaw + dYaw) %360;
+		yaw_p = Common.angleWrap(yaw + dYaw);
 
 		return new Point3i(x_p, y_p, z_p);
 	}
@@ -185,10 +183,10 @@ public abstract class Model_Drone extends Model {
             System.out.println("Incorrect number of noises parameters passed in, please pass in getX, getY, getZ, yaw, pitch, roll noises");
             return new Point3i(getPos());
         }
-        v_yaw += (v_yawR - v_yaw) * timeSinceUpdate;
-        pitch += (pitchR - pitch) * timeSinceUpdate;
-        roll += (rollR - roll) * timeSinceUpdate;
-        gaz += (gazR - gaz) * timeSinceUpdate;
+        v_yaw += (getV_yawR() - v_yaw) * timeSinceUpdate;
+        setPitch(getPitch() + (getPitchR() - getPitch()) * timeSinceUpdate);
+        setRoll(getRoll() + (getRollR() - getRoll()) * timeSinceUpdate);
+        setGaz(getGaz() + (getGazR() - getGaz()) * timeSinceUpdate);
 
         Vector3f noise = new Vector3f(getRand(), getRand(), getRand())
                 .subtract(new Vector3f(0.5, 0.5,  0.5))
@@ -210,17 +208,17 @@ public abstract class Model_Drone extends Model {
         // each pixel is 1 millimeter
         // timeSinceUpdate is in second
         Vector3i delta = noise.add(windNoise)
-                .add(new Vector3f(vel.getX(), vel.getY(), gaz).scale(timeSinceUpdate))
+                .add(new Vector3f(vel.getX(), vel.getY(), getGaz()).scale(timeSinceUpdate))
                 .toVector3i();
 
         pos_p = getPos().add(delta);
 
         double thrust;
-        double pitchRad = Math.toRadians(pitch);
-        double rollRad = Math.toRadians(roll);
-        double yawRad = Math.toRadians(yaw);
+        double pitchRad = Math.toRadians(getPitch());
+        double rollRad = Math.toRadians(getRoll());
+        double yawRad = Math.toRadians(getYaw());
         if (mass() != 0 && Math.cos(rollRad) != 0 && Math.cos(pitchRad) != 0) {
-            thrust = (gaz+1000) / (mass() * Math.cos(rollRad)) / Math.cos(pitchRad);
+            thrust = (getGaz() +1000) / (mass() * Math.cos(rollRad)) / Math.cos(pitchRad);
         }
         else{
             thrust = 1000;
@@ -229,9 +227,9 @@ public abstract class Model_Drone extends Model {
         Vector3f dv = new Vector3f(-(Math.sin(rollRad) * Math.sin(yawRad) + Math.cos(rollRad) * Math.sin(pitchRad) * Math.cos(yawRad)),
                 Math.sin(rollRad) * Math.cos(yawRad) - Math.cos(rollRad) * Math.sin(pitchRad) * Math.sin(yawRad)).scale(thrust / mass());
 
-        vel_p = new Vector3f(vel.getX() + dv.getX() * timeSinceUpdate, vel.getY() + dv.getY() * timeSinceUpdate, gaz);
+        vel_p = new Vector3f(vel.getX() + dv.getX() * timeSinceUpdate, vel.getY() + dv.getY() * timeSinceUpdate, getGaz());
 
-        yaw_p = (yaw + v_yaw * timeSinceUpdate) % 360;
+        yaw_p = Common.angleWrap(getYaw() + v_yaw * timeSinceUpdate);
 
         return new Point3i(pos_p);
     }
@@ -240,7 +238,7 @@ public abstract class Model_Drone extends Model {
     public final void updatePos(boolean followPredict) {
         if (followPredict) {
             setPos(pos_p);
-            yaw = yaw_p;
+            setYaw(yaw_p);
             //		pitch = pitch_p;
             //		roll = roll_p;
             v_yaw = v_yaw_p;
@@ -251,8 +249,8 @@ public abstract class Model_Drone extends Model {
             setPos(getPos().getX(), getPos().getY(), pos_p.getZ());
             vel = new Vector3f(vel.getX(), vel.getY(), vel_p.getZ());
             if(getZ() < 20){
-                roll = 0;
-                pitch = 0;
+                setRoll(0);
+                setPitch(0);
             }
         }
         if(getZ() < 0) {
@@ -270,7 +268,7 @@ public abstract class Model_Drone extends Model {
     public void collision(Point3i collision_point) { //todo(tim) address collision
         // No collision point, set both sensor to false
         if(collision_point != null){
-            gaz = -1000;
+            setGaz(-1000);
         }
     }
 
@@ -282,5 +280,69 @@ public abstract class Model_Drone extends Model {
 
     public final Vector3f getWindNoise() {
         return windNoise;
+    }
+
+    public double getYaw() {
+        return yaw;
+    }
+
+    public void setYaw(double yaw) {
+        this.yaw = yaw;
+    }
+
+    public double getPitch() {
+        return pitch;
+    }
+
+    public void setPitch(double pitch) {
+        this.pitch = pitch;
+    }
+
+    public double getRoll() {
+        return roll;
+    }
+
+    public void setRoll(double roll) {
+        this.roll = roll;
+    }
+
+    public double getGaz() {
+        return gaz;
+    }
+
+    public void setGaz(double gaz) {
+        this.gaz = gaz;
+    }
+
+    public double getV_yawR() {
+        return v_yawR;
+    }
+
+    public void setV_yawR(double v_yawR) {
+        this.v_yawR = v_yawR;
+    }
+
+    public double getPitchR() {
+        return pitchR;
+    }
+
+    public void setPitchR(double pitchR) {
+        this.pitchR = pitchR;
+    }
+
+    public double getGazR() {
+        return gazR;
+    }
+
+    public void setGazR(double gazR) {
+        this.gazR = gazR;
+    }
+
+    public double getRollR() {
+        return rollR;
+    }
+
+    public void setRollR(double rollR) {
+        this.rollR = rollR;
     }
 }
