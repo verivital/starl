@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
  * @version 1.0
  */
 
-public class Point3i {
+public final class Point3i {
 
 	private final int x;
 	private final int y;
