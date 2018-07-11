@@ -228,10 +228,11 @@ public class PIDController {
     }
     public void setFilterLength(int filterLength) {
         // length of filter array must be positive
-        double[] newFiltArray = new double[filterLength >= 1 ? filterLength : 1];
-        // fill array with equivalent average value to avoid a sharp jump
-        Arrays.fill(newFiltArray, filtRunningSum * filtArray.length / newFiltArray.length);
-        filtArray = newFiltArray;
+        filtArray = new double[filterLength >= 1 ? filterLength : 1];
+        if (filtRunningSum != 0) {
+            // fill array with equivalent average value to avoid a sharp jump
+            Arrays.fill(filtArray, filtRunningSum / filtArray.length);
+        }
         filtIndex = 0;
     }
 
