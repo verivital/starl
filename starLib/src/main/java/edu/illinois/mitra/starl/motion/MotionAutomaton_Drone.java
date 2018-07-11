@@ -137,22 +137,21 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
                             if (distance <= param.GOAL_RADIUS) {
                                 System.out.println(">>>Distance: " + distance + " - GOAL_RADIUS " + param.GOAL_RADIUS);
                                 next = STAGE.GOAL;
-                            }
-                            else{
-                                double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
+                            } else {
+                                /*double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
                                 //		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
                                 Vector3f A_d = destination.getPos().subtract(drone.getPos()).toVector3f().scale(kp)
                                         .subtract(drone.getVelocity().scale(kd));
                                 Ryaw = Math.atan2(destination.getY() - drone.getY(), destination.getX() - drone.getX());
                                 //Ryaw = Math.atan2((destination.getY - drone.getX), (destination.getX - drone.getY));
                                 Ryawsp = kpz * ((Ryaw - Math.toRadians(drone.yaw)));
-                                Rroll = Math.asin((A_d.getY() * Math.cos(Math.toRadians(drone.yaw)) - A_d.getX() * Math.sin(Math.toRadians(drone.yaw))) %1);
-                                Rpitch = Math.asin( (-A_d.getY() * Math.sin(Math.toRadians(drone.yaw)) - A_d.getX() * Math.cos(Math.toRadians(drone.yaw))) / (Math.cos(Rroll)) %1);
+                                Rroll = Math.asin((A_d.getY() * Math.cos(Math.toRadians(drone.yaw)) - A_d.getX() * Math.sin(Math.toRadians(drone.yaw))) % 1);
+                                Rpitch = Math.asin((-A_d.getY() * Math.sin(Math.toRadians(drone.yaw)) - A_d.getX() * Math.cos(Math.toRadians(drone.yaw))) / (Math.cos(Rroll)) % 1);
                                 Rvs = (kpz * (destination.getZ() - drone.getZ()) - kdz * drone.getVelocity().getZ());
                                 //	System.out.println(Ryaw + " , " + Ryawsp + " , " +  Rroll  + " , " +  Rpitch + " , " + Rvs);
 
 
-                                setControlInputRescale(Math.toDegrees(Ryawsp),Math.toDegrees(Rpitch)%360,Math.toDegrees(Rroll)%360,Rvs);
+                                setControlInputRescale(Math.toDegrees(Ryawsp), Math.toDegrees(Rpitch) % 360, Math.toDegrees(Rroll) % 360, Rvs);
                                 //setControlInput(Ryawsp/param.max_yaw_speed, Rpitch%param.max_pitch_roll, Rroll%param.max_pitch_roll, Rvs/param.max_gaz);
                                 //next = STAGE.INIT;*/
 
@@ -169,20 +168,19 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
                             }
                             break;
                         case ROTATOR:
-                            if(drone.yaw <= 93 && drone.yaw >= 87){
+                            if (drone.yaw <= 93 && drone.yaw >= 87) {
                                 next = STAGE.MOVE;
-                            } else{
+                            } else {
                                 rotateDrone();
                             }
                             break;
                         case HOVER:
-                            setControlInput(0,0,0, 0);
+                            setControlInput(0, 0, 0, 0);
                             // do nothing
 
-                            if(distance <= param.GOAL_RADIUS) {
+                            if (distance <= param.GOAL_RADIUS) {
                                 hover();
-                            }
-                            else{
+                            } else {
                                 double rollCommand = PID_x.getOutput(drone.getX(), destination.getX());
                                 double pitchCommand = PID_y.getOutput(drone.getY(), destination.getY());
                                 double yawCommand = calculateYaw();
@@ -191,19 +189,18 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
                             }
                             break;
                         case TAKEOFF:
-                            switch(drone.getZ()/(safeHeight/2)){
+                            switch (drone.getZ() / (safeHeight / 2)) {
                                 case 0:// 0 - 1/2 safeHeight
-                                    setControlInput(0,0,0,1);
+                                    setControlInput(0, 0, 0, 1);
                                     break;
                                 case 1: // 1/2- 1 safeHeight
-                                    setControlInput(0,0,0, 0.5);
+                                    setControlInput(0, 0, 0, 0.5);
                                     break;
                                 default: // above safeHeight:
                                     hover();
-                                    if(prev != null){
+                                    if (prev != null) {
                                         next = prev;
-                                    }
-                                    else{
+                                    } else {
                                         System.out.println("hover");
                                         next = STAGE.HOVER;
                                     }
@@ -211,16 +208,16 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
                             }
                             break;
                         case LAND:
-                            switch(drone.getZ()/(safeHeight/2)){
+                            switch (drone.getZ() / (safeHeight / 2)) {
                                 case 0:// 0 - 1/2 safeHeight
-                                    setControlInput(0,0,0,0);
+                                    setControlInput(0, 0, 0, 0);
                                     next = STAGE.STOP;
                                     break;
                                 case 1: // 1/2- 1 safeHeight
-                                    setControlInput(0,0,0, -0.05);
+                                    setControlInput(0, 0, 0, -0.05);
                                     break;
                                 default:   // above safeHeight
-                                    setControlInput(0,0,0,-0.5);
+                                    setControlInput(0, 0, 0, -0.5);
                                     break;
                             }
                             break;
@@ -229,7 +226,7 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
                             done = true;
                             gvh.log.i(TAG, "At goal!");
                             gvh.log.i("DoneFlag", "write");
-                            if(param.STOP_AT_DESTINATION){
+                            if (param.STOP_AT_DESTINATION) {
                                 hover();
                                 next = STAGE.HOVER;
                             }
@@ -243,11 +240,11 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
                             //do nothing
 
                         case USER_CONTROL:
-                            if(curKey.equals("forward") && drone.pitch <= .9){
+                            if (curKey.equals("forward") && drone.pitch <= .9) {
                                 drone.pitch = drone.pitch + .01;
                             }
                             System.out.println(drone.yaw);
-                            setControlInput(drone.yaw,drone.pitch,drone.roll,drone.gaz);
+                            setControlInput(drone.yaw, drone.pitch, drone.roll, drone.gaz);
                             break;
                     }
 
@@ -255,33 +252,32 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
                     /*if((drone.yaw >= 100 || drone.yaw <= 80) && (drone.getZ() < safeHeight) && stage != STAGE.ROTATOR){
                         next = STAGE.ROTATOR;
                     }*/
-                                if (abort) {
-                                    next = STAGE.LAND;
-                                }
-                                if (next != null) {
-                                    prev = stage;
-                                    stage = next;
-                                    System.out.println("Stage transition to " + stage.toString() + ", the previous stage is " + prev);
-
-                                    gvh.log.i(TAG, "Stage transition to " + stage.toString());
-                                    gvh.trace.traceEvent(TAG, "Stage transition", stage.toString(), gvh.time());
-                                }
-                                next = null;
-                            }
-
-                            if ((colliding || stage == null)) {
-                                gvh.log.i("FailFlag", "write");
-                                done = false;
-                                motion_stop();
-                                //	land();
-                                //	stage = STAGE.LAND;
-                            }
+                    if (abort) {
+                        next = STAGE.LAND;
                     }
-                    gvh.sleep(param.AUTOMATON_PERIOD);
+                    if (next != null) {
+                        prev = stage;
+                        stage = next;
+                        System.out.println("Stage transition to " + stage.toString() + ", the previous stage is " + prev);
+
+                        gvh.log.i(TAG, "Stage transition to " + stage.toString());
+                        gvh.trace.traceEvent(TAG, "Stage transition", stage.toString(), gvh.time());
+                    }
+                    next = null;
+                }
+
+                if ((colliding || stage == null)) {
+                    gvh.log.i("FailFlag", "write");
+                    done = false;
+                    motion_stop();
+                    //	land();
+                    //	stage = STAGE.LAND;
                 }
             }
+            gvh.sleep(param.AUTOMATON_PERIOD);
         }
     }
+
 
     public void cancel() {
         running = false;
