@@ -17,9 +17,9 @@ public class TestMain {
         settings.N_PHANTOMS(1); //Doesn't move
 
         //Files
-        settings.WAYPOINT_FILE("RobotSpecific.wpt");     //Found in top level waypoints directory, key must be #-iRob, #-quad, or # for others
+        settings.WAYPOINT_FILE("four1.wpt");     //Found in top level waypoints directory, key must be #-iRob, #-quad, or # for others
         //settings.OBSPOINT_FILE("ObstacleCourse.wpt");
-        //settings.INITIAL_POSITIONS_FILE("start.wpt");
+        settings.INITIAL_POSITIONS_FILE("start.wpt");
 
         //Drawing
         settings.DRAW_WAYPOINTS(false);         //has to be false because drawer class handles waypoints, not simulation class
