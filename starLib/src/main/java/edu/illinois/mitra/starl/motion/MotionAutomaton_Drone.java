@@ -87,18 +87,17 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
     @Override
     public void run() {
         gvh.threadCreated(this);
+        // cannot call in constructor
+        setMaxTilt((float)drone.max_pitch_roll());
 
         while(true) {
             //			gvh.gps.getObspointPositions().updateObs();
             if(running) {
-                System.out.printf("drone (%d, %d) \n", drone.getX(), drone.getY());
-                System.out.printf("destination (%d, %d) \n", destination.getX(), destination.getY());
+                //System.out.printf("drone (%d, %d) \n", drone.getX(), drone.getY());
+                //System.out.printf("destination (%d, %d) \n", destination.getX(), destination.getY());
                 int distance = (int)drone.distanceTo2D(destination);
-                System.out.println("distance:" + distance);
+                //System.out.println("distance:" + distance);
 
-                if (drone.getGaz() < -50){
-                    // System.out.println("going down");
-                }
                 boolean colliding = (stage != STAGE.LAND && drone.getGaz() < -50);
 
                 if(!colliding && stage != null) {
@@ -134,9 +133,9 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
 
                     if(abort) {
                         next = STAGE.LAND;
-                    } else if ((drone.getYaw() >= 100 || drone.getYaw() <= 80) && drone.getZ() < safeHeight && stage != STAGE.ROTATOR) {
+                    }/* else if ((drone.getYaw() >= 100 || drone.getYaw() <= 80) && drone.getZ() < safeHeight && stage != STAGE.ROTATOR) {
                         next = STAGE.ROTATOR;
-                    }
+                    }*/
                     if(next != null) {
                         prev = stage;
                         stage = next;
@@ -275,6 +274,39 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
         }
     }
 
+    /**            _____                   _____
+     * x-thrust   |     | drone-x-thrust  |     | pitch
+     * ---------->|     |---------------->|     |------->
+     * y-thrust   |     | drone-y-thrust  |     | roll
+     * ---------->|     |---------------->|_____|------->
+     *  yaw       |     |
+     *  --------->|_____|
+     */
+    private void setXYThrust(double thrustX, double thrustY) {
+        // Step 1: convert from the world coordinate system to the drone coordinate system
+        final double yaw = toRadians(drone.getYaw() - 90);
+        // we are assuming for now that the drone coordinate system matches the world coordinate
+        // system when drone.getYaw() == 0, and yaw increases counterclockwise
+        double droneThrustX = thrustX * cos(yaw) + thrustY * sin(yaw);
+        double droneThrustY = thrustX * -sin(yaw) + thrustY * cos(yaw);
+
+        // Step 2: convert from cartesian X and Y thrust values to pitch and roll
+        final double limit = sin(toRadians(drone.max_pitch_roll())); // maximum allowed thrust magnitude, < 1
+        final double magnitude = Math.sqrt(Math.pow(droneThrustX, 2) + Math.pow(droneThrustY, 2));
+        if (magnitude > limit) {
+            // reduce total thrust magnitude to limit
+            droneThrustX *= limit / magnitude;
+            droneThrustY *= limit / magnitude;
+        }
+        double rollCommand = asin(droneThrustX);
+        double pitchCommand = asin(droneThrustY);
+
+        System.out.println("Roll, pitch, yaw: " + Math.round(toDegrees(rollCommand))
+                + " " + Math.round(toDegrees(pitchCommand)) + " " + drone.getYaw());
+
+        setControlInput(0, pitchCommand * 2 / Math.PI, rollCommand * 2 / Math.PI, 0);
+    }
+
     private void stageInit(double distance) {
         PID_x.reset();
         PID_y.reset();
@@ -316,8 +348,8 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
             System.out.println(">>>Distance: " + distance + " - GOAL_RADIUS " + param.GOAL_RADIUS);
             next = STAGE.GOAL;
         } else {
-            double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
-            /*//		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
+            /*double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
+            //		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
             Vector3f A_d = destination.getPos().subtract(drone.getPos()).toVector3f().scale(kp)
                     .subtract(drone.getVelocity().scale(kd));
             Ryaw = atan2(destination.getY() - drone.getY(), destination.getX() - drone.getX());
@@ -332,21 +364,15 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
 
             setControlInputRescale(toDegrees(Ryawsp), angleWrap(toDegrees(Rpitch)),
                     angleWrap(toDegrees(Rroll)), Rvs);
-            //next = STAGE.INIT;*/
+            next = STAGE.INIT;*/
 
             // TODO convert linear horizontal and vertical thrust to appropriate angular pitch and roll
-            double rollCommand = PID_x.getOutput(drone.getX(), destination.getX());
-            double pitchCommand = PID_y.getOutput(drone.getY(), destination.getY());
-            double yawCommand = calculateYaw();
-            double gazCommand = 0;
-            gvh.log.d("POSITION DEBUG", "My Position: " + drone.getX() + " " + drone.getY());
-            gvh.log.d("POSITION DEBUG", "Destination: " + destination.getX() + " " + destination.getY());
+            double thrustX = PID_x.getOutput(drone.getX(), destination.getX());
+            double thrustY = PID_y.getOutput(drone.getY(), destination.getY());
+            setXYThrust(thrustX, thrustY);
 
-            System.out.println(rollCommand + " roll " + pitchCommand + " pitch");
-
-            setControlInputRescale(yawCommand, pitchCommand, rollCommand, gazCommand);
-            // TD_NATHAN: check and resolve: was mypos.angle
-            // that was the correct solution, has been resolved
+            //gvh.log.d("POSITION DEBUG", "My Position: " + drone.getX() + " " + drone.getY());
+            //gvh.log.d("POSITION DEBUG", "Destination: " + destination.getX() + " " + destination.getY());
         }
     }
 
@@ -354,24 +380,20 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
         if(drone.getYaw() <= 93 && drone.getYaw() >= 87){
             next = STAGE.MOVE;
         } else{
+            System.out.println("Yaw: " + drone.getYaw());
             rotateDrone();
         }
     }
 
     private void stageHover(double distance) {
-        setControlInput(0,0,0, 0);
         // do nothing
 
         if(distance <= param.GOAL_RADIUS) {
             hover();
-        }
-        else{
-            // TODO convert linear horizontal and vertical thrust to appropriate angular pitch and roll
-            double rollCommand = PID_x.getOutput(drone.getX(), destination.getX());
-            double pitchCommand = PID_y.getOutput(drone.getY(), destination.getY());
-            double yawCommand = calculateYaw();
-            double gazCommand = 0;
-            setControlInputRescale(yawCommand, pitchCommand, rollCommand, gazCommand);
+        } else{
+            double thrustX = PID_x.getOutput(drone.getX(), destination.getX());
+            double thrustY = PID_y.getOutput(drone.getY(), destination.getY());
+            setXYThrust(thrustX, thrustY);
         }
     }
 

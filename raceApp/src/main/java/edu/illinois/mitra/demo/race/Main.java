@@ -8,7 +8,7 @@ public class Main {
 	public static void main(String[] args) {
 		SimSettings.Builder settings = new SimSettings.Builder();
 		settings.OBSPOINT_FILE("Obstacles.wpt");
-		settings.N_o3DR(1);
+		settings.N_o3DR(0);
 		settings.OBSPOINT_FILE("");
 		settings.N_IROBOTS(0);
 		settings.N_QUADCOPTERS(0);

@@ -180,6 +180,17 @@ public final class Common {
 			return val;
 		}
 	}
+
+	public static double cap(double val, double min, double max) {
+		// limits the absolute value of 'value' to center plus or minus absLimit, if absLimit is positive
+		if (val > max) {
+			return max;
+		}
+		if (val < min) {
+			return min;
+		}
+		return val;
+	}
 	
     public static InetAddress getLocalAddress()throws IOException {
 		try {

@@ -150,7 +150,7 @@ public class ReachAvoid extends Thread implements Cancellable {
 				}
 				break;
 			case MOVE:
-				System.out.println("MOVING");
+				//System.out.println("MOVING");
 				if(!unsafe.validstarts(gvh.gps.getMyPosition(), radius +1) ){
 					System.out.println("reachAvoid failed, safty ");
 					gvh.log.i(TAG, " Failed: " + dest.toString());
