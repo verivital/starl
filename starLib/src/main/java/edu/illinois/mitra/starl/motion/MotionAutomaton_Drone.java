@@ -301,8 +301,7 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
         double rollCommand = asin(droneThrustX);
         double pitchCommand = asin(droneThrustY);
 
-        System.out.println("Roll, pitch, yaw: " + Math.round(toDegrees(rollCommand))
-                + " " + Math.round(toDegrees(pitchCommand)) + " " + drone.getYaw());
+        System.out.println("Pitch:       " + Math.round(toDegrees(pitchCommand)));
 
         setControlInput(0, pitchCommand * 2 / Math.PI, rollCommand * 2 / Math.PI, 0);
     }
@@ -331,11 +330,6 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
     }
 
     private void stageMove(double distance) {
-        // some control parameters
-        final double kp = 0.00033;
-        final double kd = 0.0006;
-        final double kpz = 0.00033;
-        final double kdz = 0.0006;
 
         if (drone.getZ() < safeHeight){
             // just a safe distance from ground
@@ -344,36 +338,18 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
             return;
         }
 
-        if (distance <= param.GOAL_RADIUS) {
-            System.out.println(">>>Distance: " + distance + " - GOAL_RADIUS " + param.GOAL_RADIUS);
-            next = STAGE.GOAL;
-        } else {
-            /*double Ryaw, Rroll, Rpitch, Rvs, Ryawsp = 0.0;
-            //		System.out.println(destination.getX - mypos.getX + " , " + mypos.v_x);
-            Vector3f A_d = destination.getPos().subtract(drone.getPos()).toVector3f().scale(kp)
-                    .subtract(drone.getVelocity().scale(kd));
-            Ryaw = atan2(destination.getY() - drone.getY(), destination.getX() - drone.getX());
-
-            final double yawRad = toRadians(drone.getYaw());
-            Ryawsp = kpz * (Ryaw - yawRad);
-            Rroll = asin((A_d.getY() * cos(yawRad) - A_d.getX() * sin(yawRad)) % 1);
-            Rpitch = asin((-A_d.getY() * sin(yawRad) - A_d.getX() * cos(yawRad)) / cos(Rroll) % 1);
-            Rvs = (kpz * (destination.getZ() - drone.getZ()) - kdz * drone.getVelocity().getZ());
-            //	System.out.println(Ryaw + " , " + Ryawsp + " , " +  Rroll  + " , " +  Rpitch + " , " + Rvs);
-
-
-            setControlInputRescale(toDegrees(Ryawsp), angleWrap(toDegrees(Rpitch)),
-                    angleWrap(toDegrees(Rroll)), Rvs);
-            next = STAGE.INIT;*/
-
-            // TODO convert linear horizontal and vertical thrust to appropriate angular pitch and roll
+        //if (distance <= param.GOAL_RADIUS) {
+        //    System.out.println(">>>Distance: " + distance + " - GOAL_RADIUS " + param.GOAL_RADIUS);
+        //    next = STAGE.GOAL;
+        //} else {
             double thrustX = PID_x.getOutput(drone.getX(), destination.getX());
-            double thrustY = PID_y.getOutput(drone.getY(), destination.getY());
-            setXYThrust(thrustX, thrustY);
+            // TODO uncomment
+            //double thrustY = PID_y.getOutput(drone.getY(), destination.getY());
+            setXYThrust(thrustX, 0);
 
             //gvh.log.d("POSITION DEBUG", "My Position: " + drone.getX() + " " + drone.getY());
             //gvh.log.d("POSITION DEBUG", "Destination: " + destination.getX() + " " + destination.getY());
-        }
+        //}
     }
 
     private void stageRotator() {
@@ -392,8 +368,9 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
             hover();
         } else{
             double thrustX = PID_x.getOutput(drone.getX(), destination.getX());
-            double thrustY = PID_y.getOutput(drone.getY(), destination.getY());
-            setXYThrust(thrustX, thrustY);
+            // TODO uncomment
+            //double thrustY = PID_y.getOutput(drone.getY(), destination.getY());
+            setXYThrust(thrustX, 0);
         }
     }
 

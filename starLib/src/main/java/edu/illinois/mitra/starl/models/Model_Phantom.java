@@ -54,7 +54,10 @@ public class Model_Phantom extends Model_Drone {
 	public double max_gaz() { return 1000; }
 
 	@Override
-	public double max_pitch_roll(){ return 20; }
+	public double max_pitch_roll(){
+		//return 20;
+		return 40;
+	}
 
 	@Override
 	public double max_yaw_speed() { return 200; }
@@ -67,12 +70,15 @@ public class Model_Phantom extends Model_Drone {
 	@Override
 	public PIDParams getPIDParams() {
 		PIDParams p = new PIDParams();
-		p.Kp = 0.0714669809792096;
-		p.Ki = 0.0110786899216426;
-		p.Kd = 0.189205037832174;
-		p.saturationLimit = 50;
-		p.windUpLimit = 185;
-		p.filterLength = 8;
+		//p.Kp = 0.0714669809792096;
+		//p.Ki = 0.0110786899216426;
+		//p.Kd = 0.189205037832174;
+		p.Kp = 1E-4;
+		p.Ki = 0.0;
+		p.Kd = 5E-4;
+		p.saturationLimit = 0;//Math.sin(max_pitch_roll());
+		p.windUpLimit = 0;
+		p.filterLength = 0;
 		p.reversed = true;
 		return p;
 	}

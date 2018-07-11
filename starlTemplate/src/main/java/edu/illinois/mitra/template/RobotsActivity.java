@@ -35,8 +35,8 @@ import edu.illinois.mitra.starl.models.Model_Phantom;
 import edu.illinois.mitra.starl.objects.Common;
 import edu.illinois.mitra.starl.objects.HandlerMessage;
 
-//import edu.illinois.mitra.demo.follow.FollowApp;
-import edu.illinois.mitra.demo.race.RaceApp;
+import edu.illinois.mitra.demo.follow.FollowApp;
+//import edu.illinois.mitra.demo.race.RaceApp;
 
 public class RobotsActivity extends Activity implements MessageListener {
 	private static final String TAG = "RobotsActivity";
@@ -145,7 +145,7 @@ public class RobotsActivity extends Activity implements MessageListener {
 
 	public void createAppInstance(GlobalVarHolder gvh) {
 		//runThread = new FollowApp(gvh);    // Instantiate your application here!
-		runThread = new RaceApp(gvh);
+		runThread = new FollowApp(gvh);
 		// Example: runThread = new LightPaintActivity(gvh);
 	}
 
