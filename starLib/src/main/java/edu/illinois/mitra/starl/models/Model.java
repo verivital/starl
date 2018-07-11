@@ -1,14 +1,11 @@
 package edu.illinois.mitra.starl.models;
 
 import edu.illinois.mitra.starl.motion.BTI;
-import edu.illinois.mitra.starl.motion.BluetoothInterface;
-import edu.illinois.mitra.starl.motion.DjiController;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
-import edu.illinois.mitra.starl.objects.PIDParams;
 import edu.illinois.mitra.starl.objects.Point3i;
 import edu.illinois.mitra.starl.objects.PositionList;
-import java.util.*;
+import java.util.Random;
 
 public abstract class Model extends ItemPosition {
 

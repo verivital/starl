@@ -123,10 +123,10 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 		*/
 
         Model_Drone drone = (Model_Drone)models.get(typename).get(name).cur;
-		drone.v_yawR = v_yaw;
-		drone.pitchR = pitch;
-		drone.rollR = roll;
-		drone.gazR = gaz;
+		drone.setV_yawR(v_yaw);
+		drone.setPitchR(pitch);
+		drone.setRollR(roll);
+		drone.setGazR(gaz);
 	}
 
     @Override

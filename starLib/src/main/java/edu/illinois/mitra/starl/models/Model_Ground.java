@@ -61,22 +61,22 @@ public abstract class Model_Ground extends Model {
         if(angleT  == 90) {
             if(this.getY() < other.getY())
                 angleT = angleT + 90;
-            double temp = this.angle % 360;
+            double temp = Common.angleWrap(this.angle);
             return temp > 0;
         }
         if(angleT < 0) {
             angleT += 360;
         }
         double angleT1, angleT2, angleself;
-        angleT1 = (angleT - 90) % 360;
+        angleT1 = Common.angleWrap(angleT - 90);
         if(angleT1 < 0) {
             angleT1 += 360;
         }
-        angleT2 = (angleT + 90) % 360;
+        angleT2 = Common.angleWrap(angleT + 90);
         if(angleT2 < 0) {
             angleT2 += 360;
         }
-        angleself = this.angle % 360;
+        angleself = Common.angleWrap(this.angle);
         if(angleself < 0) {
             angleself += 360;
         }
@@ -108,7 +108,7 @@ public abstract class Model_Ground extends Model {
             angle -= 360;
         }
         int retAngle = Common.min_magitude((int)(otherAngle - angle),(int)(angle - otherAngle));
-        retAngle = retAngle%360;
+        retAngle = (int)Common.angleWrap(retAngle);
         if(retAngle > 180) {
             retAngle = retAngle-360;
         }
