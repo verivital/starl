@@ -21,7 +21,7 @@ import edu.illinois.mitra.starl.objects.*;
 import edu.illinois.mitra.starl.motion.*;
 import edu.illinois.mitra.starl.motion.MotionParameters.COLAVOID_MODE_TYPE;
 
-//TODO: Fix pathstack lower and uppper x/y bounds
+//TODO: Fix pathstack lower and uppper x/y bounds. Fix obstacles
 
 public class MazeApp extends LogicThread {
 	private static final boolean RANDOM_DESTINATION = false;

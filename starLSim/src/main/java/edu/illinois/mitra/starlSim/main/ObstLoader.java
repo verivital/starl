@@ -18,7 +18,7 @@ public class ObstLoader {
         }else{
 
             try {
-                in = new BufferedReader(new FileReader("waypoints/" + file));
+                in = new BufferedReader(new FileReader(file));
             } catch (FileNotFoundException e) {
                 System.err.println("File " + file + " not found! No waypoints loaded.");
                 return new ObstacleList();
