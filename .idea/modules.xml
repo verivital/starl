@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/circleapp/CircleApp.iml" filepath="$PROJECT_DIR$/circleapp/CircleApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/ClientLib/ClientLib.iml" filepath="$PROJECT_DIR$/ClientLib/ClientLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Mavlink/Mavlink.iml" filepath="$PROJECT_DIR$/Mavlink/Mavlink.iml" />
+      <module fileurl="file://$PROJECT_DIR$/circleapp/CircleApp.iml" filepath="$PROJECT_DIR$/circleapp/CircleApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/flockingapp/flockingapp.iml" filepath="$PROJECT_DIR$/flockingapp/flockingapp.iml" />
       <module fileurl="file://$PROJECT_DIR$/followApp/followApp.iml" filepath="$PROJECT_DIR$/followApp/followApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/mazeapp/mazeapp.iml" filepath="$PROJECT_DIR$/mazeapp/mazeapp.iml" />

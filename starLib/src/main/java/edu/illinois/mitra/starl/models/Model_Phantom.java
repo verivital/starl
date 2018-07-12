@@ -78,7 +78,7 @@ public class Model_Phantom extends Model_Drone {
 		p.Kd = 5E-4;
 		p.saturationLimit = 0;//Math.sin(max_pitch_roll());
 		p.windUpLimit = 0;
-		p.filterLength = 0;
+		p.filterLength = 10;
 		p.reversed = true;
 		return p;
 	}

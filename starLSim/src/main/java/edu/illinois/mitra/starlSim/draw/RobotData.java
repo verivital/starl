@@ -36,6 +36,17 @@ public class RobotData
 		return item.getName();
 	}
 
+	public boolean isModel() {
+		return item instanceof Model;
+	}
+
+	public String getTypename() {
+		if (isModel()) {
+			return ((Model) item).getTypeName();
+		}
+		throw new IllegalArgumentException("Cannot get typename for a non-model item.");
+	}
+
 	public int getX() {
 		return item.getX();
 	}
@@ -48,29 +59,37 @@ public class RobotData
 		return item.getZ();
 	}
 
+	public boolean isGround() {
+		return item instanceof Model_Ground;
+	}
+
 	public double getDegrees() {
-		if (item instanceof Model_Ground) {
+		if (isGround()) {
 			return ((Model_Ground) item).angle;
 		}
 		throw new IllegalArgumentException("Cannot get degrees for a non-ground item.");
 	}
 
+	public boolean isDrone() {
+		return item instanceof Model_Drone;
+	}
+
 	public double getYaw() {
-		if (item instanceof Model_Drone) {
+		if (isDrone()) {
 			return ((Model_Drone) item).getYaw();
 		}
 		throw new IllegalArgumentException("Cannot get yaw for a non-drone item.");
 	}
 
 	public double getPitch() {
-		if (item instanceof Model_Drone) {
+		if (isDrone()) {
 			return ((Model_Drone) item).getPitch();
 		}
 		throw new IllegalArgumentException("Cannot get pitch for a non-drone item.");
 	}
 
 	public double getRoll() {
-		if (item instanceof Model_Drone) {
+		if (isDrone()) {
 			return ((Model_Drone) item).getRoll();
 		}
 		throw new IllegalArgumentException("Cannot get roll for a non-drone item.");
@@ -81,7 +100,7 @@ public class RobotData
 	}
 
 	public int getRadius() {
-		if (item instanceof Model) {
+		if (isModel()) {
 			return ((Model) item).radius();
 		}
 		throw new IllegalArgumentException("Cannot get radius for a non-model item.");
@@ -95,22 +114,22 @@ public class RobotData
 		return world;
 	}
 
-	public Model_iRobot.Type getType() {
-		if (item instanceof Model_Ground) {
+	public Model_iRobot.Type getGroundType() {
+		if (isGround()) {
 			return ((Model_Ground) item).type;
 		}
 		throw new IllegalArgumentException("Cannot get type for a non-ground item.");
 	}
 
 	public boolean getLeftbump() {
-		if (item instanceof Model_Ground) {
+		if (isGround()) {
 			return ((Model_Ground) item).leftBump;
 		}
 		throw new IllegalArgumentException("Cannot get leftBump for a non-ground item.");
 	}
 
 	public boolean getRightbump() {
-		if (item instanceof Model_Ground) {
+		if (isGround()) {
 			return ((Model_Ground) item).rightBump;
 		}
 		throw new IllegalArgumentException("Cannot get rightBump for a non-ground item.");

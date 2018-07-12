@@ -119,7 +119,7 @@ public class PIDController {
         double i = getIComponent(error, deltaTime);
         double d = getDComponent(deltaError, deltaTime);
         double output = p + i + d;
-        System.out.printf("    p: %6.2e\n    i: %6.2e\n    d: %6.2e\n", p, i, d);
+        //System.out.printf("    p: %6.2e\n    i: %6.2e\n    d: %6.2e\n", p, i, d);
 
         // limit output value if needed
         output = cap(output, saturationLimit); // limits to absolute range
@@ -307,8 +307,6 @@ public class PIDController {
             filtArray[filtIndex] = deltaError;
             // add newest entry
             filtRunningSum += deltaError;
-
-            System.out.printf("Derror: %f, Dtime: %f, Running: %f\n", deltaError, deltaTime, filtRunningSum);
 
             // calculate D component of command value
             return Kd * filtRunningSum / (filtArray.length * deltaTime);

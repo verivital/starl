@@ -10,11 +10,11 @@ public class Main {
 
         //Robots
         settings.N_IROBOTS(0);  //works in all increments
-        settings.N_QUADCOPTERS(1);  //Works unless multiple crash.
+        settings.N_QUADCOPTERS(0);  //Works unless multiple crash.
         settings.N_o3DR(0);     //Works
         settings.N_GHOSTS(0);   //Doesn't target correctly
         settings.N_MAVICS(0);   //Doesn't work, points switch without being hit
-        settings.N_PHANTOMS(0); //Doesn't move
+        settings.N_PHANTOMS(1); //Doesn't move
 
         //Files
         settings.WAYPOINT_FILE("testapp/waypoints/single.wpt");     //Found in top level waypoints directory, key must be #-iRob, #-quad, or # for others

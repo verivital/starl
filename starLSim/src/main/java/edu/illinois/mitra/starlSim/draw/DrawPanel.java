@@ -366,106 +366,73 @@ public class DrawPanel extends ZoomablePanel
 	private void drawRobot(Graphics2D g, RobotData rd, boolean drawId){
 		g.setStroke(new BasicStroke(this.settings.DRAW_ROBOT_STROKE_SIZE));
 
-		if (rd.getColor() != null)
-			g.setColor(rd.getColor());
-		else
-			g.setColor(Color.black);
-		int radius = settings.BOT_RADIUS;
-		if (rd.getRadius() != 0)
-			radius = rd.getRadius();
-		
-		double radians = 2 * Math.PI * rd.getDegrees() / 360.0;
-		
-		Point2D.Double from = new Point2D.Double(rd.getX(), rd.getY());
-		Point2D.Double to = Geometry.projectPoint(from, radius, radians);
-		
-		Line2D.Double l = new Line2D.Double(from, to);
-		
-		g.draw(l);
-		if(rd.getName().contains(settings.QUADCOPTER_NAME)){
-			int outerRadius = (int)Math.round((Math.sqrt(2)-1)* rd.getRadius());
-			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
-			g.drawRect(rd.getX() -offset/2, rd.getY() -offset/2, offset, offset);
-			//g.drawOval(rd.getX - radius, rd.getY - radius, radius*2, radius*2);
-			g.drawOval(rd.getX() - outerRadius - outerRadius, rd.getY() - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius + outerRadius, rd.getY() - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius - outerRadius, rd.getY() - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius + outerRadius, rd.getY() - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("getZ: " + rd.getZ() + ", pitch: " + Math.round(rd.getPitch() *100)/100 + ", roll: " + Math.round(rd.getRoll() *100)/100, rd.getX() - 55, rd.getY() + rd.getRadius() + 130);
-		}else if(rd.getName().contains(settings.GHOST_NAME)) {
-			int outerRadius = (int)Math.round((Math.sqrt(2)-1)* rd.getRadius());
-			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
-			g.drawRect(rd.getX() -offset/2, rd.getY() -offset/2, offset, offset);
-			//g.drawOval(rd.getX - radius, rd.getY - radius, radius*2, radius*2);
-			g.drawOval(rd.getX() - outerRadius - outerRadius, rd.getY() - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius + outerRadius, rd.getY() - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius - outerRadius, rd.getY() - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius + outerRadius, rd.getY() - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("getZ: " + rd.getZ() + ", pitch: " + Math.round(rd.getPitch() *100)/100 + ", roll: " + Math.round(rd.getRoll() *100)/100, rd.getX() - 55, rd.getY() + rd.getRadius() + 130);
-		}
-		else if(rd.getName().contains(settings.MAVIC_NAME)){
-			int outerRadius = (int)Math.round((Math.sqrt(2)-1)* rd.getRadius());
-			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
-			g.drawRect(rd.getX() -offset/2, rd.getY() -offset/2, offset, offset);
-			//g.drawOval(rd.getX - radius, rd.getY - radius, radius*2, radius*2);
-			g.drawOval(rd.getX() - outerRadius - outerRadius, rd.getY() - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius + outerRadius, rd.getY() - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius - outerRadius, rd.getY() - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius + outerRadius, rd.getY() - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("getZ: " + rd.getZ() + ", pitch: " + Math.round(rd.getPitch() *100)/100 + ", roll: " + Math.round(rd.getRoll() *100)/100 + ", yaw: " + rd.getYaw(), rd.getX() - 55, rd.getY() + rd.getRadius() + 130);
-		}
-		else if(rd.getName().contains(settings.PHANTOM_NAME)){
-			int outerRadius = (int)Math.round((Math.sqrt(2)-1)* rd.getRadius());
-			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
-			g.drawRect(rd.getX() -offset/2, rd.getY() -offset/2, offset, offset);
-			//g.drawOval(rd.getX - radius, rd.getY - radius, radius*2, radius*2);
-			g.drawOval(rd.getX() - outerRadius - outerRadius, rd.getY() - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius + outerRadius, rd.getY() - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius - outerRadius, rd.getY() - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius + outerRadius, rd.getY() - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("getZ: " + rd.getZ() + ", pitch: " + Math.round(rd.getPitch() *100)/100 + ", roll: " + Math.round(rd.getRoll() *100)/100 + ", yaw: " + rd.getYaw(), rd.getX() - 55, rd.getY() + rd.getRadius() + 130);
-		}
-		else if(rd.getName().contains(settings.o3DR_NAME)){
-			int outerRadius = (int)Math.round((Math.sqrt(2)-1)* rd.getRadius());
-			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
-			g.drawRect(rd.getX() -offset/2, rd.getY() -offset/2, offset, offset);
-			//g.drawOval(rd.getX - radius, rd.getY - radius, radius*2, radius*2);
-			g.drawOval(rd.getX() - outerRadius - outerRadius, rd.getY() - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius + outerRadius, rd.getY() - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius - outerRadius, rd.getY() - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.getX() - outerRadius + outerRadius, rd.getY() - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("getZ: " + rd.getZ() + ", pitch: " + Math.round(rd.getPitch() *100)/100 + ", roll: " + Math.round(rd.getRoll() *100)/100, rd.getX() - 55, rd.getY() + rd.getRadius() + 130);
-		}
-		else if(rd.getName().contains(settings.IROBOT_NAME)){
-			g.drawOval(rd.getX() - radius, rd.getY() - radius, radius*2, radius*2);
-		if(rd.getLeftbump()){
-			int x_1 = (int) (rd.getRadius() *(Math.cos(Math.toRadians(rd.getDegrees() +90))) + rd.getX());
-			int y_1 = (int) (rd.getRadius() *(Math.sin(Math.toRadians(rd.getDegrees() +90))) + rd.getY());
-			int x_2 = (int) (rd.getRadius() *(Math.cos(Math.toRadians(rd.getDegrees()))) + rd.getX());
-			int y_2 = (int) (rd.getRadius() *(Math.sin(Math.toRadians(rd.getDegrees()))) + rd.getY());
-			g.drawLine(x_1, y_1, x_2, y_2);
+		g.setColor(rd.getColor() != null ? rd.getColor() : Color.black);
+
+		int radius = rd.isModel() ? rd.getRadius() : settings.BOT_RADIUS;
+
+		double radians = 0;
+		if (rd.isGround()) {
+			radians = Math.toRadians(rd.getDegrees());
+		} else if (rd.isDrone()) {
+			radians = Math.toRadians(rd.getYaw());
 		}
 
-		
-		if(rd.getRightbump()){
-			int x_1 = (int) (rd.getRadius() *(Math.cos(Math.toRadians(rd.getDegrees()))) + rd.getX());
-			int y_1 = (int) (rd.getRadius() *(Math.sin(Math.toRadians(rd.getDegrees()))) + rd.getY());
-			int x_2 = (int) (rd.getRadius() *(Math.cos(Math.toRadians(rd.getDegrees() -90))) + rd.getX());
-			int y_2 = (int) (rd.getRadius() *(Math.sin(Math.toRadians(rd.getDegrees() -90))) + rd.getY());
-			g.drawLine(x_1, y_1, x_2, y_2);
+		Point2D.Double from = new Point2D.Double(rd.getX(), rd.getY());
+		Point2D.Double to = Geometry.projectPoint(from, radius, radians);
+		Line2D.Double l = new Line2D.Double(from, to);
+
+		// Translate the Graphics2D so that (0,0) is the center of the robot
+		g.translate(rd.getX(), rd.getY());
+		if (rd.isDrone()) {
+			// Rotate the Graphics2d so that the positive x-axis is the forward of the robot
+			g.rotate(radians);
+			int outerRadius2 = (int)Math.round((Math.sqrt(2)-1) * radius * 2);
+			int offset = (int)Math.round(outerRadius2 / Math.sqrt(2));
+			g.draw(new Line2D.Double(0, 0, radius, 0));
+			g.drawRect(-offset / 2, -offset / 2, offset, offset);
+
+			g.drawOval(-outerRadius2, -outerRadius2, outerRadius2, outerRadius2);
+			g.drawOval(0, -outerRadius2, outerRadius2, outerRadius2);
+			g.drawOval(-outerRadius2, 0, outerRadius2, outerRadius2);
+			g.drawOval(0, 0, outerRadius2, outerRadius2);
+
+			g.rotate(-radians);
+			g.drawString("z: " + rd.getZ() + ", pitch: " + Math.round(rd.getPitch() *100)/100 + ", roll: " + Math.round(rd.getRoll() *100)/100, -55, radius + 130);
+			g.drawString(rd.getName(), -55, radius + 50);
+			// g.drawString("z: " + rd.getZ() + ", pitch: " + Math.round(rd.getPitch() * Math.PI) + ", roll: " + rd.getRoll(), rd.getX() - 55, rd.getY() + rd.getRadius() + 130);
+		} else if(rd.isGround()) {
+			// Rotate the Graphics2d so that the positive x-axis is the forward of the robot
+			g.rotate(radians);
+			g.draw(new Line2D.Double(0, 0, radius, 0));
+			g.drawOval(-radius, -radius, radius*2, radius*2);
+			if(rd.getLeftbump()){
+				int x_1 = 0;
+				int y_1 = radius;
+				int x_2 = radius;
+				int y_2 = 0;
+				g.drawLine(x_1, y_1, x_2, y_2);
+			}
+			if(rd.getRightbump()){
+				int x_1 = 0;
+				int y_1 = -radius;
+				int x_2 = radius;
+				int y_2 = 0;
+				g.drawLine(x_1, y_1, x_2, y_2);
+			}
+			g.rotate(-radians);
+
+			if (drawId) {
+				// using enum for ground robot type
+				String botType = rd.getGroundType().name().toLowerCase();
+				// write name to the right of the robot
+				g.drawString(rd.getName() + " " + botType, -55, radius + 50);
+			} else {
+				g.drawString(rd.getName(), -55, radius + 50);
+			}
 		}
-		}
+		g.translate(-rd.getX(), -rd.getY());
 			
-		if (drawId)
-		{
-			// using enum for type
-			String botType = rd.getType().name().toLowerCase();
-			// write name to the right of the robot
-			g.drawString(rd.getName() +" "+ botType , rd.getX() - 55, rd.getY() + radius + 50);
-		}
-		else{
-			g.drawString(rd.getName() +" ", rd.getX() - 55, rd.getY() + radius + 50);
-		}
+
 
 	}
 	

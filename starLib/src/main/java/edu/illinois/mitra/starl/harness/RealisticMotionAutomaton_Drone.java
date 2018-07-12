@@ -22,11 +22,6 @@ public class RealisticMotionAutomaton_Drone extends MotionAutomaton_Drone {
     }
 
     @Override
-    protected void rotateDrone(){
-        bti.setControlInput(rescale(calculateYaw(), 5), 0, 0, 0);
-    }
-
-    @Override
     protected void setControlInput(double yaw_v, double pitch, double roll, double gaz){
         bti.setControlInput(yaw_v, pitch, roll, gaz);
         gvh.log.i(TAG, "control input as, yaw, pitch, roll, thrust " + yaw_v + ", " + pitch + ", " +roll + ", " +gaz);
@@ -53,7 +48,7 @@ public class RealisticMotionAutomaton_Drone extends MotionAutomaton_Drone {
      */
     protected void hover(){
         //Bluetooth command to control the drone
-        bti.setControlInput(0,0,0,0);
+        storeControlInput(0,0,0,0);
         gvh.log.i(TAG, "Drone hovering");
     }
 

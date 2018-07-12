@@ -33,8 +33,6 @@ public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
             throw new IllegalArgumentException("gaz, vertical speed must be between -1 to 1");
         }
 
-        //TODO: Have to change SimGpsProvider class, because setControlInput is only for quadCopters, setControlInput3DR is only for 3DR, etc.
-        //TODO: In order to change it, need to have one list of all robots just for motion settings, investigate more.
         gpsp.setControlInput(drone.getTypeName(), name, yaw_v*drone.max_yaw_speed(),
                 pitch*drone.max_pitch_roll(), roll*drone.max_pitch_roll(), gaz*drone.max_gaz());
 
@@ -46,7 +44,7 @@ public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
     @Override
     protected void takeOff(){
         gvh.log.i(TAG, "Drone taking off");
-        setControlInput(0, 0, 0, 1);
+        storeGaz(1);
     }
 
     /**
@@ -55,7 +53,6 @@ public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
     @Override
     protected void land(){
         gvh.log.i(TAG, "Drone landing");
-        //setControlInput(my_model.yaw, 0, 0, 5);
     }
 
     /**
@@ -64,12 +61,7 @@ public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
     @Override
     protected void hover(){
         gvh.log.i(TAG, "Drone hovering");
-        setControlInput(0, 0, 0, 0);
-    }
-
-    @Override
-    protected void rotateDrone(){
-        setControlInput(rescale(calculateYaw(), 5), 0, 0, 0);
+        storeControlInput(0, 0, 0, 0);
     }
 
     @Override
