@@ -26,6 +26,7 @@ import edu.illinois.mitra.starl.harness.RealisticSimGpsProvider;
 import edu.illinois.mitra.starl.harness.SimGpsProvider;
 import edu.illinois.mitra.starl.harness.SimulationEngine;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
+import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_3DR;
 import edu.illinois.mitra.starl.models.Model_GhostAerial;
 import edu.illinois.mitra.starl.models.Model_Ground;
@@ -52,6 +53,13 @@ public class Simulation {
 	private final DrawFrame drawFrame;
 	private ObstacleList list;
 
+	// used to pass in a "function" to instantiate specific subclasses of Model
+	private interface ModelInstantiator {
+		Model instantiate(ItemPosition pos);
+	}
+
+	private List<List<Object>> resultsList = new ArrayList<List<Object>>();
+
 	public Simulation(Class<? extends LogicThread> app, final SimSettings settings) {
 		if (settings.N_IROBOTS + settings.N_QUADCOPTERS + settings.N_GHOSTS +settings.N_MAVICS + settings.N_o3DR + settings.N_PHANTOMS<= 0)
 			throw new IllegalArgumentException("Must have more than zero robots to simulate!");
@@ -61,40 +69,13 @@ public class Simulation {
 		Set<String> blockedRobots = new HashSet<String>();
 
 		// Create participants and instantiate SimApps
-		for (int i = 0; i < settings.N_IROBOTS; i++) {
-			// Mapping between iRobot name and IP address
-			//participants.put(settings.IROBOT_NAME + i, "192.168.0." + i);
-			participants.put(settings.IROBOT_NAME + i, "10.255.24.0" + i);
-		}
-		for (int j = 0; j < settings.N_QUADCOPTERS; j++) {
-			// Mapping between quadcopter name and IP address
-			//participants.put(settings.QUADCOPTER_NAME + j, "192.168.0." + (j+settings.N_IROBOTS));
-			participants.put(settings.QUADCOPTER_NAME + j, "10.255.24.0." + (j + settings.N_IROBOTS ));
-		}
-
-		for (int j = 0; j < settings.N_GHOSTS; j++) {
-			// Mapping between quadcopter name and IP address
-			//participants.put(settings.QUADCOPTER_NAME + j, "192.168.0." + (j+settings.N_IROBOTS));
-			participants.put(settings.GHOST_NAME + j, "10.255.24.0." + (j + settings.N_IROBOTS+settings.N_QUADCOPTERS));
-		}
-
-		for(int j = 0; j < settings.N_MAVICS; j++) {
-			// Mapping between 3dr name and IP address
-			//participants.put(settings.o3DR_NAME + j, "192.168.0." + (j+settings.N_IROBOTS));
-			participants.put(settings.MAVIC_NAME + j, "10.1.1.10" + (j+settings.N_IROBOTS+settings.N_GHOSTS+settings.N_QUADCOPTERS));
-		}
-
-		for(int j = 0; j < settings.N_PHANTOMS; j++) {
-			// Mapping between 3dr name and IP address
-			//participants.put(settings.o3DR_NAME + j, "192.168.0." + (j+settings.N_IROBOTS));
-			participants.put(settings.PHANTOM_NAME + j, "10.1.1.10" + (j+settings.N_IROBOTS+settings.N_GHOSTS+settings.N_QUADCOPTERS+settings.N_MAVICS));
-		}
-
-		for(int j = 0; j < settings.N_o3DR; j++) {
-			// Mapping between 3dr name and IP address
-			//participants.put(settings.o3DR_NAME + j, "192.168.0." + (j+settings.N_IROBOTS));
-			participants.put(settings.o3DR_NAME + j, "10.1.1.10" + (j+settings.N_IROBOTS+settings.N_MAVICS+settings.N_GHOSTS+settings.N_QUADCOPTERS+settings.N_PHANTOMS));
-		}
+		int start = 0;
+		start = createParticipants(settings.N_IROBOTS, settings.IROBOT_NAME, "10.255.24.0", start);
+		start = createParticipants(settings.N_QUADCOPTERS, settings.QUADCOPTER_NAME, "10.255.24.0.", start);
+		start = createParticipants(settings.N_GHOSTS, settings.GHOST_NAME, "10.255.24.0.", start);
+		start = createParticipants(settings.N_MAVICS, settings.MAVIC_NAME, "10.1.1.10", start);
+		start = createParticipants(settings.N_PHANTOMS, settings.PHANTOM_NAME, "10.1.1.10", start);
+		createParticipants(settings.N_o3DR, settings.o3DR_NAME, "10.1.1.10", start);
 
 		// Start the simulation engine
 		LinkedList<LogicThread> logicThreads = new LinkedList<LogicThread>();
@@ -149,7 +130,6 @@ public class Simulation {
 			gps.setViews(list, settings.N_IROBOTS);
 		}
 
-
 		this.settings = settings;
 		simEngine.setGps(gps);
 		gps.start();
@@ -159,217 +139,55 @@ public class Simulation {
 		if (settings.INITIAL_POSITIONS_FILE != null) {
 			t_initialPositions = WptLoader.loadWaypoints(settings.INITIAL_POSITIONS_FILE);
 		} else
-			t_initialPositions = new PositionList<ItemPosition>();
-		Random rand = new Random();
-		/*
-		PositionList<Model_iRobot> initialPositions = new PositionList<Model_iRobot>();
-		for(ItemPosition t_pos : t_initialPositions){
-			initialPositions.update(new Model_iRobot(t_pos));
-		}
-		 */
+			t_initialPositions = new PositionList<>();
+
 		// Create each iRobot
-		for (int i = 0; i < settings.N_IROBOTS; i++) {
-			Model_iRobot initialPosition = null;
-			String botName = settings.IROBOT_NAME + i;
-			ItemPosition initialPos = t_initialPositions.getPosition(botName);
-			if (initialPos != null) {
-				initialPosition = new Model_iRobot(initialPos);
-			}
-			// If no initial position was supplied, randomly generate one
-			if (initialPosition == null) {
-				//	System.out.println("null position in list");
-				int retries = 0;
-				boolean valid = false;
-				while (retries++ < 10000 && (!acceptableStart(initialPosition) || !valid)) {
-					initialPosition = new Model_iRobot(botName, rand.nextInt(settings.GRID_XSIZE), rand.nextInt(settings.GRID_YSIZE), rand.nextInt(360));
-					if (list != null) {
-						valid = (list.validstarts(initialPosition, initialPosition.radius()));
+		addModels(settings.N_IROBOTS, settings.IROBOT_NAME, t_initialPositions, app, logicThreads,
+				new ModelInstantiator() {
+					public Model instantiate(ItemPosition pos) {
+						return new Model_iRobot(pos);
 					}
-				}
-				if (retries > 10000) {
-					System.out.println("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE or remove some obstacles");
-				}
-			}
-			if (i < settings.N_DBOTS) {
-				initialPosition.type = Model_Ground.Type.EXPLORE_AREA;
-			} else if ((i >= settings.N_DBOTS) && (i < (settings.N_DBOTS + settings.N_RBOTS))) {
-				initialPosition.type = Model_Ground.Type.RANDOM_MOVING_OBSTACLE;
-			} else {
-				initialPosition.type = Model_Ground.Type.GET_TO_GOAL;
-				//default robot type is get to goal
-			}
+				});
 
-			//TODO: Modify this setting
-			//initialPosition.radius = settings.BOT_RADIUS;
-			SimApp sa = new SimApp(botName, participants, simEngine, initialPosition, settings.TRACE_OUT_DIR, app, drawFrame, settings.TRACE_CLOCK_DRIFT_MAX, settings.TRACE_CLOCK_SKEW_MAX);
-			bots.add(sa);
-			logicThreads.add(sa.logic);
-			simEngine.addLogging(sa.gvh.log);
-
-		}
-		for (int i = 0; i < settings.N_QUADCOPTERS; i++) {
-			Model_quadcopter initialPosition = null;
-			String botName = settings.QUADCOPTER_NAME + i;
-			ItemPosition initialPos = t_initialPositions.getPosition(botName);
-			if (initialPos != null) {
-				initialPosition = new Model_quadcopter(initialPos);
-			}
-			// If no initial position was supplied, randomly generate one
-			if (initialPosition == null) {
-				//	System.out.println("null position in list");
-				int retries = 0;
-				boolean valid = false;
-				while (retries++ < 10000 && (!acceptableStart(initialPosition) || !valid)) {
-					initialPosition = new Model_quadcopter(botName, rand.nextInt(settings.GRID_XSIZE), rand.nextInt(settings.GRID_YSIZE), 0, rand.nextInt(360));
-					if (list != null) {
-						valid = (list.validstarts(initialPosition, initialPosition.radius()));
+		// Create each Quadcopter
+		addModels(settings.N_QUADCOPTERS, settings.QUADCOPTER_NAME, t_initialPositions, app, logicThreads,
+				new ModelInstantiator() {
+					public Model instantiate(ItemPosition pos) {
+						return new Model_quadcopter(pos);
 					}
-				}
-				if (retries > 10000) {
-					System.out.println("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE/GRID_ZSIZE or remove some obstacles");
-				}
-			}
-			//initialPosition.radius() = settings.BOT_RADIUS;
+				});
 
-			SimApp sa = new SimApp(botName, participants, simEngine, initialPosition, settings.TRACE_OUT_DIR, app, drawFrame, settings.TRACE_CLOCK_DRIFT_MAX, settings.TRACE_CLOCK_SKEW_MAX);
-
-			bots.add(sa);
-
-			logicThreads.add(sa.logic);
-			simEngine.addLogging(sa.gvh.log);
-
-		}
-
-		for (int i = 0; i < settings.N_GHOSTS; i++) {
-			Model_GhostAerial initialPosition = null;
-			String botName = settings.GHOST_NAME + i;
-			ItemPosition initialPos = t_initialPositions.getPosition(botName);
-			if (initialPos != null) {
-				initialPosition = new Model_GhostAerial(initialPos);
-			}
-			// If no initial position was supplied, randomly generate one
-			if (initialPosition == null) {
-				//	System.out.println("null position in list");
-				int retries = 0;
-				boolean valid = false;
-				while (retries++ < 10000 && (!acceptableStart(initialPosition) || !valid)) {
-					initialPosition = new Model_GhostAerial(botName, rand.nextInt(settings.GRID_XSIZE), rand.nextInt(settings.GRID_YSIZE), 0, rand.nextInt(360));
-					if (list != null) {
-						valid = (list.validstarts(initialPosition, initialPosition.radius()));
+		// Create each ghost
+		addModels(settings.N_GHOSTS, settings.GHOST_NAME, t_initialPositions, app, logicThreads,
+				new ModelInstantiator() {
+					public Model instantiate(ItemPosition pos) {
+						return new Model_GhostAerial(pos);
 					}
-				}
-				if (retries > 10000) {
-					System.out.println("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE/GRID_ZSIZE or remove some obstacles");
-				}
-			}
-			//initialPosition.radius() = settings.BOT_RADIUS;
+				});
 
-			SimApp sa = new SimApp(botName, participants, simEngine, initialPosition, settings.TRACE_OUT_DIR, app, drawFrame, settings.TRACE_CLOCK_DRIFT_MAX, settings.TRACE_CLOCK_SKEW_MAX);
-
-			bots.add(sa);
-
-			logicThreads.add(sa.logic);
-			simEngine.addLogging(sa.gvh.log);
-
-		}
-
-		for (int i = 0; i < settings.N_MAVICS; i++) {
-			Model_Mavic initialPosition = null;
-			String botName = settings.MAVIC_NAME + i;
-			ItemPosition initialPos = t_initialPositions.getPosition(botName);
-			if (initialPos != null) {
-				initialPosition = new Model_Mavic(initialPos);
-			}
-			// If no initial position was supplied, randomly generate one
-			if (initialPosition == null) {
-				//	System.out.println("null position in list");
-				int retries = 0;
-				boolean valid = false;
-				while (retries++ < 10000 && (!acceptableStart(initialPosition) || !valid)) {
-					initialPosition = new Model_Mavic(botName, rand.nextInt(settings.GRID_XSIZE), rand.nextInt(settings.GRID_YSIZE), 0, rand.nextInt(360));
-					if (list != null) {
-						valid = (list.validstarts(initialPosition, initialPosition.radius()));
+		// Create each Mavic
+		addModels(settings.N_MAVICS, settings.MAVIC_NAME, t_initialPositions, app, logicThreads,
+				new ModelInstantiator() {
+					public Model instantiate(ItemPosition pos) {
+						return new Model_Mavic(pos);
 					}
-				}
-				if (retries > 10000) {
-					System.out.println("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE/GRID_ZSIZE or remove some obstacles");
-				}
-			}
+				});
 
-			SimApp sa = new SimApp(botName, participants, simEngine, initialPosition, settings.TRACE_OUT_DIR, app, drawFrame, settings.TRACE_CLOCK_DRIFT_MAX, settings.TRACE_CLOCK_SKEW_MAX);
-
-			bots.add(sa);
-
-			logicThreads.add(sa.logic);
-			simEngine.addLogging(sa.gvh.log);
-
-		}
-		for (int i = 0; i < settings.N_PHANTOMS; i++) {
-			Model_Phantom initialPosition = null;
-			String botName = settings.PHANTOM_NAME + i;
-			ItemPosition initialPos = t_initialPositions.getPosition(botName);
-			if (initialPos != null) {
-				initialPosition = new Model_Phantom(initialPos);
-			}
-			// If no initial position was supplied, randomly generate one
-			if (initialPosition == null) {
-				//	System.out.println("null position in list");
-				int retries = 0;
-				boolean valid = false;
-				while (retries++ < 10000 && (!acceptableStart(initialPosition) || !valid)) {
-					initialPosition = new Model_Phantom(botName, rand.nextInt(settings.GRID_XSIZE), rand.nextInt(settings.GRID_YSIZE), 0, rand.nextInt(360));
-					if (list != null) {
-						valid = (list.validstarts(initialPosition, initialPosition.radius()));
+		// Create each Phantom
+		addModels(settings.N_PHANTOMS, settings.PHANTOM_NAME, t_initialPositions, app, logicThreads,
+				new ModelInstantiator() {
+					public Model instantiate(ItemPosition pos) {
+						return new Model_Phantom(pos);
 					}
-				}
-				if (retries > 10000) {
-					System.out.println("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE/GRID_ZSIZE or remove some obstacles");
-				}
-			}
-			//initialPosition.radius() = settings.BOT_RADIUS;
+				});
 
-			SimApp sa = new SimApp(botName, participants, simEngine, initialPosition, settings.TRACE_OUT_DIR, app, drawFrame, settings.TRACE_CLOCK_DRIFT_MAX, settings.TRACE_CLOCK_SKEW_MAX);
-
-			bots.add(sa);
-
-			logicThreads.add(sa.logic);
-			simEngine.addLogging(sa.gvh.log);
-
-		}
-		
-		for (int i = 0; i < settings.N_o3DR; i++) {
-			Model_3DR initialPosition = null;
-			String botName = settings.o3DR_NAME + i;
-			ItemPosition initialPos = t_initialPositions.getPosition(botName);
-			if (initialPos != null) {
-				initialPosition = new Model_3DR(initialPos);
-			}
-			// If no initial position was supplied, randomly generate one
-			if (initialPosition == null) {
-				//	System.out.println("null position in list");
-				int retries = 0;
-				boolean valid = false;
-				while (retries++ < 10000 && (!acceptableStart(initialPosition) || !valid)) {
-					initialPosition = new Model_3DR(botName, rand.nextInt(settings.GRID_XSIZE), rand.nextInt(settings.GRID_YSIZE), 0, rand.nextInt(360));
-					if (list != null) {
-						valid = (list.validstarts(initialPosition, initialPosition.radius()));
+		// Create each 3DR
+		addModels(settings.N_o3DR, settings.o3DR_NAME, t_initialPositions, app, logicThreads,
+				new ModelInstantiator() {
+					public Model instantiate(ItemPosition pos) {
+						return new Model_3DR(pos);
 					}
-				}
-				if (retries > 10000) {
-					System.out.println("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE/GRID_ZSIZE or remove some obstacles");
-				}
-			}
-			//initialPosition.radius = settings.BOT_RADIUS;
-
-			SimApp sa = new SimApp(botName, participants, simEngine, initialPosition, settings.TRACE_OUT_DIR, app, drawFrame, settings.TRACE_CLOCK_DRIFT_MAX, settings.TRACE_CLOCK_SKEW_MAX);
-
-			bots.add(sa);
-
-			logicThreads.add(sa.logic);
-			simEngine.addLogging(sa.gvh.log);
-
-		}
-
+				});
 
 		if (settings.USE_GLOBAL_LOGGER)
 			gps.addObserver(createGlobalLogger(settings));
@@ -386,78 +204,32 @@ public class Simulation {
 			Observer guiObserver = new Observer() {
 				@Override
 				public void update(Observable o, Object arg) {
-					Color[] c = new Color[12];
-					c[0] = Color.BLACK;
-					c[1] = Color.BLUE;
-					c[2] = Color.GREEN;
-					c[3] = Color.MAGENTA;
-					c[4] = Color.ORANGE;
-					c[5] = Color.CYAN;
-					c[6] = Color.GRAY;
-					c[7] = Color.PINK;
-					c[8] = Color.RED;
-					c[9] = Color.LIGHT_GRAY;
-					c[10] = Color.YELLOW;
-					c[11] = Color.DARK_GRAY;
-
 					Vector<ObstacleList> views = gps.getViews();
 					//				ArrayList<Model_iRobot> pos;
 					//				ArrayList<Model_quadcopter> pos2;
 					ArrayList<RobotData> rd = new ArrayList<RobotData>();
-					ArrayList targetList = ((PositionList) arg).getList();
-					
-					if (targetList.size() > 0) {
-
-						int iiRobot = 0; //tracks ith iRobot since only iRobots access the views vector
-						for (int i = 0; i < targetList.size(); i++) {
-							if (targetList.get(i) instanceof Model_iRobot) {
-
-								Model_iRobot ip = (Model_iRobot) targetList.get(i);
-								if (i < 12) {
-									RobotData nextBot = new RobotData(ip.name, ip.getX(), ip.getY(), ip.angle, c[i-settings.N_GHOSTS-settings.N_o3DR], views.elementAt(i-settings.N_GHOSTS-settings.N_o3DR), ip.leftBump, ip.rightBump);
-									nextBot.radius = settings.BOT_RADIUS;
-									nextBot.type = ip.type;
-									rd.add(nextBot);
-								} else {
-									RobotData nextBot = new RobotData(ip.name, ip.getX(), ip.getY(), ip.angle, c[0], views.elementAt(iiRobot), ip.leftBump, ip.rightBump);
-									nextBot.radius = settings.BOT_RADIUS;
-									rd.add(nextBot);
-								}
-								iiRobot++;
-							} else if (targetList.get(i) instanceof Model_quadcopter) {
-								Model_quadcopter ip = (Model_quadcopter) targetList.get(i);
-								RobotData nextBot = new RobotData(ip.name, ip.getX(), ip.getY(), ip.getZ(), ip.getYaw(), ip.getPitch(), ip.getRoll(), ip.receivedTime);
-								nextBot.radius = settings.BOT_RADIUS;
-								rd.add(nextBot);
-							} else if (targetList.get(i) instanceof Model_GhostAerial) {
-								Model_GhostAerial ip = (Model_GhostAerial) targetList.get(i);
-								RobotData nextBot = new RobotData(ip.name, ip.getX(), ip.getY(), ip.getZ(), ip.getYaw(), ip.getPitch(), ip.getRoll(), ip.receivedTime);
-								nextBot.radius = settings.BOT_RADIUS;
-								rd.add(nextBot);
-							}else if (targetList.get(i) instanceof Model_Mavic) {
-								Model_Mavic ip = (Model_Mavic) targetList.get(i);
-								RobotData nextBot = new RobotData(ip.name, ip.getX(), ip.getY(), ip.getZ(), ip.getYaw(), ip.getPitch(), ip.getRoll(), ip.receivedTime);
-								nextBot.radius = settings.BOT_RADIUS;
-								rd.add(nextBot);
-							}else if (targetList.get(i) instanceof Model_Phantom) {
-								Model_Phantom ip = (Model_Phantom) targetList.get(i);
-								RobotData nextBot = new RobotData(ip.name, ip.getX(), ip.getY(), ip.getZ(), ip.getYaw(), ip.getPitch(), ip.getRoll(), ip.receivedTime);
-								nextBot.radius = settings.BOT_RADIUS;
-								rd.add(nextBot);
-							}else if (targetList.get(i) instanceof Model_3DR) {
-								Model_3DR ip = (Model_3DR) targetList.get(i);
-								RobotData nextBot = new RobotData(ip.name, ip.getX(), ip.getY(), ip.getZ(), ip.getYaw(), ip.getPitch(), ip.getRoll(), ip.receivedTime);
-								nextBot.radius = settings.BOT_RADIUS;
-								rd.add(nextBot);
-							}
-						}
+					if (!(arg instanceof PositionList)) {
+						return;
 					}
+					PositionList<? extends ItemPosition> argList = (PositionList<? extends ItemPosition>)arg;
+					ArrayList<? extends ItemPosition> targetList = argList.getList();
+
+					for (int i = 0, iiRobot = 0; i < targetList.size(); i++) {
+						ItemPosition ip = targetList.get(i);
+						RobotData nextBot;
+						if (ip instanceof Model_Ground) {
+							//tracks ith iRobot since only iRobots access the views vector
+							nextBot = new RobotData(ip, Color.black, views.elementAt(iiRobot));
+						} else {
+							nextBot = new RobotData(ip);
+						}
+						rd.add(nextBot);
+					}
+
 					// Add waypoints
 					if (settings.DRAW_WAYPOINTS) {
 						for (ItemPosition ip : gps.getWaypointPositions().getList()) {
-							RobotData waypoint = new RobotData((settings.DRAW_WAYPOINT_NAMES ? ip.name : ""), ip.getX(), ip.getY(), ip.index);
-							waypoint.radius = 5;
-							waypoint.c = new Color(255, 0, 0);
+							RobotData waypoint = new RobotData(ip, Color.red);
 							rd.add(waypoint);
 						}
 					}
@@ -531,84 +303,6 @@ public class Simulation {
 
 		//***************************************************************************************************************************
 
-	private Observer createGlobalLogger(final SimSettings settings) {
-		final GlobalLogger gl = new GlobalLogger(settings.TRACE_OUT_DIR, "global.txt");
-		System.out.println("SANITY CHECK createGlobalLogger called");
-
-		// global logger observer updates the log file when new positions are calculated
-		Observer globalLogger = new Observer() {
-			@Override
-			public void update(Observable o, Object arg) {
-				ArrayList<RobotData> rd = new ArrayList<RobotData>();
-                ArrayList<ItemPosition> pos = ((PositionList) arg).getList();
-                for(ItemPosition ip : pos) {
-                    if(ip instanceof Model_iRobot) {
-                        Model_iRobot m = (Model_iRobot) ip;
-                        RobotData nextBot = new RobotData(m.name, m.getX(), m.getY(), m.angle, ip.receivedTime);
-                        nextBot.radius = m.radius();
-                        rd.add(nextBot);
-                    }
-                    else if(ip instanceof Model_quadcopter) {
-                        Model_quadcopter m = (Model_quadcopter) ip;
-                        RobotData nextBot = new RobotData(ip.name, m.getX(), m.getY(), m.getZ(), m.getYaw(), m.getPitch(), m.getRoll(), m.receivedTime);
-                        nextBot.radius = m.radius();
-                        rd.add(nextBot);
-                    }
-                    else if(ip instanceof Model_GhostAerial) {
-						Model_GhostAerial m = (Model_GhostAerial) ip;
-						RobotData nextBot = new RobotData(ip.name, m.getX(), m.getY(), m.getZ(), m.getYaw(), m.getPitch(), m.getRoll(), m.receivedTime);
-						nextBot.radius = m.radius();
-						rd.add(nextBot);
-					}
-                    else if(ip instanceof Model_Mavic) {
-                        Model_Mavic m = (Model_Mavic) ip;
-                        RobotData nextBot = new RobotData(ip.name, m.getX(), m.getY(), m.getZ(), m.getYaw(), m.getPitch(), m.getRoll(), m.receivedTime);
-                        nextBot.radius = m.radius();
-                        rd.add(nextBot);
-                    }
-					else if(ip instanceof Model_Phantom) {
-						Model_Phantom m = (Model_Phantom) ip;
-						RobotData nextBot = new RobotData(ip.name, m.getX(), m.getY(), m.getZ(), m.getYaw(), m.getPitch(), m.getRoll(), m.receivedTime);
-						nextBot.radius = m.radius();
-						rd.add(nextBot);
-					}
-					else if(ip instanceof Model_3DR) {
-						Model_3DR m = (Model_3DR) ip;
-						RobotData nextBot = new RobotData(ip.name, m.getX(), m.getY(), m.getZ(), m.getYaw(), m.getPitch(), m.getRoll(), m.receivedTime);
-						nextBot.radius = m.radius();
-						rd.add(nextBot);
-					}
-                }
-
-                // the code below doesn't work because when using both bot types it will try to cast one as the other
-
-				/*if(((PositionList) arg).getList().get(0) instanceof Model_iRobot){
-					ArrayList<Model_iRobot> pos = ((PositionList<Model_iRobot>) arg).getList();
-					// Add robots
-					for(Model_iRobot ip : pos) {
-						RobotData nextBot = new RobotData(ip.name, ip.getX, ip.getY, ip.angle, ip.receivedTime);
-						nextBot.radius = settings.BOT_RADIUS;
-						rd.add(nextBot);
-					}
-				}
-				else if(((PositionList) arg).getList().get(0) instanceof Model_quadcopter){
-					ArrayList<Model_quadcopter> pos = ((PositionList<Model_quadcopter>) arg).getList();
-					// Add robots
-					for(Model_quadcopter ip : pos) {
-						RobotData nextBot = new RobotData(ip.name, ip.getX, ip.getY, ip.getZ, ip.yaw, ip.pitch, ip.roll, ip.receivedTime);
-						nextBot.radius = settings.BOT_RADIUS;
-						rd.add(nextBot);
-					}
-				}*/
-
-				gl.updateData(rd, simEngine.getTime());
-			}
-		};
-		return globalLogger;
-	}
-
-
-	private List<List<Object>> resultsList = new ArrayList<List<Object>>();
 	/**
 	 * Begins executing a simulation. This call will block until the simulation completes.
 	 */
@@ -669,5 +363,82 @@ public class Simulation {
 
 	public String getMessageStatistics() {
 		return 	simEngine.getComChannel().getStatistics();
+	}
+
+	private Observer createGlobalLogger(final SimSettings settings) {
+		final GlobalLogger gl = new GlobalLogger(settings.TRACE_OUT_DIR, "global.txt");
+		System.out.println("SANITY CHECK createGlobalLogger called");
+
+		// global logger observer updates the log file when new positions are calculated
+		Observer globalLogger = new Observer() {
+			@Override
+			public void update(Observable o, Object arg) {
+				ArrayList<RobotData> rd = new ArrayList<RobotData>();
+				ArrayList<ItemPosition> pos = ((PositionList) arg).getList();
+				for(ItemPosition ip : pos) {
+					RobotData nextBot = new RobotData(ip);
+					rd.add(nextBot);
+				}
+				gl.updateData(rd, simEngine.getTime());
+			}
+		};
+		return globalLogger;
+	}
+
+	private int createParticipants(int count, String name, String ip, int startIndex) {
+		for (int i = 0; i < count; i++) {
+			// Mapping between robot name and IP address
+			participants.put(name + i, ip + (i + startIndex));
+		}
+		return startIndex + count;
+	}
+
+	private void addModels(int count, String name, PositionList<ItemPosition> t_initialPositions,
+						   Class<? extends LogicThread> app, List<LogicThread> logicThreads,
+						   ModelInstantiator instantiator) {
+		Random rand = new Random();
+		for (int i = 0; i < count; i++) {
+			Model model = null;
+			String botName = name + i;
+			ItemPosition initialPos = t_initialPositions.getPosition(botName);
+			if (initialPos != null) {
+				// instantiate a subclass of Model without knowing the exact type
+				model = instantiator.instantiate(initialPos);
+			} else {
+				// If no initial position was supplied, randomly generate one
+				boolean valid = false;
+				for (int retries = 0; !(acceptableStart(model) && valid); ++retries) {
+					if (retries >= 10000) {
+						throw new RuntimeException("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE or remove some obstacles");
+					}
+					initialPos = new ItemPosition(botName, rand.nextInt(settings.GRID_XSIZE),
+							rand.nextInt(settings.GRID_YSIZE));
+					// instantiate a subclass of Model without knowing the exact type
+					model = instantiator.instantiate(initialPos);
+					if (list != null) {
+						valid = (list.validstarts(model, model.radius()));
+					}
+				}
+			}
+
+			// Add type for ground models
+			if (model instanceof Model_Ground) {
+				Model_Ground modelGround = (Model_Ground)model;
+				if (i < settings.N_DBOTS) {
+					modelGround.type = Model_Ground.Type.EXPLORE_AREA;
+				} else if ((i >= settings.N_DBOTS) && (i < (settings.N_DBOTS + settings.N_RBOTS))) {
+					modelGround.type = Model_Ground.Type.RANDOM_MOVING_OBSTACLE;
+				} else {
+					modelGround.type = Model_Ground.Type.GET_TO_GOAL;
+					//default robot type is get to goal
+				}
+			}
+
+			SimApp sa = new SimApp(botName, participants, simEngine, model, settings.TRACE_OUT_DIR,
+					app, drawFrame, settings.TRACE_CLOCK_DRIFT_MAX, settings.TRACE_CLOCK_SKEW_MAX);
+			bots.add(sa);
+			logicThreads.add(sa.logic);
+			simEngine.addLogging(sa.gvh.log);
+		}
 	}
 }
