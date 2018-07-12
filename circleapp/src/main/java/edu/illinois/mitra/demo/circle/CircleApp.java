@@ -23,6 +23,8 @@ import edu.illinois.mitra.starl.interfaces.Synchronizer;
 import edu.illinois.mitra.starl.motion.RobotMotion;
 import edu.illinois.mitra.starl.objects.PositionList;
 
+//TODO: Fiz all num parse methods, set for iRobots currently.
+
 public class CircleApp extends LogicThread {
     private enum STAGE { START, SYNC, ELECT, MOVE, DONE }
     private STAGE stage = STAGE.START;

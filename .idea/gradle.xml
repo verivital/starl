@@ -11,11 +11,15 @@
             <option value="$PROJECT_DIR$/ClientLib" />
             <option value="$PROJECT_DIR$/Mavlink" />
             <option value="$PROJECT_DIR$/circleapp" />
+            <option value="$PROJECT_DIR$/flockingapp" />
             <option value="$PROJECT_DIR$/followApp" />
+            <option value="$PROJECT_DIR$/mazeapp" />
+            <option value="$PROJECT_DIR$/projectapp" />
             <option value="$PROJECT_DIR$/raceApp" />
             <option value="$PROJECT_DIR$/starLSim" />
             <option value="$PROJECT_DIR$/starLib" />
             <option value="$PROJECT_DIR$/starlTemplate" />
+            <option value="$PROJECT_DIR$/testapp" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

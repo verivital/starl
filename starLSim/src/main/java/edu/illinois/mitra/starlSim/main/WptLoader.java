@@ -20,7 +20,7 @@ public final class WptLoader {
         }else{
 
             try {
-            	File f = new File("waypoints" + File.separator + file);
+            	File f = new File(file);
                 in = new BufferedReader(new FileReader(f));
 
             } catch (IOException e) {

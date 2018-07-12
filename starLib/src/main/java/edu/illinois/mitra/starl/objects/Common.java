@@ -248,4 +248,9 @@ public final class Common {
 		angle = angle % 360;
 		return angle < 0 ? angle + 360 : angle;
 	}
+
+
+	// Following array represents the neighbours for each bot and rf distance between them. Index represents the bot num. As following:
+	// bots_neighbour [bot_number][0= beforeBot_name], bots_neighbour [bot_number][1= afterBot_name], bots_neighbour [bot_number][2= rf]
+	public static String[][] bots_neighbour = new String[numOFbots][3];
 }
