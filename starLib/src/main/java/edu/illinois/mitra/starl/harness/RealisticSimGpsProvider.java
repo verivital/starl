@@ -99,7 +99,9 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 
 		String typeName = bot.getTypeName();
 		synchronized(models) {
+			System.out.println("Keyed as " + bot.name + ", typename = " + typeName);
 			getModels(typeName).put(bot.name, new TrackedModel<>(bot));
+			System.out.println("Lookup: " + getModels(typeName).get(bot.name).toString());
 		}
 		getModelPositions(typeName).update(bot);
 	}
