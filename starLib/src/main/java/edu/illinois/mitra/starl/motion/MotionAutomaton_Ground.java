@@ -247,7 +247,6 @@ public class MotionAutomaton_Ground extends RobotMotion {
                         case TURN:
                             if(stage != prev) {
                                 gvh.log.e(TAG, "Sending turn command");
-                                System.out.println("here");
                                 turn(TurnSpeed(absangle), angle);
                             } else {
                                 if(absangle <= param.SMALLTURN_ANGLE) {

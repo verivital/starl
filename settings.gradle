@@ -1,6 +1,6 @@
 
 
-include ':starLib', ':ClientLib', ':Mavlink'
+include ':starLib', ':ClientLib', ':Mavlink', ':CircleApp', ':circleapp', ':circleapp'
 include ':starlTemplate'
 include ':followApp'
 include ':starLSim'

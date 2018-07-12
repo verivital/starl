@@ -95,6 +95,10 @@ public abstract class Model_Ground extends Model {
         return angleTo(other.getPos());
     }
 
+    public double getAngle(){
+        return angle;
+    }
+
     public int angleTo(Point3i other) {
         if(other == null) {
             return 0;

@@ -41,6 +41,6 @@ public abstract class Model extends ItemPosition {
 	}
 
 	public final String getTypeName(){
-	    return getClass().getSimpleName().replaceFirst("Model_", "");
+	    return getClass().getSimpleName();
     }
 }
