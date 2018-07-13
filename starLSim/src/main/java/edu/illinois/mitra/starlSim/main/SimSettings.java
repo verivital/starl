@@ -319,6 +319,14 @@ public class SimSettings {
 		private boolean DRAW_WAYPOINT_NAMES = true;
 		private boolean DRAW_ROBOT_TYPE = false;
 
+		public int getGRID_XSIZE(){
+			return GRID_XSIZE;
+		}
+
+		public int getGRID_YSIZE(){
+			return GRID_YSIZE;
+		}
+
 
 		public Builder De_Radius(int length) {
 			this.De_Radius = length;
