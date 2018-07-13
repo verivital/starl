@@ -15,23 +15,25 @@ public class ReachAvoid extends Thread implements Cancellable {
 	/**
 	 * default 5 retries using different parameters, can be set to other values 
 	 */
-	public int tries = 5;
-	public int radius;
+	private static final int TRIES = 5;
+	private int radius;
+
 	protected enum STAGE_R {
 		IDLE, PLAN, PICK, MOVE
 	}
 	protected GlobalVarHolder gvh;
-	public boolean running;
-	public RRTNode kdTree;
-	ItemPosition start;
-	ItemPosition dest;
-	ObstacleList unsafe;
-	ObstacleList planObs;
-	public boolean activeFlag, doneFlag, failFlag;
-	STAGE_R stage;
-	public Stack<ItemPosition> pathStack;
-	int counter;
-	int xLower, xUpper, yLower, yUpper;
+	private boolean running;
+	private RRTNode kdTree;
+	private ItemPosition start;
+	private ItemPosition dest;
+	private ObstacleList unsafe;
+	private ObstacleList planObs;
+	private boolean activeFlag;
+	private boolean doneFlag;
+	private boolean failFlag;
+	private STAGE_R stage;
+	private Stack<ItemPosition> pathStack;
+	private int counter;
 	
 	
 	public ReachAvoid(GlobalVarHolder gvh){
@@ -90,6 +92,7 @@ public class ReachAvoid extends Thread implements Cancellable {
 				double magic = .0011;
 				double xRange = Math.abs(start.getX() - dest.getX());
 				double yRange = Math.abs(start.getY() - dest.getY());
+				int xLower, xUpper, yLower, yUpper;
 				xLower = Math.min(start.getX(), dest.getX()) - (int)((xRange+radius)*(counter+1)*radius*magic);
 				xUpper = Math.max(start.getX(), dest.getX()) + (int)((xRange+radius)*(counter+1)*radius*magic);
 				yLower = Math.min(start.getY(), dest.getY()) - (int)((yRange+radius)*(counter+1)*radius*magic);
@@ -100,7 +103,7 @@ public class ReachAvoid extends Thread implements Cancellable {
 				pathStack = path.findRoute(dest, 1000, planObs, xLower, xUpper, yLower,yUpper, start, radius);
 				if(pathStack == null){
 					counter ++ ; 
-					if(counter > tries){
+					if(counter > TRIES){
 						activeFlag = false;
 						gvh.log.i(TAG, "RRT could not find solution, giving up");
 						return;
@@ -128,8 +131,7 @@ public class ReachAvoid extends Thread implements Cancellable {
 					gvh.plat.moat.goTo(goMidPoint);
 					gvh.log.i(TAG, " go to called to: " + goMidPoint.toString());
 					stage = STAGE_R.MOVE;
-				}
-				else{
+				} else {
 					System.out.println("pathStack is empty");
 					if(gvh.plat.moat.done){
 						System.out.println("ReachAvoid Done");
@@ -170,6 +172,22 @@ public class ReachAvoid extends Thread implements Cancellable {
 			}
 			gvh.sleep(100);
 		}
+	}
+
+	public RRTNode getKdTree() {
+		return kdTree;
+	}
+
+	public boolean isActive() {
+		return activeFlag;
+	}
+
+	public boolean isDone() {
+		return doneFlag;
+	}
+
+	public boolean isFail() {
+		return failFlag;
 	}
 }
 

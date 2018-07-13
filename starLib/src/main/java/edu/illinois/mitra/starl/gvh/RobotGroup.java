@@ -25,7 +25,7 @@ public class RobotGroup {
 
     public RobotGroup(String id, Integer numOFgroup){
 
-        String intValue = id.replaceAll("[^0-9]", ""); // this will work for bots with sequential numbers in their names, not irobot0 quadrotor0
+        String intValue = id.replaceFirst("[^0-9]+", ""); // this will work for bots with sequential numbers in their names, not irobot0 quadrotor0
         Integer i = Integer.parseInt(intValue);
         groupNum = i % numOFgroup;
         setAfterBefore= true;

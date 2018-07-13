@@ -195,15 +195,17 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 
 				while(true) {
                     // iterate through all types contained
-                    for (Map<String, TrackedModel<Model>> submap : models.values()) {
-                        synchronized(submap) {
-                            // iterate through all Models of a specific type
-                            for (TrackedModel<Model> r : submap.values()) {
-                                r.updatePos();
-                                receivers.get(r.getName()).receivePosition(r.cur.inMotion());
-                            }
-                        }
-                    }
+					synchronized (models) {
+						for (Map<String, TrackedModel<Model>> submap : models.values()) {
+							synchronized (submap) {
+								// iterate through all Models of a specific type
+								for (TrackedModel<Model> r : submap.values()) {
+									r.updatePos();
+									receivers.get(r.getName()).receivePosition(r.cur.inMotion());
+								}
+							}
+						}
+					}
 
 					setChanged();
 					notifyObservers(allpos);

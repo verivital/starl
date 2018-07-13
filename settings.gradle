@@ -1,7 +1,7 @@
 
 
-include ':starLib', ':ClientLib', ':Mavlink', ':CircleApp', ':circleapp', ':circleapp', ':flockingapp', ':projectapp', ':testapp', ':mazeapp'
+include ':starLib', ':ClientLib', ':Mavlink', ':CircleApp', ':circleapp', ':circleapp', ':FlockingApp', ':ProjectApp', ':TestApp', ':MazeApp'
 include ':starlTemplate'
-include ':followApp'
+include ':FollowApp'
 include ':starLSim'
-include ':raceApp'
+include ':RaceApp'

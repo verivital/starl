@@ -43,7 +43,7 @@ public class DrawPanel extends ZoomablePanel
 	
 	private LinkedList <Drawer> preDrawers = new LinkedList <Drawer>();
 	private LinkedList <AcceptsPointInput> clickListeners = new LinkedList <AcceptsPointInput>();       //List of mouse listeners, use addClickListener()
-	private LinkedList <AcceptsKeyInput> keyListeners = new LinkedList <AcceptsKeyInput>();           //List of keyboard listeners, use addKeyListener()
+	private final LinkedList <AcceptsKeyInput> keyListeners = new LinkedList <AcceptsKeyInput>();           //List of keyboard listeners, use addKeyListener()
 	
 	// wireless interface
 	RoundRectangle2D.Double toggle = new RoundRectangle2D.Double(5,5,20,20,15,15);
@@ -249,11 +249,13 @@ public class DrawPanel extends ZoomablePanel
      * Sends string of most recently typed key to all keyListeners
      */
 	public void notifyKeyListeners() {
-		for (AcceptsKeyInput k : keyListeners)
-		    if(!keyListeners.isEmpty()) {
-		    k.receivedKeyInput(getKeyType());
-
-            }
+		synchronized (keyListeners) {
+			for (AcceptsKeyInput k : keyListeners) {
+				if (!keyListeners.isEmpty()) {
+					k.receivedKeyInput(getKeyType());
+				}
+			}
+		}
 	}
 
     /**

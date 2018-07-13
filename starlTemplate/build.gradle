@@ -42,6 +42,6 @@ dependencies {
     implementation project(':starLib')
 
     // add the appropriate project for your app here:
-    implementation project(':followApp')
+    implementation project(':FollowApp')
 }
 
