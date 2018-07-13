@@ -19,6 +19,7 @@ public class ItemPosition implements Comparable<ItemPosition>, Traceable {
 	public int index;
 	public long receivedTime;
 	private Point3i pos;
+	public boolean circleSensor;
 
 	public ItemPosition(){
 		super();
@@ -64,17 +65,20 @@ public class ItemPosition implements Comparable<ItemPosition>, Traceable {
 	 */
 	public ItemPosition(String name, int x, int y) {
 		pos = new Point3i(x, y);
+		this.circleSensor = false;
 		setName(name);
 	}
 	
 	public ItemPosition(String name, int x, int y, int z) {
 		pos = new Point3i(x, y, z);
+		this.circleSensor = false;
 		setName(name);
 	}
 	
 	public ItemPosition(String name, int x, int y, int z, int index) {
 		pos = new Point3i(x, y, z);
 		setName(name);
+		this.circleSensor = false;
 		this.index = index;
 	}
 	

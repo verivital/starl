@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/CircleApp/circleapp.iml" filepath="$PROJECT_DIR$/CircleApp/circleapp.iml" />
       <module fileurl="file://$PROJECT_DIR$/ClientLib/ClientLib.iml" filepath="$PROJECT_DIR$/ClientLib/ClientLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/FlockingApp/FlockingApp.iml" filepath="$PROJECT_DIR$/FlockingApp/FlockingApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/FollowApp/FollowApp.iml" filepath="$PROJECT_DIR$/FollowApp/FollowApp.iml" />
@@ -10,7 +11,6 @@
       <module fileurl="file://$PROJECT_DIR$/ProjectApp/ProjectApp.iml" filepath="$PROJECT_DIR$/ProjectApp/ProjectApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/RaceApp/RaceApp.iml" filepath="$PROJECT_DIR$/RaceApp/RaceApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/TestApp/TestApp.iml" filepath="$PROJECT_DIR$/TestApp/TestApp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/CircleApp/circleapp.iml" filepath="$PROJECT_DIR$/CircleApp/circleapp.iml" />
       <module fileurl="file://$PROJECT_DIR$/starLSim/starLSim.iml" filepath="$PROJECT_DIR$/starLSim/starLSim.iml" />
       <module fileurl="file://$PROJECT_DIR$/starLib/starLib.iml" filepath="$PROJECT_DIR$/starLib/starLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/starl.iml" filepath="$PROJECT_DIR$/starl.iml" />
