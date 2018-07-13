@@ -8,18 +8,22 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/CircleApp" />
             <option value="$PROJECT_DIR$/ClientLib" />
-            <option value="$PROJECT_DIR$/FlockingApp" />
-            <option value="$PROJECT_DIR$/FollowApp" />
             <option value="$PROJECT_DIR$/Mavlink" />
-            <option value="$PROJECT_DIR$/MazeApp" />
-            <option value="$PROJECT_DIR$/ProjectApp" />
-            <option value="$PROJECT_DIR$/RaceApp" />
-            <option value="$PROJECT_DIR$/TestApp" />
+            <option value="$PROJECT_DIR$/arrowtravelapp" />
+            <option value="$PROJECT_DIR$/circleapp" />
+            <option value="$PROJECT_DIR$/distributedsearchapp" />
+            <option value="$PROJECT_DIR$/flockingapp" />
+            <option value="$PROJECT_DIR$/followApp" />
+            <option value="$PROJECT_DIR$/grouptagapp" />
+            <option value="$PROJECT_DIR$/lawnmowerapp" />
+            <option value="$PROJECT_DIR$/mazeapp" />
+            <option value="$PROJECT_DIR$/projectapp" />
+            <option value="$PROJECT_DIR$/raceApp" />
             <option value="$PROJECT_DIR$/starLSim" />
             <option value="$PROJECT_DIR$/starLib" />
             <option value="$PROJECT_DIR$/starlTemplate" />
+            <option value="$PROJECT_DIR$/testapp" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
