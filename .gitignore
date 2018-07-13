@@ -1,5 +1,6 @@
 *.iml
 *.log
+*.bak
 .gradle
 gradle
 local.properties

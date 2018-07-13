@@ -306,7 +306,7 @@ public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {
     // TD_NATHAN: old version
     @Override
     public synchronized void addRobot(Model_iRobot bot) {
-        robots.put(bot.name, new Model(bot));
+        robots.put(bot.name, new RegisterModel(bot));
         robot_positions.update(bot);
     }
     */

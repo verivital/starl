@@ -13,8 +13,6 @@ import edu.illinois.mitra.starl.interfaces.LogicThread;
 import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.models.Model_Ground;
-import edu.illinois.mitra.starl.models.Model_iRobot;
-import edu.illinois.mitra.starl.models.Model_quadcopter;
 import edu.illinois.mitra.starl.motion.MotionParameters;
 import edu.illinois.mitra.starl.motion.RRTNode;
 import edu.illinois.mitra.starl.objects.ItemPosition;
@@ -79,7 +77,7 @@ public class TestApp extends LogicThread {
          *doReachAvoid directs robots to waypoints, must also be passed to TestDrawer.
          *
          * Keys: All numbers start at 1 and increment
-         * Models: #-Model.getTypeName()
+         * Models: #-RegisterModel.getTypeName()
          * All Others: #
          */
 

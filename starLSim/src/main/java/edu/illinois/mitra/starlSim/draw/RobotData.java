@@ -7,7 +7,6 @@ import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.models.Model_Ground;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
-import edu.illinois.mitra.starl.models.Model_iRobot; // for Model_iRobot.Type
 
 public class RobotData
 {
@@ -114,7 +113,7 @@ public class RobotData
 		return world;
 	}
 
-	public Model_iRobot.Type getGroundType() {
+	public Model_Ground.Type getGroundType() {
 		if (isGround()) {
 			return ((Model_Ground) item).type;
 		}

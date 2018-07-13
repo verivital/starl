@@ -56,8 +56,6 @@ import com.o3dr.services.android.lib.drone.property.Attitude;
 import java.util.List;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
-import edu.illinois.mitra.starl.models.Model_3DR;
-
 
 public class o3DRController extends AppCompatActivity implements DroneBTI, TowerListener, DroneListener, LinkListener {
     private static final String TAG = o3DRController.class.getSimpleName();

@@ -18,14 +18,18 @@ import edu.illinois.mitra.starl.objects.Vector3i;
 
 public class Model_3DR extends Model_Drone {
 
+    static {
+        ModelRegistry.register(Model_3DR.class);
+    }
+
     public Model_3DR(String received) throws ItemFormattingException{
         super(received);
     }
-/*
+
     public Model_3DR(String name, int x, int y) {
         super(name, x, y);
     }
-
+/*
     public Model_3DR(String name, int x, int y, int z) {
         super(name, x, y, z);
     }

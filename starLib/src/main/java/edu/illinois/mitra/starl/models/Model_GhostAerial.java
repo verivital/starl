@@ -16,14 +16,18 @@ import edu.illinois.mitra.starl.objects.PositionList;
 
 public class Model_GhostAerial extends Model_Drone {
 
+    static {
+        ModelRegistry.register(Model_GhostAerial.class);
+    }
+
     public Model_GhostAerial(String received) throws ItemFormattingException {
         super(received);
     }
-/*
-    public Model_GhostAerial(String name, int x, int y) {
-        super(name, x, y, 0);
-    }
 
+    public Model_GhostAerial(String name, int x, int y) {
+        super(name, x, y);
+    }
+/*
     public Model_GhostAerial(String name, int x, int y, int z) {
         super(name, x, y, z);
     }

@@ -78,9 +78,9 @@ public abstract class Model_Drone extends Model {
         }
     }
 
-    /*public Model_Drone(String name, int x, int y) {
+    public Model_Drone(String name, int x, int y) {
         super(name, x, y);
-    }*/
+    }
 
     /*public Model_Drone(String name, int x, int y, int z) {
         super(name, x, y, z);

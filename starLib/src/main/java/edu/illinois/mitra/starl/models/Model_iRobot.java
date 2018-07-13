@@ -16,6 +16,10 @@ public class Model_iRobot extends Model_Ground {
 
 	//private boolean circleSensor = false;
 
+	static {
+		ModelRegistry.register(Model_iRobot.class);
+	}
+
 	/**
 	 * Construct an Model_iRobot from a received GPS broadcast message
 	 *

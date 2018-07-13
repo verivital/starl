@@ -4,12 +4,6 @@ import java.util.Observer;
 import java.util.Vector;
 
 import edu.illinois.mitra.starl.models.Model;
-import edu.illinois.mitra.starl.models.Model_3DR;
-import edu.illinois.mitra.starl.models.Model_GhostAerial;
-import edu.illinois.mitra.starl.models.Model_Mavic;
-import edu.illinois.mitra.starl.models.Model_Phantom;
-import edu.illinois.mitra.starl.models.Model_iRobot;
-import edu.illinois.mitra.starl.models.Model_quadcopter;
 import edu.illinois.mitra.starl.objects.*;
 
 public interface SimGpsProvider {

@@ -11,7 +11,6 @@ import edu.illinois.mitra.starl.objects.PositionList;
 public abstract class Model_Ground extends Model {
     public double angle = 0;
     public Type type = Type.GET_TO_GOAL;
-    public double velocity = 0;
     public boolean leftBump = false;
     public boolean rightBump = false;
     public double vFwd = 0;
