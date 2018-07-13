@@ -78,11 +78,11 @@ public abstract class Model_Drone extends Model {
         }
     }
 
-    public Model_Drone(String name, int x, int y) {
+    /*public Model_Drone(String name, int x, int y) {
         super(name, x, y);
-    }
+    }*/
 
-    public Model_Drone(String name, int x, int y, int z) {
+    /*public Model_Drone(String name, int x, int y, int z) {
         super(name, x, y, z);
     }
 
@@ -95,7 +95,7 @@ public abstract class Model_Drone extends Model {
         this(name, x, y, z, yaw);
         this.setPitch(pitch);
         this.setRoll(roll);
-    }
+    }*/
 
     public Model_Drone(ItemPosition t_pos) {
         super(t_pos);

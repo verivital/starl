@@ -271,38 +271,6 @@ public class Simulation {
 			gps.addObserver(o);
 	}
 
-	//***************************************************************************************************************************
-	/*
-	public Observer addChristinaObserver(final SimSettings settings) {
-		final GlobalLogger cl = new GlobalLogger(settings.TRACE_OUT_DIR, "global.txt");
-		Observer Christina = new Observer() {
-			@Override
-			public void update(Observable o, Object arg) {
-				System.out.println("Christina Received Position Changes!!!");
-				ArrayList<RobotData> rd = new ArrayList<RobotData>();
-				ArrayList<ItemPosition> pos = ((PositionList) arg).getList();
-				for (ItemPosition ip : pos) {
-					if (ip instanceof Model_iRobot) {
-						Model_iRobot m = (Model_iRobot) ip;
-						RobotData nextBot = new RobotData(m.name, m.getX, m.getY, m.angle, ip.receivedTime);
-						nextBot.radius = settings.BOT_RADIUS;
-						rd.add(nextBot);
-					} else if (ip instanceof Model_quadcopter) {
-						Model_quadcopter m = (Model_quadcopter) ip;
-						RobotData nextBot = new RobotData(ip.name, m.getX, m.getY, m.getZ, m.yaw, m.pitch, m.roll, m.receivedTime);
-						nextBot.radius = settings.BOT_RADIUS;
-						rd.add(nextBot);
-					}
-				}
-
-				cl.updateData(rd, simEngine.getTime());
-			}
-		};
-		return Christina;
-	} */
-
-		//***************************************************************************************************************************
-
 	/**
 	 * Begins executing a simulation. This call will block until the simulation completes.
 	 */

@@ -62,25 +62,6 @@ public class SimGlobalVarHolder extends GlobalVarHolder {
 		} else {
 			throw new RuntimeException("Initpos neither a Model_Ground or Model_Drone: " + initpos.getTypeName());
 		}
-
-
-		/*else if(initpos instanceof Model_GhostAerial){
-			plat.moat = new RealisticSimMotionAutomaton_ghost(this, engine.getGps());
-			plat.moat.start();
-		}else if(initpos instanceof Model_Mavic){
-			plat.moat = new RealisticSimMotionAutomaton_mavic(this, engine.getGps());
-			plat.moat.start();
-		}else if(initpos instanceof Model_3DR){
-			plat.moat = new RealisticSimMotionAutomaton_3DR(this, engine.getGps());
-			plat.moat.start();
-		}
-		else if(initpos instanceof Model_Phantom){
-			plat.moat = new RealisticSimMotionAutomaton_Phantom(this, engine.getGps());
-			plat.moat.start();
-		}
-		else {
-			throw new RuntimeException("After adding a model, please add the motion controller for that model in SimGlobalVarHolder.java");
-		}*/
 	}
 
 	@Override

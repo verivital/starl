@@ -30,6 +30,7 @@ import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.gvh.RealGlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
 import edu.illinois.mitra.starl.interfaces.MessageListener;
+import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.models.Model_Mavic;
 import edu.illinois.mitra.starl.models.Model_Phantom;
 import edu.illinois.mitra.starl.objects.Common;
@@ -228,7 +229,7 @@ public class RobotsActivity extends Activity implements MessageListener {
 		pbBattery.setMax(100);
 		cbRegistered = (CheckBox) findViewById(R.id.cbRegistered);
 
-		if (!(botInfo[selectedRobot].type instanceof Model_Mavic || botInfo[selectedRobot].type instanceof Model_Phantom)) {
+		if (!(botInfo[selectedRobot].type instanceof Model_Drone)) {
 			cbRegistered.setVisibility(View.GONE);
 		} else {
 			cbBluetooth.setText("Drone Connected");

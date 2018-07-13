@@ -5,10 +5,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import edu.illinois.mitra.starl.comms.RobotMessage;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
+import edu.illinois.mitra.starl.models.Model;
+import edu.illinois.mitra.starl.models.Model_Drone;
+import edu.illinois.mitra.starl.models.Model_Ground;
 import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starl.models.Model_quadcopter;
 import edu.illinois.mitra.starl.motion.MotionParameters;
@@ -75,30 +79,17 @@ public class TestApp extends LogicThread {
          *doReachAvoid directs robots to waypoints, must also be passed to TestDrawer.
          *
          * Keys: All numbers start at 1 and increment
-         * iRob: #-iRob
-         * quad: #-quad
+         * Models: #-Model.getTypeName()
          * All Others: #
          */
 
         int index = 1;
         for (ItemPosition i : gvh.gps.getWaypointPositions()) {
-            if (gvh.plat.model instanceof Model_quadcopter) {
-                if (i.getName().equals(index + "-quad")) {
-                    destinations.put(i.getName(), i);
-                    index++;
-                }
-
-            } else if (gvh.plat.model instanceof Model_iRobot) {
-                if (i.getName().equals(index + "-iRob")) {
-                    destinations.put(i.getName(), i);
-                    index++;
-                }
-
-            } else {
-                if (i.getName().equals(index + "")) {
-                    destinations.put(i.getName(), i);
-                    index++;
-                }
+            // allows using 1-Model_.+ suffix
+            String name = index + "-" + gvh.plat.model.getTypeName();
+            if (name.startsWith(i.getName())) {
+                destinations.put(name, i);
+                index++;
             }
         }
 
@@ -204,13 +195,8 @@ public class TestApp extends LogicThread {
             return (T) map.values().toArray()[rand.nextInt(map.size())];
         else {
             //Must change format of keys in .wpt to match the return.
-            if (gvh.plat.model instanceof Model_quadcopter) {
-                return (T) map.get(index + "-quad");
-            } else if (gvh.plat.model instanceof Model_iRobot) {
-                return (T) map.get(index + "-iRob");
-            } else {
-                return (T) map.get(index + "");
-            }
+            String name = index + "-" + gvh.plat.model.getTypeName();
+            return (T) map.get((X)name);
         }
     }
 }
