@@ -62,24 +62,6 @@ public class RealGlobalVarHolder extends GlobalVarHolder {
 		} else {
 			throw new IllegalArgumentException("No known MotionAutomaton for type " + plat.model.getTypeName());
 		}
-		/*
-		if(initpos instanceof Model_iRobot) {
-			plat.moat = new MotionAutomaton_iRobot(this, new BluetoothInterface(this, robotMac.trim()));
-		}
-
-		else if (initpos instanceof Model_quadcopter) {
-			plat.moat = new MotionAutomatonMiniDrone(this, new MiniDroneBTI(this, context, robotMac));
-		}
-		else if(initpos instanceof Model_Mavic){
-			plat.moat = new MotionAutomaton_Mavic(this, new DjiController(this, context, robotMac));
-		}
-		else if(initpos instanceof Model_Phantom){
-			plat.moat = new MotionAutomaton_Phantom(this, new DjiController(this, context, robotMac));
-		}
-		else if (initpos instanceof Model_GhostAerial){
-			plat.moat = new MotionAutomaton_GhostAerial(this, new GhostAerialBTI(this, context, robotMac));
-		}
-		*/
 /*
 //TD_NATHAN: resolve - resolved above
         if(type == Common.IROBOT) {

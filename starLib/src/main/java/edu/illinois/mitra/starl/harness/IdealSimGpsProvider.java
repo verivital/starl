@@ -10,6 +10,7 @@ import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starl.objects.*;
 
+@Deprecated
 public class IdealSimGpsProvider extends Observable implements SimGpsProvider  {	
 	private HashMap<String, SimGpsReceiver> receivers;
 	private HashMap<String, TrackedRobot> robots;

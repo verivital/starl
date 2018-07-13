@@ -20,7 +20,7 @@ public class Model_quadcopter extends Model_Drone {
 	public Model_quadcopter(String received) throws ItemFormattingException{
 		super(received);
 	}
-
+/*
 	public Model_quadcopter(String name, int x, int y) {
 		super(name, x, y);
 	}
@@ -36,7 +36,7 @@ public class Model_quadcopter extends Model_Drone {
 	public Model_quadcopter(String name, int x, int y, int z, double yaw, double pitch, double roll) {
 		super(name, x, y, z, yaw, pitch, roll);
 	}
-
+	*/
 	public Model_quadcopter(ItemPosition t_pos) {
 		super(t_pos);
 	}

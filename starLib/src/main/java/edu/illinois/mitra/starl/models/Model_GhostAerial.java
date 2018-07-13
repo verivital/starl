@@ -19,7 +19,7 @@ public class Model_GhostAerial extends Model_Drone {
     public Model_GhostAerial(String received) throws ItemFormattingException {
         super(received);
     }
-
+/*
     public Model_GhostAerial(String name, int x, int y) {
         super(name, x, y, 0);
     }
@@ -35,9 +35,9 @@ public class Model_GhostAerial extends Model_Drone {
     public Model_GhostAerial(String name, int x, int y, int z, double yaw, double pitch, double roll) {
         super(name, x, y, z, yaw, pitch, roll);
     }
-
+    */
     public Model_GhostAerial(ItemPosition t_pos) {
-        super(t_pos.name, t_pos.getX(), t_pos.getY(), t_pos.getZ());
+        super(t_pos);
     }
 
     @Override

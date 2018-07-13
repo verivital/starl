@@ -20,7 +20,7 @@ public class Model_Mavic extends Model_Drone {
 	public Model_Mavic(String received) throws ItemFormattingException {
 		super(received);
 	}
-
+/*
 	public Model_Mavic(String name, int x, int y) {
 		super(name, x, y);
 	}
@@ -36,7 +36,7 @@ public class Model_Mavic extends Model_Drone {
 	public Model_Mavic(String name, int x, int y, int z, double yaw) {
 		super(name, x, y, z, yaw);
 	}
-
+	*/
 
 	public Model_Mavic(ItemPosition t_pos) {
 		super(t_pos);
