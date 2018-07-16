@@ -29,19 +29,11 @@ public class Model_3DR extends Model_Drone {
     public Model_3DR(String name, int x, int y) {
         super(name, x, y);
     }
-/*
+
     public Model_3DR(String name, int x, int y, int z) {
         super(name, x, y, z);
     }
 
-    public Model_3DR(String name, int x, int y, int z, int yaw) {
-        super(name, x, y, z, yaw);
-    }
-
-    public Model_3DR(String name, int x, int y, int z, double yaw, double pitch, double roll) {
-        super(name, x, y, z, yaw, pitch, roll);
-    }
-    */
     public Model_3DR(ItemPosition t_pos) {
         super(t_pos);
     }

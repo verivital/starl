@@ -40,7 +40,11 @@ public abstract class Model extends ItemPosition {
 		super(t_pos);
 	}
 
+	/**
+	 * Dynamically look up the name of the subclass of
+	 * @return the polymorphic name of the class, without the package
+	 */
 	public final String getTypeName(){
-	    return getClass().getSimpleName();
+	    return this.getClass().getSimpleName();
     }
 }

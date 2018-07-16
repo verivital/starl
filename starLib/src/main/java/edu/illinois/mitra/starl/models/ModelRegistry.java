@@ -2,6 +2,8 @@ package edu.illinois.mitra.starl.models;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,7 +20,7 @@ public class ModelRegistry {
 
     private static final Object lock = new Object();
     private static volatile boolean accessed = false; // volatile for atomic reads and writes
-    private static final Map<String, Constructor<? extends Model>> map = new HashMap<>();
+    private static final Map<String, Class<? extends Model>> map = new HashMap<>();
 
     /**
      * Registers a subclass of Model to be used in the application.
@@ -27,46 +29,63 @@ public class ModelRegistry {
      * @param c a Class object representing the type to be registered
      */
     public static void register(Class<? extends Model> c) {
-        check();
+        String typeName = c.getSimpleName();
+        check(); // first check
         synchronized(lock) {
-            check();
-
-            // Model.getTypeName() implementation must return the same string
-            String typeName = c.getSimpleName();
+            check(); // second check in double-checked locking
             if (map.containsKey(typeName)) {
                 throw new RuntimeException(typeName + " is already registered.");
             }
 
-            Constructor<? extends Model> modelConstructor;
-            try {
-                modelConstructor = c.getConstructor();
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(typeName + " has no default constructor. " + e);
-            }
-
-            map.put(typeName, modelConstructor);
-            System.out.println("Registered " + typeName);
+            map.put(typeName, c);
         }
+        System.out.println("Registered " + typeName);
     }
 
     /**
-     * Instantiates a subclass of Model given by the typeName parameter.
+     * Instantiates a subclass of Model given by the typeName parameter. Although this is
+     * a more expensive operation than a raw <code>new</code>, it enables Models to be created
+     * with any arguments without knowing the explicit type.
+     *
      * @param typeName the type of Model to instantiate
+     * @param args the arguments to the Model constructor
      * @return a new instance of class typeName
      * @throws RuntimeException if typeName is not registered or if construction fails
      */
-    public static Model create(String typeName) throws RuntimeException {
+    public static Model create(String typeName, Object... args) throws RuntimeException {
         access(); // make read-only
 
-        Constructor<? extends Model> modelConstructor = map.get(typeName);
-        if (modelConstructor == null) {
+        Class<? extends Model> modelClass;
+        Class<?>[] formalTypes;
+        Constructor<? extends Model> modelConstructor;
+        Model model;
+
+        // load the registered class
+        modelClass = map.get(typeName);
+        if (modelClass == null) {
             throw new RuntimeException(typeName + " not found in registry.");
         }
-        Model model;
+
+        // populate an array with the Classes of the arguments
+        formalTypes = new Class<?>[args.length];
+        for (int i = 0; i < args.length; i++) {
+            formalTypes[i] = args[i].getClass();
+        }
+
         try {
-            model = modelConstructor.newInstance();
+            // attempt to get the constructor that can accept the arguments
+            modelConstructor = modelClass.getDeclaredConstructor(formalTypes);
+        } catch (NoSuchMethodException | SecurityException e) {
+            throw new RuntimeException(typeName + " has no corresponding constructor to "
+                    + Arrays.toString(formalTypes) + ". " + e);
+        }
+
+        try {
+            // call the constructor with the arguments
+            model = modelConstructor.newInstance(args);
         } catch (InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException e) {
+                | IllegalArgumentException | InvocationTargetException
+                | ExceptionInInitializerError e) {
             throw new RuntimeException("Could not get new instance of " + typeName + ". " + e);
         }
         return model;
@@ -84,11 +103,11 @@ public class ModelRegistry {
 
     /**
      * Lists the types contained in the registry.
-     * @return a set of typenames
+     * @return an unmodifiable set of typenames
      */
     public static Set<String> types() {
         access(); // make read-only
-        return map.keySet();
+        return Collections.unmodifiableSet(map.keySet());
     }
 
     // make sure registry has not been accessed (use in double-checked locking)
@@ -98,7 +117,7 @@ public class ModelRegistry {
         }
     }
 
-    // mark the registry as accessed
+    // mark the registry as accessed, make read-only
     private static void access() {
         if (!accessed) {
             synchronized (lock) {

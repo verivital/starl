@@ -1,5 +1,6 @@
 package edu.illinois.mitra.starl.models;
 
+import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
 import edu.illinois.mitra.starl.motion.BTI;
 import edu.illinois.mitra.starl.motion.GroundBTI;
 import edu.illinois.mitra.starl.objects.Common;
@@ -21,14 +22,34 @@ public abstract class Model_Ground extends Model {
 
     public Model_Ground() {}
 
+    /**
+     * Construct a Model_Ground from a received GPS broadcast message
+     *
+     * @param received GPS broadcast received
+     * @throws ItemFormattingException
+     */
+    public Model_Ground(String received) throws ItemFormattingException {
+        String[] parts = received.replace(",", "").split("\\|");
+        if(parts.length >= 6) {
+            this.name = parts[1];
+            this.setPos(Integer.parseInt(parts[2]),
+                    Integer.parseInt(parts[3]),
+                    Integer.parseInt(parts[4]));
+            this.angle = Integer.parseInt(parts[5]);
+        }
+        else {
+            throw new ItemFormattingException("Should be length 6, is length " + parts.length);
+        }
+    }
+
     public Model_Ground(String name, int x, int y) {
         super(name, x, y);
     }
 
-    public Model_Ground(String name, int x, int y, int z) {
-        super(name, x, y, z);
+    public Model_Ground(String name, int x, int y, double angle) {
+        super(name, x, y);
+        this.angle = angle;
     }
-
     public Model_Ground(ItemPosition t_pos) {
         super(t_pos);
         this.angle = t_pos.index;
