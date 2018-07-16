@@ -19,13 +19,14 @@ public class CircleDrawer extends Drawer {
 		CircleApp app = (CircleApp) lt;
 
 		g.setColor(Color.RED);
-		for (ItemPosition pos : app.destinations) {
-			g.fillRect(pos.getX() - 13, pos.getY() - 13, 26, 26);
+		for(ItemPosition dest : app.destinations.values()) {
+			g.fillRect(dest.getX() - 13, dest.getY() - 13, 26, 26);
 		}
 
 		g.setColor(selectColor);
 		g.setStroke(stroke);
-
+		if(app.currentDestination != null)
+			g.drawOval(app.currentDestination.getX() - 20, app.currentDestination.getY() - 20, 40, 40);
 	}
 
 }

@@ -13,10 +13,10 @@ public class Main {
         SimSettings.Builder settings = new SimSettings.Builder();
 
         settings.N_IROBOTS(4);
-        settings.N_GBOTS(4);
-        //settings.N_DBOTS(1);
+        settings.N_GOAL_BOTS(4);
+        //settings.N_DISCOV_BOTS(1);
 
-        //	settings.N_RBOTS(1);
+        //	settings.N_RAND_BOTS(1);
         settings.TIC_TIME_RATE(5);
         settings.WAYPOINT_FILE("projectapp/waypoints/dest.wpt");        //Enter relative path
         settings.INITIAL_POSITIONS_FILE("projectapp/waypoints/start.wpt");

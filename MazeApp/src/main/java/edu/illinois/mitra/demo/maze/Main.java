@@ -13,9 +13,9 @@ public class Main {
 		SimSettings.Builder settings = new SimSettings.Builder();
 		
 		settings.N_IROBOTS(2);
-		settings.N_GBOTS(1);
-		settings.N_DBOTS(1);
-	//	settings.N_RBOTS(1);
+		settings.N_GOAL_BOTS(1);
+		settings.N_DISCOV_BOTS(1);
+	//	settings.N_RAND_BOTS(1);
 		settings.TIC_TIME_RATE(3);
 		settings.WAYPOINT_FILE("mazeapp/waypoints/dest.wpt");
 

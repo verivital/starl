@@ -51,7 +51,7 @@ public class PickedLeaderElection extends StarLCallable implements LeaderElectio
 	
 	public PickedLeaderElection(GlobalVarHolder gvh) {
 		super(gvh,"RandomLeaderElection");
-		results = new String[1];
+		results = new String[2];
 		nodes = gvh.id.getParticipants().size();
 		gvh.trace.traceEvent(TAG, "Created", gvh.time());
 		registerListeners();
@@ -68,13 +68,13 @@ public class PickedLeaderElection extends StarLCallable implements LeaderElectio
 		Random rand = new Random();
 		int myNum = rand.nextInt(1000);
 		receivedFrom.add(name);
-		ballots.add(new Ballot(name, myNum));
+		ballots.add(new Ballot(name, myNum, gvh.id.getIdNumber()));
 
 		gvh.trace.traceVariable(TAG, "myNum", myNum, gvh.time());
 		gvh.log.i(TAG, "My number is " + myNum);
 		
 		// Broadcast
-		RobotMessage bcast = new RobotMessage("ALL", name, Common.MSG_RANDLEADERELECT, new MessageContents(myNum));
+		RobotMessage bcast = new RobotMessage("ALL", name, Common.MSG_RANDLEADERELECT, new MessageContents(Integer.toString(myNum), Integer.toString(gvh.id.getIdNumber())));
 		gvh.comms.addOutgoingMessage(bcast);
 		
 		// Wait to receive MSG_LEADERELECT messages
@@ -98,11 +98,14 @@ public class PickedLeaderElection extends StarLCallable implements LeaderElectio
 		// Determine the leader
 		Object[] botarray;
 		String leader=null;
+		int leaderID = -1;
 		if(!error) {
 			gvh.log.d(TAG, "No errors, determining leader now.");
 			// Retrieve all names and take the one whose name comes first (in order of the alphabet)
 			botarray =gvh.id.getParticipants().toArray();
-			leader=(String) botarray[0];
+			leader = ballots.first().candidate;
+			leaderID = ballots.first().idNum;
+			//leaderID = botarray[0].id;
 			
 			gvh.trace.traceEvent(TAG, "Determined leader", leader, gvh.time());
 			
@@ -110,6 +113,7 @@ public class PickedLeaderElection extends StarLCallable implements LeaderElectio
 			RobotMessage bcast_leader = new RobotMessage("ALL", name, Common.MSG_RANDLEADERELECT_ANNOUNCE, new MessageContents(leader));
 			gvh.comms.addOutgoingMessage(bcast_leader);
 			gvh.trace.traceEvent(TAG, "Notified all of leader", gvh.time());
+
 		}		
 		if(error) {
 			gvh.log.d(TAG, "An error occurred (waited too long?) must wait to receive announcement broadcasts.");
@@ -127,9 +131,11 @@ public class PickedLeaderElection extends StarLCallable implements LeaderElectio
 			}
 			leader = announcedLeader;
 		}
+
 		gvh.log.i(TAG, "Elected leader: " + leader);
 		gvh.trace.traceEvent(TAG, "Elected leader", leader, gvh.time());
 		results[0] = leader;
+		results[1] = Integer.toString(leaderID);
 		return returnResults();
 	}
 	
@@ -141,8 +147,10 @@ public class PickedLeaderElection extends StarLCallable implements LeaderElectio
 			if(receivedFrom.contains(from)) {
 				gvh.log.e(TAG, "Received from " + from + " twice!");
 			} else {
-				int val = Integer.parseInt(m.getContents(0));				
-				ballots.add(new Ballot(from, val));
+				int val = Integer.parseInt(m.getContents(0));
+				int id = Integer.parseInt(m.getContents(1));
+
+				ballots.add(new Ballot(from, val, id));
 				receivedFrom.add(from);
 				gvh.log.i(TAG, "Received " + receivedFrom.size());
 				if(receivedFrom.size() == nodes) {
@@ -164,10 +172,24 @@ public class PickedLeaderElection extends StarLCallable implements LeaderElectio
 	}
 
 	@Override
+	public int getLeaderID(){
+		if(elected.isDone()) {
+			try {
+				return Integer.parseInt((String)elected.get().get(2));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+		return -1;
+	}
+
+	@Override
 	public String getLeader() {
 		if(elected.isDone()) {
 			try {
-				return (String) elected.get().get(0);
+				return (String)(elected.get().get(1));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
@@ -191,10 +213,13 @@ public class PickedLeaderElection extends StarLCallable implements LeaderElectio
 	private class Ballot implements Comparable<Ballot> {
 		public String candidate;
 		public int value;
+		public int idNum;
+
 		
-		public Ballot(String candidate, int value) {
+		public Ballot(String candidate, int value, int id) {
 			this.candidate = candidate;
 			this.value = value;
+			this.idNum = id;
 		}
 		
 		public String toString() {
