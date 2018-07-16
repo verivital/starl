@@ -1,7 +1,6 @@
 
 
-include ':starLib', ':ClientLib', ':Mavlink', ':CircleApp', ':circleapp', ':circleapp', ':FlockingApp', ':ProjectApp', ':TestApp', ':MazeApp', ':distributedsearchapp', ':arrowtravelapp', ':grouptagapp', ':grouptagapp', ':lawnmowerapp', ':circleapp'
-include ':starlTemplate'
-include ':FollowApp'
-include ':starLSim'
-include ':RaceApp'
+include ':ClientLib', ':Mavlink'
+include ':starLib', ':starlTemplate', ':starLSim'
+include ':FollowApp', ':RaceApp', ':circleapp', ':FlockingApp', ':ProjectApp', ':TestApp'
+include ':MazeApp', ':distributedsearchapp', ':arrowtravelapp',':grouptagapp', ':lawnmowerapp'

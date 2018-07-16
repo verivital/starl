@@ -218,6 +218,7 @@ public abstract class Model_Ground extends Model {
         RANDOM_MOVING_OBSTACLE,
 
 		// acts as AI opponent try to block robots getting to the goal
+        //TODO: Hasn't been implemented yet
         ANTI_GOAL
     }
 }

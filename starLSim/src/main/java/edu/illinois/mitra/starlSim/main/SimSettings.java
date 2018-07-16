@@ -23,17 +23,17 @@ public class SimSettings {
 	/**
 	 * The number of get to the goal rRobots to simulate.
 	 */
-	public final int N_GBOTS;
+	public final int N_GOAL_BOTS;
 	
 	/**
 	 * The number of discovery iRobots to simulate.
 	 */
-	public final int N_DBOTS;
+	public final int N_DISCOV_BOTS;
 	
 	/**
 	 * The number of random moving iRobots to simulate.
 	 */
-	public final int N_RBOTS;
+	public final int N_RAND_BOTS;
 	
 	/**
 	 * The number of quadcopters to simulate.
@@ -269,9 +269,9 @@ public class SimSettings {
 		private int De_Radius = 1;
 		private int Detect_Precision = 1;
 		private int N_IROBOTS = 4;
-		private int N_GBOTS = 4;
-		private int N_DBOTS = 0;
-		private int N_RBOTS = 0;
+		private int N_GOAL_BOTS = 4;
+		private int N_DISCOV_BOTS = 0;
+		private int N_RAND_BOTS = 0;
 		private int N_QUADCOPTERS = 0;
 		private int N_GHOSTS = 0;
         private int N_MAVICS = 0;
@@ -343,18 +343,18 @@ public class SimSettings {
 			return this;
 		}
 		
-		public Builder N_GBOTS(int N_GBOTS) {
-			this.N_GBOTS = N_GBOTS;
+		public Builder N_GOAL_BOTS(int N_GOAL_BOTS) {
+			this.N_GOAL_BOTS = N_GOAL_BOTS;
 			return this;
 		}
 		
-		public Builder N_DBOTS(int N_DBOTS) {
-			this.N_DBOTS = N_DBOTS;
+		public Builder N_DISCOV_BOTS(int N_DISCOV_BOTS) {
+			this.N_DISCOV_BOTS = N_DISCOV_BOTS;
 			return this;
 		}
 		
-		public Builder N_RBOTS(int N_RBOTS) {
-			this.N_RBOTS = N_RBOTS;
+		public Builder N_RAND_BOTS(int N_RAND_BOTS) {
+			this.N_RAND_BOTS = N_RAND_BOTS;
 			return this;
 		}
 		
@@ -589,9 +589,9 @@ public class SimSettings {
 		this.De_Radius = builder.De_Radius;
 		this.Detect_Precision = builder.Detect_Precision;
 		this.N_IROBOTS = builder.N_IROBOTS;
-		this.N_GBOTS = builder.N_GBOTS;
-		this.N_DBOTS = builder.N_DBOTS;
-		this.N_RBOTS = builder.N_RBOTS;
+		this.N_GOAL_BOTS = builder.N_GOAL_BOTS;
+		this.N_DISCOV_BOTS = builder.N_DISCOV_BOTS;
+		this.N_RAND_BOTS = builder.N_RAND_BOTS;
 		this.N_QUADCOPTERS = builder.N_QUADCOPTERS;
 		this.N_GHOSTS = builder.N_GHOSTS;
         this.N_MAVICS = builder.N_MAVICS;

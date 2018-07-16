@@ -15,7 +15,7 @@ public class Main {
 		SimSettings.Builder settings = new SimSettings.Builder();
 		
 		settings.N_IROBOTS(5);
-		settings.N_GBOTS(0);
+		settings.N_GOAL_BOTS(0);
 		settings.TIC_TIME_RATE(5);
 		settings.WAYPOINT_FILE("distributedsearchapp/waypoints/dest.wpt");
 		settings.SENSEPOINT_FILE("distributedsearchapp/waypoints/senseObjects.wpt");

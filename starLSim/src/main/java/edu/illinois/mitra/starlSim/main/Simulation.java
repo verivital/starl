@@ -392,9 +392,9 @@ public class Simulation {
 			// Add type for ground models
 			if (model instanceof Model_Ground) {
 				Model_Ground modelGround = (Model_Ground)model;
-				if (i < settings.N_DBOTS) {
+				if (i < settings.N_DISCOV_BOTS) {
 					modelGround.type = Model_Ground.Type.EXPLORE_AREA;
-				} else if ((i >= settings.N_DBOTS) && (i < (settings.N_DBOTS + settings.N_RBOTS))) {
+				} else if ((i >= settings.N_DISCOV_BOTS) && (i < (settings.N_DISCOV_BOTS + settings.N_RAND_BOTS))) {
 					modelGround.type = Model_Ground.Type.RANDOM_MOVING_OBSTACLE;
 				} else {
 					modelGround.type = Model_Ground.Type.GET_TO_GOAL;
