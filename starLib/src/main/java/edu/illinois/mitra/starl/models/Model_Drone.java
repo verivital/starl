@@ -82,20 +82,9 @@ public abstract class Model_Drone extends Model {
         super(name, x, y);
     }
 
-    /*public Model_Drone(String name, int x, int y, int z) {
+    public Model_Drone(String name, int x, int y, int z) {
         super(name, x, y, z);
     }
-
-    public Model_Drone(String name, int x, int y, int z, double yaw) {
-        this(name, x, y, z);
-        this.setYaw(yaw);
-    }
-
-    public Model_Drone(String name, int x, int y, int z, double yaw, double pitch, double roll) {
-        this(name, x, y, z, yaw);
-        this.setPitch(pitch);
-        this.setRoll(roll);
-    }*/
 
     public Model_Drone(ItemPosition t_pos) {
         super(t_pos);

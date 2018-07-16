@@ -16,7 +16,6 @@ import edu.illinois.mitra.starl.interfaces.GpsReceiver;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener.Event;
 import edu.illinois.mitra.starl.models.Model_Phantom;
 import edu.illinois.mitra.starl.models.Model_iRobot;
-import edu.illinois.mitra.starl.models.Model_quadcopter;
 import edu.illinois.mitra.starl.objects.Common;
 import edu.illinois.mitra.starl.objects.HandlerMessage;
 import edu.illinois.mitra.starl.objects.ItemPosition;
@@ -32,7 +31,7 @@ public class UdpGpsReceiver extends Thread implements GpsReceiver {
 	private static final String TAG = "GPSReceiver";
 	private static final String ERR = "Critical Error";
 	
-	public PositionList robotPositions;
+	public PositionList<ItemPosition> robotPositions;
 	public PositionList<ItemPosition> waypointPositions;
 	public ObstacleList obs;
 	public Vector<ObstacleList> viewsOfWorld;

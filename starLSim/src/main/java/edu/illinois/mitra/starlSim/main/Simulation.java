@@ -370,7 +370,7 @@ public class Simulation {
 			String botName = name + i;
 			ItemPosition initialPos = t_initialPositions.getPosition(botName);
 			if (initialPos != null) {
-				// instantiate a subclass of RegisterModel without knowing the exact type
+				// instantiate a subclass of Model without knowing the exact type
 				model = instantiator.instantiate(initialPos);
 			} else {
 				// If no initial position was supplied, randomly generate one
@@ -381,7 +381,7 @@ public class Simulation {
 					}
 					initialPos = new ItemPosition(botName, rand.nextInt(settings.GRID_XSIZE),
 							rand.nextInt(settings.GRID_YSIZE));
-					// instantiate a subclass of RegisterModel without knowing the exact type
+					// instantiate a subclass of Model without knowing the exact type
 					model = instantiator.instantiate(initialPos);
 					if (list != null) {
 						valid = (list.validstarts(model, model.radius()));
