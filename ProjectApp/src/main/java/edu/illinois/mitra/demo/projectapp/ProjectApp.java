@@ -6,13 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Stack;
-import java.util.Vector;
+
 import edu.illinois.mitra.starl.comms.RobotMessage;
 import edu.illinois.mitra.starl.functions.RandomLeaderElection;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.LeaderElection;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
-import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_Ground;
 import edu.illinois.mitra.starl.objects.*;
 import edu.illinois.mitra.starl.motion.*;

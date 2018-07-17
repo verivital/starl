@@ -6,11 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 
 import edu.illinois.mitra.starl.interfaces.LogicThread;
-import edu.illinois.mitra.starl.motion.RRTNode;
 import edu.illinois.mitra.starl.objects.ItemPosition;
-import edu.illinois.mitra.starl.objects.ObstacleList;
-import edu.illinois.mitra.starl.objects.Obstacles;
-import edu.illinois.mitra.starl.objects.Point3i;
 import edu.illinois.mitra.starlSim.draw.Drawer;
 
 public class LawnDrawer extends Drawer {

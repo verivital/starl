@@ -27,6 +27,7 @@ import edu.illinois.mitra.starl.harness.SimGpsProvider;
 import edu.illinois.mitra.starl.harness.SimulationEngine;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
 import edu.illinois.mitra.starl.models.Model;
+import edu.illinois.mitra.starl.models.ModelRegistry;
 import edu.illinois.mitra.starl.models.Model_3DR;
 import edu.illinois.mitra.starl.models.Model_GhostAerial;
 import edu.illinois.mitra.starl.models.Model_Ground;
@@ -41,41 +42,40 @@ import edu.illinois.mitra.starlSim.draw.DrawFrame;
 import edu.illinois.mitra.starlSim.draw.RobotData;
 
 public class Simulation {
+	private static final double BOT_SPACING_FACTOR = 2.8;
 	private Collection<SimApp> bots = new HashSet<SimApp>();
 	private HashMap<String, String> participants = new HashMap<String, String>();
 	private SimGpsProvider gps;
 	private SimulationEngine simEngine;
-
 	private ExecutorService executor;
-
 	private final SimSettings settings;
-
 	private final DrawFrame drawFrame;
 	private ObstacleList list;
-
-	// used to pass in a "function" to instantiate specific subclasses of RegisterModel
-	private interface ModelInstantiator {
-		Model instantiate(ItemPosition pos);
-	}
-
 	private List<List<Object>> resultsList = new ArrayList<List<Object>>();
+	private Map<String, ItemPosition> startingPositions = new HashMap<String, ItemPosition>();
 
 	public Simulation(Class<? extends LogicThread> app, final SimSettings settings) {
-		if (settings.N_IROBOTS + settings.N_QUADCOPTERS + settings.N_GHOSTS +settings.N_MAVICS + settings.N_o3DR + settings.N_PHANTOMS<= 0)
+		// Make sure there is at least one robot entered in settings
+		int N_ROBOTS = 0, N_GROUND_BOTS = 0;
+		for (Map.Entry<String, SimSettings.Bot> entry : settings.BOTS.entrySet()) {
+			int count = entry.getValue().COUNT;
+			// Count all robots
+			N_ROBOTS += count;
+			if (ModelRegistry.isInstance(entry.getKey(), Model_Ground.class)) {
+				// Count ground robots for views
+				N_GROUND_BOTS += count;
+			}
+		}
+		if (N_ROBOTS == 0) {
 			throw new IllegalArgumentException("Must have more than zero robots to simulate!");
+		}
 
 		// Create set of robots whose wireless is blocked for passage between
 		// the GUI and the simulation communication object
 		Set<String> blockedRobots = new HashSet<String>();
 
 		// Create participants and instantiate SimApps
-		int start = 0;
-		start = createParticipants(settings.N_IROBOTS, settings.IROBOT_NAME, "10.255.24.0", start);
-		start = createParticipants(settings.N_QUADCOPTERS, settings.QUADCOPTER_NAME, "10.255.24.0.", start);
-		start = createParticipants(settings.N_GHOSTS, settings.GHOST_NAME, "10.255.24.0.", start);
-		start = createParticipants(settings.N_MAVICS, settings.MAVIC_NAME, "10.1.1.10", start);
-		start = createParticipants(settings.N_PHANTOMS, settings.PHANTOM_NAME, "10.1.1.10", start);
-		createParticipants(settings.N_o3DR, settings.o3DR_NAME, "10.1.1.10", start);
+		createParticipants(settings.BOTS);
 
 		// Start the simulation engine
 		LinkedList<LogicThread> logicThreads = new LinkedList<LogicThread>();
@@ -120,14 +120,14 @@ public class Simulation {
 			if (settings.Detect_Precision > 1) {
 				list.Gridfy();
 			}
-			gps.setViews(list, settings.N_IROBOTS);
+			gps.setViews(list, N_GROUND_BOTS);
 		} else {
 			//if we have no input files, we still have to initialize the obstacle list so that later on, if we detect collision between robots, we can add that obstacle
 			gps.setObspoints(new ObstacleList());
 			list = gps.getObspointPositions();
 			list.detect_Precision = settings.Detect_Precision;
 			list.de_Radius = settings.De_Radius;
-			gps.setViews(list, settings.N_IROBOTS);
+			gps.setViews(list, N_GROUND_BOTS);
 		}
 
 		this.settings = settings;
@@ -141,53 +141,13 @@ public class Simulation {
 		} else
 			t_initialPositions = new PositionList<>();
 
-		// Create each iRobot
-		addModels(settings.N_IROBOTS, settings.IROBOT_NAME, t_initialPositions, app, logicThreads,
-				new ModelInstantiator() {
-					public Model instantiate(ItemPosition pos) {
-						return new Model_iRobot(pos);
-					}
-				});
-
-		// Create each Quadcopter
-		addModels(settings.N_QUADCOPTERS, settings.QUADCOPTER_NAME, t_initialPositions, app, logicThreads,
-				new ModelInstantiator() {
-					public Model instantiate(ItemPosition pos) {
-						return new Model_quadcopter(pos);
-					}
-				});
-
-		// Create each ghost
-		addModels(settings.N_GHOSTS, settings.GHOST_NAME, t_initialPositions, app, logicThreads,
-				new ModelInstantiator() {
-					public Model instantiate(ItemPosition pos) {
-						return new Model_GhostAerial(pos);
-					}
-				});
-
-		// Create each Mavic
-		addModels(settings.N_MAVICS, settings.MAVIC_NAME, t_initialPositions, app, logicThreads,
-				new ModelInstantiator() {
-					public Model instantiate(ItemPosition pos) {
-						return new Model_Mavic(pos);
-					}
-				});
-
-		// Create each Phantom
-		addModels(settings.N_PHANTOMS, settings.PHANTOM_NAME, t_initialPositions, app, logicThreads,
-				new ModelInstantiator() {
-					public Model instantiate(ItemPosition pos) {
-						return new Model_Phantom(pos);
-					}
-				});
-
-		// Create each 3DR
-		addModels(settings.N_o3DR, settings.o3DR_NAME, t_initialPositions, app, logicThreads,
-				new ModelInstantiator() {
-					public Model instantiate(ItemPosition pos) {
-						return new Model_3DR(pos);
-					}
-				});
+		// Create each robot
+		for (Map.Entry<String, SimSettings.Bot> entry : settings.BOTS.entrySet()) {
+			int count = entry.getValue().COUNT;
+			String name = entry.getValue().NAME;
+			String typeName = entry.getKey();
+			addModels(count, name, t_initialPositions, app, logicThreads, typeName);
+		}
 
 		if (settings.USE_GLOBAL_LOGGER)
 			gps.addObserver(createGlobalLogger(settings));
@@ -220,6 +180,7 @@ public class Simulation {
 						if (ip instanceof Model_Ground) {
 							//tracks ith iRobot since only iRobots access the views vector
 							nextBot = new RobotData(ip, Color.black, views.elementAt(iiRobot));
+							iiRobot++;
 						} else {
 							nextBot = new RobotData(ip);
 						}
@@ -241,22 +202,6 @@ public class Simulation {
 			// show viewer
 			drawFrame.setVisible(true);
 		}
-	}
-
-	private static final double BOT_SPACING_FACTOR = 2.8;
-	private Map<String, ItemPosition> startingPositions = new HashMap<String, ItemPosition>();
-
-	private boolean acceptableStart(ItemPosition pos) {
-		if (pos == null)
-			return false;
-		startingPositions.put(pos.getName(), pos);
-		for (Entry<String, ItemPosition> entry : startingPositions.entrySet()) {
-			if (!entry.getKey().equals(pos.getName())) {
-				if (entry.getValue().distanceTo(pos) < (BOT_SPACING_FACTOR * settings.BOT_RADIUS))
-					return false;
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -333,6 +278,18 @@ public class Simulation {
 		return 	simEngine.getComChannel().getStatistics();
 	}
 
+	private boolean acceptableStart(ItemPosition pos) {
+		// does not modify this
+		if (pos == null)
+			return false;
+		final int minDistSq = (int)Math.ceil(Math.pow(BOT_SPACING_FACTOR * settings.BOT_RADIUS, 2));
+		for (Entry<String, ItemPosition> entry : startingPositions.entrySet()) {
+			if (entry.getValue().getPos().subtract(pos.getPos()).magnitudeSq() < minDistSq)
+				return false;
+		}
+		return true;
+	}
+
 	private Observer createGlobalLogger(final SimSettings settings) {
 		final GlobalLogger gl = new GlobalLogger(settings.TRACE_OUT_DIR, "global.txt");
 		System.out.println("SANITY CHECK createGlobalLogger called");
@@ -353,17 +310,22 @@ public class Simulation {
 		return globalLogger;
 	}
 
-	private int createParticipants(int count, String name, String ip, int startIndex) {
-		for (int i = 0; i < count; i++) {
-			// Mapping between robot name and IP address
-			participants.put(name + i, ip + (i + startIndex));
+	private void createParticipants(Map<String, SimSettings.Bot> bots) {
+		int index = 0;
+		for (Map.Entry<String, SimSettings.Bot> entry : bots.entrySet()) {
+			// use a temporary to get IP address
+			String ip = ModelRegistry.create(entry.getKey()).ip();
+			for (int i = 0; i < entry.getValue().COUNT; i++) {
+				// Mapping between robot name and IP address
+				participants.put(entry.getValue().NAME + i, ip + (i + index));
+				index++;
+			}
 		}
-		return startIndex + count;
 	}
 
 	private void addModels(int count, String name, PositionList<ItemPosition> t_initialPositions,
 						   Class<? extends LogicThread> app, List<LogicThread> logicThreads,
-						   ModelInstantiator instantiator) {
+						   String typeName) {
 		Random rand = new Random();
 		for (int i = 0; i < count; i++) {
 			Model model = null;
@@ -371,21 +333,36 @@ public class Simulation {
 			ItemPosition initialPos = t_initialPositions.getPosition(botName);
 			if (initialPos != null) {
 				// instantiate a subclass of Model without knowing the exact type
-				model = instantiator.instantiate(initialPos);
+				model = ModelRegistry.create(typeName, initialPos);
 			} else {
 				// If no initial position was supplied, randomly generate one
-				boolean valid = false;
-				for (int retries = 0; !(acceptableStart(model) && valid); ++retries) {
-					if (retries >= 10000) {
-						throw new RuntimeException("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE or remove some obstacles");
-					}
+				// Must pass both acceptableStart() and list.validstarts()
+				boolean valid;
+				int retries = 0;
+				Integer radius = null;
+				do {
 					initialPos = new ItemPosition(botName, rand.nextInt(settings.GRID_XSIZE),
 							rand.nextInt(settings.GRID_YSIZE));
-					// instantiate a subclass of Model without knowing the exact type
-					model = instantiator.instantiate(initialPos);
-					if (list != null) {
-						valid = (list.validstarts(model, model.radius()));
+					valid = acceptableStart(initialPos);
+					if (valid) {
+						if (radius == null) {
+							// radius saved after first time, avoid expensive call to create model
+							model = ModelRegistry.create(typeName, initialPos);
+							radius = model.radius();
+						}
+						valid = list.validstarts(initialPos, radius);
 					}
+					if (valid) {
+						if (model == null) {
+							model = ModelRegistry.create(typeName, initialPos);
+						}
+					} else {
+						model = null; // dispose of invalid model
+					}
+					retries++;
+				} while (!valid && retries < 10000);
+				if (!valid) {
+					throw new RuntimeException("too many tries for BOT" + botName + "please increase settings.GRID_XSIZE/GRID_YSIZE or remove some obstacles");
 				}
 			}
 

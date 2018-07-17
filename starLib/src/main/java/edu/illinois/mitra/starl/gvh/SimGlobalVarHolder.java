@@ -9,7 +9,6 @@ import edu.illinois.mitra.starl.harness.RealisticSimMotionAutomaton_Ground;
 import edu.illinois.mitra.starl.harness.SimGpsReceiver;
 import edu.illinois.mitra.starl.harness.SimSmartComThread;
 import edu.illinois.mitra.starl.harness.SimulationEngine;
-import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.*;
 import edu.illinois.mitra.starl.motion.ReachAvoid;
 

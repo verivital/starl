@@ -2,6 +2,7 @@ package edu.illinois.mitra.starl.models;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,37 +10,59 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * ModelRegistry is a static container class whose purpose is to eliminate
+ * ModelRegistry is a static container class whose purpose is to reduce
  * explicit typing of the concrete Model subclasses. Each concrete Model subclass
- * will call <code>ModelRegistry.register(Model_Something.class);</code>
- * in their static initializers to register themselves for use in the rest of the
- * application. The first time the registry is read, it disables all further
- * modification and becomes immutable, essentially like a global constant.
+ * must be registered once in the static initializer for use in the rest of
+ * the application. The first time the registry is read, it disables all further
+ * modification and becomes immutable, essentially like a global constant,
+ * thus eliminating the drawbacks of traditional singletons.
  */
 public class ModelRegistry {
 
     private static final Object lock = new Object();
     private static volatile boolean accessed = false; // volatile for atomic reads and writes
     private static final Map<String, Class<? extends Model>> map = new HashMap<>();
+    private static final Map<Class<?>, Class<?>> primitiveClasses = new HashMap<>();
+
+    /*
+     * To enable a type of Model to be used in the application, you must register it here.
+     * Simply call register on one or more of the Classes of the concrete Model subclasses.
+     */
+    static {
+        register(
+                Model_3DR.class,
+                Model_GhostAerial.class,
+                Model_iRobot.class,
+                Model_Mavic.class,
+                Model_Phantom.class,
+                Model_quadcopter.class
+        );
+    }
 
     /**
-     * Registers a subclass of Model to be used in the application.
+     * Registers one or more subclasses of Model to be used in the application. Safe to call repeatedly.
      *
+     * Registering subclasses is only allowed before any data has been read from the registry,
+     * through the methods {@link #create(String, Object...)}, {@link #canCreate(String)}, etc.
+     *
+     * @param classes one or more Class objects representing the type(s) to be registered
      * @throws RuntimeException if the type has already been registered or has no default constructor
-     * @param c a Class object representing the type to be registered
      */
-    public static void register(Class<? extends Model> c) {
-        String typeName = c.getSimpleName();
+    @SafeVarargs
+    public static void register(Class<? extends Model>... classes) {
         check(); // first check
         synchronized(lock) {
             check(); // second check in double-checked locking
-            if (map.containsKey(typeName)) {
-                throw new RuntimeException(typeName + " is already registered.");
+            for (Class<? extends Model> c : classes) {
+                String typeName = c.getSimpleName();
+                if (Modifier.isAbstract(c.getModifiers())) {
+                    throw new IllegalArgumentException(typeName + " is abstract.");
+                } else if (map.containsKey(typeName)) {
+                    throw new IllegalArgumentException(typeName + " is already registered.");
+                }
+                map.put(typeName, c);
             }
-
-            map.put(typeName, c);
         }
-        System.out.println("Registered " + typeName);
     }
 
     /**
@@ -55,38 +78,32 @@ public class ModelRegistry {
     public static Model create(String typeName, Object... args) throws RuntimeException {
         access(); // make read-only
 
-        Class<? extends Model> modelClass;
-        Class<?>[] formalTypes;
-        Constructor<? extends Model> modelConstructor;
-        Model model;
-
         // load the registered class
-        modelClass = map.get(typeName);
-        if (modelClass == null) {
-            throw new RuntimeException(typeName + " not found in registry.");
-        }
+        Class<? extends Model> modelClass = loadFromRegistry(typeName);
 
         // populate an array with the Classes of the arguments
-        formalTypes = new Class<?>[args.length];
+        Class<?>[] formalTypes = new Class<?>[args.length];
         for (int i = 0; i < args.length; i++) {
-            formalTypes[i] = args[i].getClass();
+            // assume primitive types were intended instead of boxed object types
+            formalTypes[i] = makePrimitive(args[i].getClass());
         }
 
+        Constructor<? extends Model> modelConstructor;
         try {
             // attempt to get the constructor that can accept the arguments
             modelConstructor = modelClass.getDeclaredConstructor(formalTypes);
         } catch (NoSuchMethodException | SecurityException e) {
             throw new RuntimeException(typeName + " has no corresponding constructor to "
-                    + Arrays.toString(formalTypes) + ". " + e);
+                    + Arrays.toString(formalTypes) + ". ", e);
         }
 
+        Model model;
         try {
             // call the constructor with the arguments
             model = modelConstructor.newInstance(args);
-        } catch (InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException
-                | ExceptionInInitializerError e) {
-            throw new RuntimeException("Could not get new instance of " + typeName + ". " + e);
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException | ExceptionInInitializerError e) {
+            throw new RuntimeException("Could not get new instance of " + typeName + ". ", e);
         }
         return model;
     }
@@ -94,7 +111,7 @@ public class ModelRegistry {
     /**
      * Checks whether a type is in the registry.
      * @param typeName the type of Model to be looked up in the registry
-     * @return whether create() will return successfully, barring a construction failure
+     * @return whether {@link #create(String, Object...)} will return successfully, barring a construction failure
      */
     public static boolean canCreate(String typeName) {
         access(); // make read-only
@@ -102,10 +119,24 @@ public class ModelRegistry {
     }
 
     /**
+     * Checks whether a type is or is a subclass of the given class object.
+     * @param typeName the type of Model to be looked up in the registry
+     * @param c the class object to check to be a superclass
+     * @return whether the class represented by typeName is an instance of the class represented by c
+     * @throws IllegalArgumentException if typeName is not registered
+     */
+    public static boolean isInstance(String typeName, Class<? extends Model> c) {
+        access(); // make read-only
+        // load the registered class
+        Class<? extends Model> modelClass = loadFromRegistry(typeName);
+        return c.isAssignableFrom(modelClass);
+    }
+
+    /**
      * Lists the types contained in the registry.
      * @return an unmodifiable set of typenames
      */
-    public static Set<String> types() {
+    public static Set<String> getTypes() {
         access(); // make read-only
         return Collections.unmodifiableSet(map.keySet());
     }
@@ -117,12 +148,40 @@ public class ModelRegistry {
         }
     }
 
-    // mark the registry as accessed, make read-only
+    // mark the registry as accessed, make read-only. Only locks before accessed is set to true.
     private static void access() {
         if (!accessed) {
             synchronized (lock) {
                 accessed = true;
             }
         }
+    }
+
+    // if given a Class object representing the object versions of the primitive types, return
+    // the Class object of the corresponding primitive type
+    static {
+        primitiveClasses.put(Boolean.class, boolean.class);
+        primitiveClasses.put(Byte.class, byte.class);
+        primitiveClasses.put(Character.class, char.class);
+        primitiveClasses.put(Double.class, double.class);
+        primitiveClasses.put(Float.class, float.class);
+        primitiveClasses.put(Integer.class, int.class);
+        primitiveClasses.put(Long.class, long.class);
+        primitiveClasses.put(Short.class, short.class);
+    }
+
+    private static Class<?> makePrimitive(Class<?> c) {
+        Class<?> temp = primitiveClasses.get(c);
+        return temp != null ? temp : c;
+    }
+
+    // load the Class object registered by typeName, or throw a IllegalArgumentException if not found
+    private static Class<? extends Model> loadFromRegistry(String typeName) {
+        // load the registered class
+        Class<? extends Model> modelClass = map.get(typeName);
+        if (modelClass == null) {
+            throw new IllegalArgumentException(typeName + " not found in registry.");
+        }
+        return modelClass;
     }
 }

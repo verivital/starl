@@ -4,10 +4,7 @@ import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
 import edu.illinois.mitra.starl.motion.DjiController;
 import edu.illinois.mitra.starl.motion.DroneBTI;
 import edu.illinois.mitra.starl.objects.ItemPosition;
-import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.PIDParams;
-import edu.illinois.mitra.starl.objects.Point3i;
-import edu.illinois.mitra.starl.objects.PositionList;
 
 /**
  * This class represents a simple model of the quadcopter
@@ -17,9 +14,8 @@ import edu.illinois.mitra.starl.objects.PositionList;
 
 public class Model_Phantom extends Model_Drone {
 
-	static {
-		ModelRegistry.register(Model_Phantom.class);
-	}
+	@SuppressWarnings("unused")
+	public Model_Phantom() {}
 
 	public Model_Phantom(String received) throws ItemFormattingException {
 		super(received);
@@ -39,6 +35,9 @@ public class Model_Phantom extends Model_Drone {
 
 	@Override
 	public int radius() { return 340; }
+
+	@Override
+	public String ip() { return "10.1.1.10"; }
 
 	@Override
 	public double height() { return 50; }

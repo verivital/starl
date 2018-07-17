@@ -7,7 +7,6 @@ import java.util.Vector;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener;
 import edu.illinois.mitra.starl.models.Model_Ground;
-import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starl.objects.Common;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
@@ -131,7 +130,7 @@ public class MotionAutomaton_Ground extends RobotMotion {
     }
 
     public void goTo(ItemPosition dest) {
-        Scanner in = new Scanner(((Model_iRobot)gvh.gps.getMyPosition()).name).useDelimiter("[^0-9]+");
+        Scanner in = new Scanner(gvh.gps.getMyPosition().getName()).useDelimiter("[^0-9]+");
         int index = in.nextInt();
         Vector<ObstacleList> temp = gvh.gps.getViews();
         ObstacleList obsList;
@@ -172,7 +171,7 @@ public class MotionAutomaton_Ground extends RobotMotion {
             if(running) {
                 // why is getModel being used? Think it should be get position.
                 //bot = (Model_iRobot)gvh.plat.getModel();
-                bot = (Model_iRobot)gvh.gps.getMyPosition();
+                bot = (Model_Ground)gvh.gps.getMyPosition();
                 int distance = (int) bot.distanceTo(destination);
                 int angle = bot.angleTo(destination);
                 int absangle = Math.abs(angle);

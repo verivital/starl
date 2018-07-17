@@ -88,7 +88,7 @@ public class Obstacles {
      * @return
      */
     public boolean checkCross(ItemPosition destination, ItemPosition current) {
-        double x1, x2, x3, x4, y1, y2, y3, y4;
+        int x1, x2, x3, x4, y1, y2, y3, y4;
         x1 = destination.getX();
         y1 = destination.getY();
         x2 = current.getX();
@@ -111,22 +111,22 @@ public class Obstacles {
     //line intersection calculation method to replace java.awt.geom.Line2D.intersectsLine() since
     //the java.awt library is not part of android (also this one is supposedly 25% faster)
     //source: http://www.java-gaming.org/index.php?topic=22590.0
-    private static boolean linesIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+    private static boolean linesIntersect(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
         // Return false if either of the lines have zero length
         if (x1 == x2 && y1 == y2 ||
                 x3 == x4 && y3 == y4) {
             return false;
         }
         // Fastest method, based on Franklin Antonio's "Faster Line Segment Intersection" topic "in Graphics Gems III" book (http://www.graphicsgems.org/)
-        double ax = x2 - x1;
-        double ay = y2 - y1;
-        double bx = x3 - x4;
-        double by = y3 - y4;
-        double cx = x1 - x3;
-        double cy = y1 - y3;
+        int ax = x2 - x1;
+        int ay = y2 - y1;
+        int bx = x3 - x4;
+        int by = y3 - y4;
+        int cx = x1 - x3;
+        int cy = y1 - y3;
 
-        double alphaNumerator = by * cx - bx * cy;
-        double commonDenominator = ay * bx - ax * by;
+        int alphaNumerator = by * cx - bx * cy;
+        int commonDenominator = ay * bx - ax * by;
         if (commonDenominator > 0) {
             if (alphaNumerator < 0 || alphaNumerator > commonDenominator) {
                 return false;
@@ -136,7 +136,7 @@ public class Obstacles {
                 return false;
             }
         }
-        double betaNumerator = ax * cy - ay * cx;
+        int betaNumerator = ax * cy - ay * cx;
         if (commonDenominator > 0) {
             if (betaNumerator < 0 || betaNumerator > commonDenominator) {
                 return false;
@@ -150,8 +150,8 @@ public class Obstacles {
             // This code wasn't in Franklin Antonio's method. It was added by Keith Woodward.
             // The lines are parallel.
             // Check if they're collinear.
-            double y3LessY1 = y3 - y1;
-            double collinearityTestForP3 = x1 * (y2 - y3) + x2 * (y3LessY1) + x3 * (y1 - y2);   // see http://mathworld.wolfram.com/Collinear.html
+            int y3LessY1 = y3 - y1;
+            int collinearityTestForP3 = x1 * (y2 - y3) + x2 * (y3LessY1) + x3 * (y1 - y2);   // see http://mathworld.wolfram.com/Collinear.html
             // If p3 is collinear with p1 and p2 then p4 will also be collinear, since p1-p2 is parallel with p3-p4
             if (collinearityTestForP3 == 0) {
                 // The lines are collinear. Now check if they overlap.
@@ -185,26 +185,25 @@ public class Obstacles {
         if (obstacle.size() == 0)
             return true;
 
-        Point3i nextpoint = obstacle.firstElement();
-        Point3i curpoint = obstacle.firstElement();
         int[] x = new int[obstacle.size()];
         int[] y = new int[obstacle.size()];
 
         for (int j = 0; j < obstacle.size(); j++) {
-            curpoint = obstacle.get(j);
+            Point3i curpoint = obstacle.get(j);
+            Point3i nextpoint;
             if (j == obstacle.size() - 1) {
                 nextpoint = obstacle.firstElement();
             } else {
                 nextpoint = obstacle.get(j + 1);
             }
-            double x1 = curpoint.getX();
-            double y1 = curpoint.getY();
-            double x2 = nextpoint.getX();
-            double y2 = nextpoint.getY();
+            int x1 = curpoint.getX();
+            int y1 = curpoint.getY();
+            int x2 = nextpoint.getX();
+            int y2 = nextpoint.getY();
             x[j] = curpoint.getX();
             y[j] = curpoint.getY();
-            double px = destination.getX();
-            double py = destination.getY();
+            int px = destination.getX();
+            int py = destination.getY();
             if (pointToLineSeg(px, py, x1, y1, x2, y2) < radius) {
                 return false;
             }
@@ -237,25 +236,24 @@ public class Obstacles {
     }
 
     public double findMinDist(RRTNode destNode, RRTNode currentNode) {
-        Point3i nextpoint = obstacle.firstElement();
-        Point3i curpoint = obstacle.firstElement();
         double minDist = Double.MAX_VALUE;
-        double cx1 = destNode.position.getX();
-        double cy1 = destNode.position.getY();
-        double cx2 = currentNode.position.getX();
-        double cy2 = currentNode.position.getY();
+        int cx1 = destNode.position.getX();
+        int cy1 = destNode.position.getY();
+        int cx2 = currentNode.position.getX();
+        int cy2 = currentNode.position.getY();
 
         for (int j = 0; j < obstacle.size(); j++) {
-            curpoint = obstacle.get(j);
+            Point3i curpoint = obstacle.get(j);
+            Point3i nextpoint;
             if (j == obstacle.size() - 1) {
                 nextpoint = obstacle.firstElement();
             } else {
                 nextpoint = obstacle.get(j + 1);
             }
-            double sx1 = curpoint.getX();
-            double sy1 = curpoint.getY();
-            double sx2 = nextpoint.getX();
-            double sy2 = nextpoint.getY();
+            int sx1 = curpoint.getX();
+            int sy1 = curpoint.getY();
+            int sx2 = nextpoint.getX();
+            int sy2 = nextpoint.getY();
 
             double dist1 = shortestDistance(cx1, cy1, sx1, sy1, sx2, sy2);//segment.ptSegDist(current.x1, current.y1);
             double dist2 = shortestDistance(cx2, cy2, sx1, sy1, sx2, sy2);//segment.ptSegDist(current.x2, current.y2);
@@ -276,15 +274,15 @@ public class Obstacles {
 
     //returns the shortest distance between a point to a line segment
     //source: https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment?page=1&tab=votes#tab-top
-    private static double pointToLineSeg(double px, double py, double x1, double y1, double x2, double y2) {
-        double A = px - x1;
-        double B = py - y1;
-        double C = x2 - x1;
-        double D = y2 - y1;
+    private static double pointToLineSeg(int px, int py, int x1, int y1, int x2, int y2) {
+        int A = px - x1;
+        int B = py - y1;
+        int C = x2 - x1;
+        int D = y2 - y1;
 
-        double dot = A * C + B * D;
-        double len_sq = C * C + D * D;
-        double param = -1;
+        int dot = A * C + B * D;
+        int len_sq = C * C + D * D;
+        double param = -1.0;
         if (len_sq != 0) {
             param = dot / len_sq;
         }
@@ -303,34 +301,33 @@ public class Obstacles {
 
         double dx = px - xx;
         double dy = px - yy;
-        return Math.sqrt(dx * dx + dy * dy);
+        return Math.hypot(dx, dy);
     }
 
-    private static double shortestDistance(double x3,double y3, double x1,double y1,double x2,double y2)
+    private static double shortestDistance(int x3, int y3, int x1, int y1, int x2, int y2)
     {
-        double px=x2-x1;
-        double py=y2-y1;
-        double temp=(px*px)+(py*py);
-        double u=((x3 - x1) * px + (y3 - y1) * py) / (temp);
-        if(u>1){
-            u=1;
-        }
-        else if(u<0){
-            u=0;
+        int px = x2 - x1;
+        int py = y2 - y1;
+        int temp = px * px + py * py;
+        double u = ((x3 - x1) * px + (y3 - y1) * py) / temp;
+        if (u > 1) {
+            u = 1;
+        } else if (u < 0) {
+            u = 0;
         }
         double x = x1 + u * px;
         double y = y1 + u * py;
 
         double dx = x - x3;
         double dy = y - y3;
-        return Math.sqrt(dx*dx + dy*dy);
+        return Math.hypot(dx, dy);
 
     }
 
     public Point3i getClosestPointOnSegment(Point3i s1, Point3i s2, Point3i p) {
         assert(s1 != null && s2 != null && p != null);
         Vector3i delta = s2.subtract(s1);
-        double u = ((p.getX() - s1.getX()) * delta.getX() + (p.getY() - s1.getY()) * delta.getY()) / (delta.magnitudeSq());
+        double u = ((p.getX() - s1.getX()) * delta.getX() + (p.getY() - s1.getY()) * delta.getY()) / delta.magnitudeSq();
 
         final Point3i closestPoint;
         if (u < 0) {
@@ -344,8 +341,8 @@ public class Obstacles {
     }
 
     public Point3i getClosestPointOnSegment(int sx1, int sy1, int sx2, int sy2, int px, int py) {
-        double xDelta = sx2 - sx1;
-        double yDelta = sy2 - sy1;
+        int xDelta = sx2 - sx1;
+        int yDelta = sy2 - sy1;
         double u = ((px - sx1) * xDelta + (py - sy1) * yDelta) / (xDelta * xDelta + yDelta * yDelta);
 
         final Point3i closestPoint;

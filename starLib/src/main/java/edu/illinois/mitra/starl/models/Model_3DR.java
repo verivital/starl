@@ -2,44 +2,44 @@ package edu.illinois.mitra.starl.models;
 
 /**
  * Created by yangy14 on 6/2/2017.
- * TODO: Cleanup, already modifies Model_Drone.
  */
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
 import edu.illinois.mitra.starl.motion.DroneBTI;
 import edu.illinois.mitra.starl.motion.o3DRController;
 import edu.illinois.mitra.starl.objects.ItemPosition;
-import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.PIDParams;
-import edu.illinois.mitra.starl.objects.Point3i;
-import edu.illinois.mitra.starl.objects.PositionList;
-import edu.illinois.mitra.starl.objects.Vector3f;
-import edu.illinois.mitra.starl.objects.Vector3i;
 
 public class Model_3DR extends Model_Drone {
 
-    static {
-        ModelRegistry.register(Model_3DR.class);
-    }
+    @SuppressWarnings("unused")
+    public Model_3DR() {}
 
+    @SuppressWarnings("unused")
     public Model_3DR(String received) throws ItemFormattingException{
         super(received);
     }
 
+    @SuppressWarnings("unused")
     public Model_3DR(String name, int x, int y) {
         super(name, x, y);
     }
 
+    @SuppressWarnings("unused")
     public Model_3DR(String name, int x, int y, int z) {
         super(name, x, y, z);
     }
 
+    @SuppressWarnings("unused")
     public Model_3DR(ItemPosition t_pos) {
         super(t_pos);
     }
 
     @Override
     public int radius() { return 340; }
+
+    @Override
+    public String ip() { return "10.1.1.10"; }
 
     @Override
     public double height() { return 50; }

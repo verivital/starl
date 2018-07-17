@@ -1,5 +1,6 @@
 package edu.illinois.mitra.demo.search;
 
+import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starlSim.main.SimSettings;
 import edu.illinois.mitra.starlSim.main.Simulation;
 
@@ -14,7 +15,7 @@ public class Main {
 		*/
 		SimSettings.Builder settings = new SimSettings.Builder();
 		
-		settings.N_IROBOTS(5);
+		settings.BOTS(Model_iRobot.class.getSimpleName()).COUNT = 5;
 		settings.N_GOAL_BOTS(0);
 		settings.TIC_TIME_RATE(5);
 		settings.WAYPOINT_FILE("distributedsearchapp/waypoints/dest.wpt");

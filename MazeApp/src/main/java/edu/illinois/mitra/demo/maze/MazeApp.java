@@ -15,7 +15,6 @@ import edu.illinois.mitra.starl.functions.RandomLeaderElection;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.LeaderElection;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
-import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_Ground;
 import edu.illinois.mitra.starl.objects.*;
 import edu.illinois.mitra.starl.motion.*;

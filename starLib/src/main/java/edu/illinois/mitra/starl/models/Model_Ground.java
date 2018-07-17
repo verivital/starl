@@ -1,7 +1,6 @@
 package edu.illinois.mitra.starl.models;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.motion.BTI;
 import edu.illinois.mitra.starl.motion.GroundBTI;
 import edu.illinois.mitra.starl.objects.Common;
 import edu.illinois.mitra.starl.objects.ItemPosition;

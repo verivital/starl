@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import edu.illinois.mitra.starl.functions.BarrierSynchronizer;
 import edu.illinois.mitra.starl.functions.RandomLeaderElection;

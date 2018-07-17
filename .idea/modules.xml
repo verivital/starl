@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/CircleApp/CircleApp.iml" filepath="$PROJECT_DIR$/CircleApp/CircleApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/ClientLib/ClientLib.iml" filepath="$PROJECT_DIR$/ClientLib/ClientLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/FlockingApp/FlockingApp.iml" filepath="$PROJECT_DIR$/FlockingApp/FlockingApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/FollowApp/FollowApp.iml" filepath="$PROJECT_DIR$/FollowApp/FollowApp.iml" />
@@ -11,7 +12,6 @@
       <module fileurl="file://$PROJECT_DIR$/RaceApp/RaceApp.iml" filepath="$PROJECT_DIR$/RaceApp/RaceApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/TestApp/TestApp.iml" filepath="$PROJECT_DIR$/TestApp/TestApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/arrowtravelapp/arrowtravelapp.iml" filepath="$PROJECT_DIR$/arrowtravelapp/arrowtravelapp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/CircleApp/CircleApp.iml" filepath="$PROJECT_DIR$/CircleApp/CircleApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/distributedsearchapp/distributedsearchapp.iml" filepath="$PROJECT_DIR$/distributedsearchapp/distributedsearchapp.iml" />
       <module fileurl="file://$PROJECT_DIR$/grouptagapp/grouptagapp.iml" filepath="$PROJECT_DIR$/grouptagapp/grouptagapp.iml" />
       <module fileurl="file://$PROJECT_DIR$/lawnmowerapp/lawnmowerapp.iml" filepath="$PROJECT_DIR$/lawnmowerapp/lawnmowerapp.iml" />

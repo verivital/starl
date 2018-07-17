@@ -1,5 +1,6 @@
 package edu.illinois.mitra.demo.GroupTag;
 
+import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starlSim.main.SimSettings;
 import edu.illinois.mitra.starlSim.main.Simulation;
 
@@ -7,7 +8,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		SimSettings.Builder settings = new SimSettings.Builder();
-		settings.N_IROBOTS(5);
+		settings.BOTS(Model_iRobot.class.getSimpleName()).COUNT = 5;
 		settings.GPS_POSITION_NOISE(4);
 		settings.TIC_TIME_RATE(1);
         settings.WAYPOINT_FILE("grouptagapp/waypoints/tag.wpt");

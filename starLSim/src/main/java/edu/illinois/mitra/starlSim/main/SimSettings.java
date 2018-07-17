@@ -1,5 +1,11 @@
 package edu.illinois.mitra.starlSim.main;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import edu.illinois.mitra.starl.models.ModelRegistry;
 import edu.illinois.mitra.starlSim.draw.Drawer;
 
 /**
@@ -14,52 +20,27 @@ public class SimSettings {
 	//mark a rectangle when hit an unknown obstacle, length of rectangle = De_Radadius * Detect_Precision
 	// may change to mark a circle later on
 	public final int De_Radius;
-	
+
 	/**
-	 * The number of iRobots to simulate.
+	 * The settings for each kind of model to simulate, with keys equivalent to ModelRegistry.getTypes();
 	 */
-	public final int N_IROBOTS;
-	
+	public final Map<String, Bot> BOTS;
+
 	/**
-	 * The number of get to the goal rRobots to simulate.
+	 * The number of get to the goal ground robots to simulate.
 	 */
 	public final int N_GOAL_BOTS;
 	
 	/**
-	 * The number of discovery iRobots to simulate.
+	 * The number of discovery ground robots to simulate.
 	 */
 	public final int N_DISCOV_BOTS;
 	
 	/**
-	 * The number of random moving iRobots to simulate.
+	 * The number of random moving ground robots to simulate.
 	 */
 	public final int N_RAND_BOTS;
-	
-	/**
-	 * The number of quadcopters to simulate.
-	 */
-	public final int N_QUADCOPTERS;
 
-	/**
-	 * The number of Ghost Aerials to simulate.
-	 */
-	public final int N_GHOSTS;
-
-    /**
-     * The number of mavics to simulate.
-     */
-    public final int N_MAVICS;
-
-	/**
-	 * The number of Phantoms to simulate.
-	 */
-	public final int N_PHANTOMS;
-
-	/**
-	 * The number of 3dr solo to simulate.
-	 */
-	public final int N_o3DR;
-	
 	/**
 	 * Default 0.
 	 * The maximum number of seconds (real time) the simulation may be executing
@@ -158,36 +139,6 @@ public class SimSettings {
 	 * Seed for random number generator used by the communication channel.
 	 */
 	public final int MSG_RANDOM_SEED;
-
-	/**
-	 * iRobot name prefix
-	 */
-	public final String IROBOT_NAME;
-	
-	/**
-	 * quadcopter name prefix
-	 */
-	public final String QUADCOPTER_NAME;
-
-	/**
-	 * ghost name prefix
-	 */
-	public final String GHOST_NAME;
-
-    /**
-     * Mavic name prefix
-     */
-    public final String MAVIC_NAME;
-
-	/**
-	 * Mavic name prefix
-	 */
-	public final String PHANTOM_NAME;
-
-	/**
-	 * 3dr solo name prefix
-	 */
-	public final String o3DR_NAME;
 	
 	/**
 	 * Millimeters. The radius of simulated robots.
@@ -265,19 +216,37 @@ public class SimSettings {
 		return defaultInstance;
 	}
 
+	/**
+	 * The settings specific to each type of robot.
+	 */
+	public static class Bot {
+		public String NAME;
+		public int COUNT;
+
+		private Bot(String name, int count) {
+			NAME = name;
+			COUNT = count;
+		}
+	}
+
 	public static class Builder {
 		private int De_Radius = 1;
 		private int Detect_Precision = 1;
-		private int N_IROBOTS = 4;
 		private int N_GOAL_BOTS = 4;
 		private int N_DISCOV_BOTS = 0;
 		private int N_RAND_BOTS = 0;
-		private int N_QUADCOPTERS = 0;
-		private int N_GHOSTS = 0;
-        private int N_MAVICS = 0;
-		private int N_PHANTOMS = 0;
-		private int N_o3DR = 0;
-		
+
+		private Map<String, Bot> BOTS;
+		{
+			Map<String, Bot> modifiableBots = new HashMap<>();
+			for (String type : ModelRegistry.getTypes()) {
+				modifiableBots.put(type, new Bot(
+						type.toLowerCase().replaceFirst("model_", ""),
+						0));
+			}
+			BOTS = Collections.unmodifiableMap(modifiableBots);
+		}
+
 		private long SIM_TIMEOUT = 0;
 		private long TIMEOUT = 0;
 		private String WAYPOINT_FILE;
@@ -298,12 +267,6 @@ public class SimSettings {
 		private int MSG_STDDEV_DELAY = 5;
 		private int MSG_LOSSES_PER_HUNDRED = 0;
 		private int MSG_RANDOM_SEED = 0;
-		private String IROBOT_NAME = "iRobot";
-		private String QUADCOPTER_NAME = "quadcopter";
-		private String GHOST_NAME = "ghostie";
-        private String MAVIC_NAME = "mavic";
-		private String PHANTOM_NAME = "Phantom";
-		private String o3DR_NAME = "Solo";
 		private int BOT_RADIUS = 165;
 		private String TRACE_OUT_DIR;
 		private boolean THREE_D = true;
@@ -337,10 +300,12 @@ public class SimSettings {
 			this.Detect_Precision = sqsize;
 			return this;
 		}
-		
-		public Builder N_IROBOTS(int N_IROBOTS) {
-			this.N_IROBOTS = N_IROBOTS;
-			return this;
+
+		public SimSettings.Bot BOTS(String typeName) {
+			if (!BOTS.containsKey(typeName)) {
+				throw new IllegalArgumentException("Invalid typeName.");
+			}
+			return BOTS.get(typeName);
 		}
 		
 		public Builder N_GOAL_BOTS(int N_GOAL_BOTS) {
@@ -355,30 +320,6 @@ public class SimSettings {
 		
 		public Builder N_RAND_BOTS(int N_RAND_BOTS) {
 			this.N_RAND_BOTS = N_RAND_BOTS;
-			return this;
-		}
-		
-		public Builder N_QUADCOPTERS(int N_QUADCOPTERS) {
-			this.N_QUADCOPTERS = N_QUADCOPTERS;
-			return this;
-		}
-
-		public Builder N_GHOSTS(int N_GHOSTS) {
-			this.N_GHOSTS = N_GHOSTS;
-			return this;
-		}
-
-        public Builder N_MAVICS(int N_MAVICS) {
-            this.N_MAVICS = N_MAVICS;
-            return this;
-        }
-		public Builder N_PHANTOMS(int N_PHANTOMS) {
-			this.N_PHANTOMS = N_PHANTOMS;
-			return this;
-		}
-
-		public Builder N_o3DR(int N_o3DR) {
-			this.N_o3DR = N_o3DR;
 			return this;
 		}
 		
@@ -480,36 +421,6 @@ public class SimSettings {
 			return this;
 		}
 
-		public Builder IROBOT_NAME(String IROBOT_NAME) {
-			this.IROBOT_NAME = IROBOT_NAME;
-			return this;
-		}
-
-		public Builder QUADCOPTER_NAME(String QUADCOPTER_NAME) {
-			this.QUADCOPTER_NAME = QUADCOPTER_NAME;
-			return this;
-		}
-
-        public Builder MAVIC_NAME(String MAVIC_NAME) {
-			this.MAVIC_NAME = MAVIC_NAME;
-			return this;
-		}
-
-		public Builder PHANTOM_NAME(String PHANTOM_NAME) {
-			this.PHANTOM_NAME = PHANTOM_NAME;
-			return this;
-		}
-
-		public Builder o3DR_NAME(String o3DR_NAME) {
-			this.o3DR_NAME = o3DR_NAME;
-			return this;
-		}
-
-        public Builder GHOST_NAME(String GHOST_NAME) {
-            this.GHOST_NAME = GHOST_NAME;
-            return this;
-        }
-
 		public Builder BOT_RADIUS(int BOT_RADIUS) {
 			this.BOT_RADIUS = BOT_RADIUS;
 			return this;
@@ -588,15 +499,12 @@ public class SimSettings {
 	private SimSettings(Builder builder) {
 		this.De_Radius = builder.De_Radius;
 		this.Detect_Precision = builder.Detect_Precision;
-		this.N_IROBOTS = builder.N_IROBOTS;
 		this.N_GOAL_BOTS = builder.N_GOAL_BOTS;
 		this.N_DISCOV_BOTS = builder.N_DISCOV_BOTS;
 		this.N_RAND_BOTS = builder.N_RAND_BOTS;
-		this.N_QUADCOPTERS = builder.N_QUADCOPTERS;
-		this.N_GHOSTS = builder.N_GHOSTS;
-        this.N_MAVICS = builder.N_MAVICS;
-		this.N_PHANTOMS = builder.N_PHANTOMS;
-		this.N_o3DR = builder.N_o3DR;
+
+		this.BOTS = Collections.unmodifiableMap(builder.BOTS);
+
 		this.SENSEPOINT_FILE = builder.SENSEPOINT_FILE;
 		this.WAYPOINT_FILE = builder.WAYPOINT_FILE;
 		this.OBSPOINT_FILE = builder.OBSPOINT_FILE;
@@ -615,12 +523,6 @@ public class SimSettings {
 		this.MSG_STDDEV_DELAY = builder.MSG_STDDEV_DELAY;
 		this.MSG_LOSSES_PER_HUNDRED = builder.MSG_LOSSES_PER_HUNDRED;
 		this.MSG_RANDOM_SEED = builder.MSG_RANDOM_SEED;
-		this.IROBOT_NAME = builder.IROBOT_NAME;
-		this.QUADCOPTER_NAME = builder.QUADCOPTER_NAME;
-		this.GHOST_NAME = builder.GHOST_NAME;
-        this.MAVIC_NAME = builder.MAVIC_NAME;
-		this.PHANTOM_NAME = builder.PHANTOM_NAME;
-		this.o3DR_NAME = builder.o3DR_NAME;
 		this.BOT_RADIUS = builder.BOT_RADIUS;
 		this.TRACE_OUT_DIR = builder.TRACE_OUT_DIR;
 		this.THREE_D = builder.THREE_D;

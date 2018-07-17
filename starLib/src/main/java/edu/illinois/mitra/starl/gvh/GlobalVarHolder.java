@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import edu.illinois.mitra.starl.interfaces.DSM;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener.Event;
 

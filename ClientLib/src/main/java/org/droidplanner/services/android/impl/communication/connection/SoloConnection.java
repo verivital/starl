@@ -1,7 +1,6 @@
 package org.droidplanner.services.android.impl.communication.connection;
 
 import android.content.Context;
-import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import com.o3dr.services.android.lib.gcs.link.LinkConnectionStatus;
 import org.droidplanner.services.android.impl.utils.connection.WifiConnectionHandler;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.List;
 
 import timber.log.Timber;

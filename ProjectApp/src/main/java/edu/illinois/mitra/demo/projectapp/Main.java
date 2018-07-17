@@ -1,5 +1,6 @@
 package edu.illinois.mitra.demo.projectapp;
 
+import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starlSim.main.SimSettings;
 import edu.illinois.mitra.starlSim.main.Simulation;
 
@@ -12,7 +13,7 @@ public class Main {
     public static void main(String[] args) {
         SimSettings.Builder settings = new SimSettings.Builder();
 
-        settings.N_IROBOTS(4);
+        settings.BOTS(Model_iRobot.class.getSimpleName()).COUNT = 4;
         settings.N_GOAL_BOTS(4);
         //settings.N_DISCOV_BOTS(1);
 

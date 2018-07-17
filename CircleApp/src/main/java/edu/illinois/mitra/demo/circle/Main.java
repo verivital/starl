@@ -1,5 +1,6 @@
 package edu.illinois.mitra.demo.circle;
 
+import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starlSim.main.SimSettings;
 import edu.illinois.mitra.starlSim.main.Simulation;
 
@@ -7,7 +8,8 @@ public class Main {
 
 	public static void main(String[] args) {
 		SimSettings.Builder settings = new SimSettings.Builder();
-		settings.N_IROBOTS(15); // pick N reasonably large (> ~10) for rotations along arcs instead of going across middle always
+		// pick N reasonably large (> ~10) for rotations along arcs instead of going across middle always
+		settings.BOTS(Model_iRobot.class.getSimpleName()).COUNT = 15;
 		settings.TIC_TIME_RATE(1.5);
 		settings.DRAW_WAYPOINTS(false);
 		settings.DRAW_WAYPOINT_NAMES(false);

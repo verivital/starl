@@ -42,7 +42,7 @@ public class RobotsActivity extends Activity implements MessageListener {
 	private static final String ERR = "Critical Error";
 
 	private static final String IDENTITY_FILE_URL = "https://dl.dropbox.com/s/dwfqdhbf5vdtz18/robots.rif?dl=1";
-	private static final String[][] ERROR_PARTICIPANTS = {{"ERROR"}, {"ERROR"}, {"ERROR"}};
+	private static final String[] ERROR_PARTICIPANTS = {"ERROR"};
 
 	private static final boolean ENABLE_TRACING = false;
 
@@ -60,10 +60,6 @@ public class RobotsActivity extends Activity implements MessageListener {
 	private MainHandler mainHandler;
 	private WifiManager.MulticastLock multicastLock;
 
-	// Row 0 = names
-	// Row 1 = MACs
-	// Row 2 = IPs
-	private String[][] participants;
 	private int numRobots;
 	private BotInfoSelector[] botInfo;
 	private int i;
@@ -99,11 +95,13 @@ public class RobotsActivity extends Activity implements MessageListener {
 		// botInfo[3] = new BotInfoSelector("white", Common.IROBOT, Common.NEXUS7);
 		botInfo[0] = new BotInfoSelector("blue", Common.PHANTOM, Common.NEXUS7);
 
-		participants = new String[3][numRobots];
+		// Row 0 = names
+		// Row 1 = IPs
+		String[] participantNames = new String[numRobots];
+		String[] participantIPs = new String[numRobots];
 		for (i = 0; i < numRobots; i++) {
-			participants[0][i] = botInfo[i].name;
-			participants[1][i] = botInfo[i].bluetooth;
-			participants[2][i] = botInfo[i].ip;
+			participantNames[i] = botInfo[i].name;
+			participantIPs[i] = botInfo[i].ip;
 		}
 
 
@@ -111,29 +109,30 @@ public class RobotsActivity extends Activity implements MessageListener {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		selectedRobot = prefs.getInt(PREF_SELECTED_ROBOT, 0);
 
-		if (selectedRobot >= participants[0].length) {
+		if (selectedRobot >= participantNames.length) {
 			Toast.makeText(this, "Identity error! Reselect robot identity", Toast.LENGTH_LONG).show();
 			selectedRobot = 0;
 		}
 
 		// Set up the GUI
-		setupGUI();
+		setupGUI(participantNames); // names
 
 		// Create the main handler
 		mainHandler = new MainHandler(this, pbBluetooth, pbBattery, cbGPS, cbBluetooth, cbRunning, txtDebug, cbRegistered);
 
-		if (participants == null) {
-			Toast.makeText(this, "Error loading identity file!", Toast.LENGTH_LONG).show();
-			participants = ERROR_PARTICIPANTS;
-			selectedRobot = 0;
-		}
+		//if (participantNames == null || participantIPs == null) {
+		//	Toast.makeText(this, "Error loading identity file!", Toast.LENGTH_LONG).show();
+		//	participantNames = ERROR_PARTICIPANTS;
+		//	participantIPs = ERROR_PARTICIPANTS;
+		//	selectedRobot = 0;
+		//}
 
 		// Create the global variable holder
 		HashMap<String, String> hm_participants = new HashMap<String, String>();
-		for (int i = 0; i < participants[0].length; i++) {
-			hm_participants.put(participants[0][i], participants[2][i]);
+		for (int i = 0; i < participantNames.length; i++) {
+			hm_participants.put(participantNames[i], participantIPs[i]);
 		}
-		gvh = new RealGlobalVarHolder(participants[0][selectedRobot], hm_participants, botInfo[selectedRobot].type, mainHandler, participants[1][selectedRobot], this);
+		gvh = new RealGlobalVarHolder(participantNames[selectedRobot], hm_participants, botInfo[selectedRobot].type, mainHandler, this);
 		mainHandler.setGvh(gvh);
 
 		//Connect
@@ -214,7 +213,7 @@ public class RobotsActivity extends Activity implements MessageListener {
 	private ProgressBar pbBattery;
 
 
-	private void setupGUI() {
+	private void setupGUI(final String[] participantNames) {
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		txtRobotName = (TextView) findViewById(R.id.txtRobotName);
@@ -233,15 +232,15 @@ public class RobotsActivity extends Activity implements MessageListener {
 			cbBluetooth.setText("Drone Connected");
 		}
 
-		txtRobotName.setText(participants[0][selectedRobot]);
+		txtRobotName.setText(participantNames[selectedRobot]);
 		txtRobotName.setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
 				AlertDialog.Builder sel_robot_builder = new AlertDialog.Builder(RobotsActivity.this);
 				sel_robot_builder.setTitle("Who Am I?");
-				sel_robot_builder.setItems(participants[0], new DialogInterface.OnClickListener() {
+				sel_robot_builder.setItems(participantNames, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int item) {
 						selectedRobot = item;
-						txtRobotName.setText(participants[0][selectedRobot]);
+						txtRobotName.setText(participantNames[selectedRobot]);
 						SharedPreferences.Editor spe = prefs.edit();
 						spe.putInt(PREF_SELECTED_ROBOT, selectedRobot);
 						spe.commit();

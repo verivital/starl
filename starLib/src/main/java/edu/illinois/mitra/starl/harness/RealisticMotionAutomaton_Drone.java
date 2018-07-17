@@ -1,8 +1,6 @@
 package edu.illinois.mitra.starl.harness;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
-import edu.illinois.mitra.starl.interfaces.RobotEventListener;
-import edu.illinois.mitra.starl.motion.BTI;
 import edu.illinois.mitra.starl.motion.BTI;
 import edu.illinois.mitra.starl.motion.DroneBTI;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_Drone;

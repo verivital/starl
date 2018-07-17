@@ -8,7 +8,6 @@ import java.awt.Stroke;
 import java.util.Iterator;
 
 import edu.illinois.mitra.starl.interfaces.LogicThread;
-import edu.illinois.mitra.starl.motion.RRTNode;
 import edu.illinois.mitra.starl.objects.*;
 import edu.illinois.mitra.starlSim.draw.Drawer;
 public class DistributedSearchDrawer extends Drawer {

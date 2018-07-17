@@ -12,13 +12,8 @@ import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.models.Model_Ground;
 import edu.illinois.mitra.starl.motion.BTI;
-import edu.illinois.mitra.starl.motion.BluetoothInterface;
-import edu.illinois.mitra.starl.motion.DjiController;
-import edu.illinois.mitra.starl.motion.GhostAerialBTI;
-import edu.illinois.mitra.starl.motion.MotionAutomaton_Drone;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_Ground;
 import edu.illinois.mitra.starl.motion.ReachAvoid;
-import edu.illinois.mitra.starl.motion.MiniDroneBTI;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.PositionList;
 
@@ -33,9 +28,8 @@ public class RealGlobalVarHolder extends GlobalVarHolder {
 	 * @param name the name of this agent
 	 * @param participants contains (name,IP) pairs for each participating agent
 	 * @param handler the main application handler capable of receiving GUI update messages
-	 * @param robotMac the MAC address of this agent's iRobot Create chassis
 	 */
-	public RealGlobalVarHolder(String name, Map<String,String> participants, Model initpos, Handler handler, String robotMac, Context context) {
+	public RealGlobalVarHolder(String name, Map<String,String> participants, Model initpos, Handler handler, Context context) {
 //	public RealGlobalVarHolder(String name, Map<String,String> participants, Handler handler, String robotMac, Context context) {
 		super(name, participants);
 
@@ -52,7 +46,7 @@ public class RealGlobalVarHolder extends GlobalVarHolder {
 		try {
 			bti = plat.model.getBluetoothInterface().newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
-			throw new IllegalArgumentException("Could not access bluetooth interface. " + e);
+			throw new IllegalArgumentException("Could not access bluetooth interface. ", e);
 		}
 
 		if (initpos instanceof Model_Drone) {

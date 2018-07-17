@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
-import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.gvh.Logging;
 import edu.illinois.mitra.starl.interfaces.ExplicitlyDrawable;
 import edu.illinois.mitra.starl.interfaces.LogicThread;

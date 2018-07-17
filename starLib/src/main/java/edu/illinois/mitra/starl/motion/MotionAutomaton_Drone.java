@@ -6,12 +6,10 @@ import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener.Event;
 import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.objects.*;
-import static edu.illinois.mitra.starl.objects.Common.angleWrap;
+
 import static java.lang.Math.sin;
 import static java.lang.Math.cos;
-import static java.lang.Math.atan2;
 import static java.lang.Math.asin;
-import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
 /**

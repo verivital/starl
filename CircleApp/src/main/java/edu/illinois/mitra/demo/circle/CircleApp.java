@@ -1,12 +1,10 @@
 package edu.illinois.mitra.demo.circle;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import edu.illinois.mitra.starl.functions.PickedLeaderElection;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
 import edu.illinois.mitra.starl.models.Model_Ground;

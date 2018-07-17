@@ -4,11 +4,7 @@ import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
 import edu.illinois.mitra.starl.motion.DroneBTI;
 import edu.illinois.mitra.starl.motion.MiniDroneBTI;
 import edu.illinois.mitra.starl.objects.ItemPosition;
-import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.PIDParams;
-import edu.illinois.mitra.starl.objects.Point3i;
-import edu.illinois.mitra.starl.objects.Vector3f;
-import edu.illinois.mitra.starl.objects.PositionList;
 /**
  * This class represents a simple model of the quadcopter
  * @author Yixiao Lin
@@ -17,28 +13,34 @@ import edu.illinois.mitra.starl.objects.PositionList;
 
 public class Model_quadcopter extends Model_Drone {
 
-	static {
-		ModelRegistry.register(Model_quadcopter.class);
-	}
+	@SuppressWarnings("unused")
+	public Model_quadcopter() {}
 
+	@SuppressWarnings("unused")
 	public Model_quadcopter(String received) throws ItemFormattingException{
 		super(received);
 	}
 
+	@SuppressWarnings("unused")
 	public Model_quadcopter(String name, int x, int y) {
 		super(name, x, y);
 	}
 
+	@SuppressWarnings("unused")
 	public Model_quadcopter(String name, int x, int y, int z) {
 		super(name, x, y, z);
 	}
 
+	@SuppressWarnings("unused")
 	public Model_quadcopter(ItemPosition t_pos) {
 		super(t_pos);
 	}
 
 	@Override
 	public int radius() { return 340; }
+
+	@Override
+	public String ip() { return "10.255.24.0."; }
 
 	@Override
 	public double height() { return 50; }

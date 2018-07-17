@@ -214,7 +214,7 @@ public final class Common {
 	 * @param b a byte array of length 2
 	 * @return an int representing the unsigned short
 	 */
-	public static final int unsignedShortToInt(byte[] b) 
+	public static int unsignedShortToInt(byte[] b)
 	{
 		if(b.length != 2){
 			return -99;
@@ -226,7 +226,7 @@ public final class Common {
 	    return i;
 	}
 	
-	public static final int signedShortToInt(byte[] b)
+	public static int signedShortToInt(byte[] b)
 	{
 		if(b.length != 2) {
 			return -99;

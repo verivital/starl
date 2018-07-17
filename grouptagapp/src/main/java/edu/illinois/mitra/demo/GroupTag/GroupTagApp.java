@@ -22,7 +22,6 @@ import edu.illinois.mitra.starl.motion.MotionParameters.COLAVOID_MODE_TYPE;
 import edu.illinois.mitra.starl.motion.RobotMotion;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.PositionList;
-import edu.illinois.mitra.starlSim.main.SimSettings;
 
 public class GroupTagApp extends LogicThread implements MessageListener {
     private static final String TAG = "Logic";

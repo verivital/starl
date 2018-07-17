@@ -17,7 +17,6 @@ import java.util.TreeSet;
 import edu.illinois.mitra.starl.comms.RobotMessage;
 import edu.illinois.mitra.starl.functions.BarrierSynchronizer;
 import edu.illinois.mitra.starl.functions.PickedLeaderElection;
-import edu.illinois.mitra.starl.functions.RandomLeaderElection;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.LeaderElection;
 import edu.illinois.mitra.starl.interfaces.LogicThread;

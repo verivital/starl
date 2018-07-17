@@ -8,7 +8,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ehang.coptersdk.CopterControl;
-import com.ehang.coptersdk.connection.ConnectionListener;
 import com.ehang.coptersdk.connection.OnConnectionListener;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;

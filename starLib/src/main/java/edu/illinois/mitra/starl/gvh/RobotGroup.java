@@ -7,7 +7,6 @@ package edu.illinois.mitra.starl.gvh;
 import java.util.ArrayList;
 
 import edu.illinois.mitra.starl.objects.Common;
-import edu.illinois.mitra.starl.objects.ItemPosition;
 
 
 public class RobotGroup {

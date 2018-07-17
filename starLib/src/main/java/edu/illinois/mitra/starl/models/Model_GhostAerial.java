@@ -1,14 +1,10 @@
 package edu.illinois.mitra.starl.models;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.motion.BTI;
 import edu.illinois.mitra.starl.motion.DroneBTI;
 import edu.illinois.mitra.starl.motion.GhostAerialBTI;
 import edu.illinois.mitra.starl.objects.ItemPosition;
-import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.PIDParams;
-import edu.illinois.mitra.starl.objects.Point3i;
-import edu.illinois.mitra.starl.objects.PositionList;
 
 /**
  * Created by wangcs2 on 6/2/2017.
@@ -16,28 +12,34 @@ import edu.illinois.mitra.starl.objects.PositionList;
 
 public class Model_GhostAerial extends Model_Drone {
 
-    static {
-        ModelRegistry.register(Model_GhostAerial.class);
-    }
+    @SuppressWarnings("unused")
+    public Model_GhostAerial() {}
 
+    @SuppressWarnings("unused")
     public Model_GhostAerial(String received) throws ItemFormattingException {
         super(received);
     }
 
+    @SuppressWarnings("unused")
     public Model_GhostAerial(String name, int x, int y) {
         super(name, x, y);
     }
 
+    @SuppressWarnings("unused")
     public Model_GhostAerial(String name, int x, int y, int z) {
         super(name, x, y, z);
     }
 
+    @SuppressWarnings("unused")
     public Model_GhostAerial(ItemPosition t_pos) {
         super(t_pos);
     }
 
     @Override
     public int radius() { return 340; }
+
+    @Override
+    public String ip() { return "10.255.24.0."; }
 
     @Override
     public double height() { return 50; }

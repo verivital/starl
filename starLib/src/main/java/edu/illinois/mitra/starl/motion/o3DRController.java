@@ -12,39 +12,26 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.TextureView;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.o3dr.android.client.ControlTower;
 import com.o3dr.android.client.Drone;
-import com.o3dr.services.android.lib.drone.connection.ConnectionParameter;
 import com.o3dr.android.client.apis.ControlApi;
 import com.o3dr.android.client.apis.VehicleApi;
 import com.o3dr.android.client.interfaces.DroneListener;
 import com.o3dr.android.client.interfaces.LinkListener;
 import com.o3dr.android.client.interfaces.TowerListener;
 import com.o3dr.android.client.utils.video.DecoderListener;
-import com.o3dr.android.client.utils.video.MediaCodecManager;
-import com.o3dr.services.android.lib.coordinate.LatLong;
 import com.o3dr.services.android.lib.coordinate.LatLongAlt;
 import com.o3dr.services.android.lib.drone.attribute.AttributeEvent;
 import com.o3dr.services.android.lib.drone.attribute.AttributeType;
 import com.o3dr.services.android.lib.drone.companion.solo.SoloAttributes;
 import com.o3dr.services.android.lib.drone.companion.solo.SoloState;
-import com.o3dr.services.android.lib.drone.companion.solo.button.ButtonPacket;
 import com.o3dr.services.android.lib.drone.connection.ConnectionParameter;
 import com.o3dr.services.android.lib.drone.connection.ConnectionType;
-import com.o3dr.services.android.lib.drone.mission.item.command.YawCondition;
-import com.o3dr.services.android.lib.drone.property.Altitude;
-import com.o3dr.services.android.lib.drone.property.Gps;
-import com.o3dr.services.android.lib.drone.property.Home;
-import com.o3dr.services.android.lib.drone.property.Speed;
 import com.o3dr.services.android.lib.drone.property.State;
 import com.o3dr.services.android.lib.drone.property.Type;
 import com.o3dr.services.android.lib.drone.property.VehicleMode;
@@ -52,10 +39,6 @@ import com.o3dr.services.android.lib.gcs.link.LinkConnectionStatus;
 import com.o3dr.services.android.lib.model.AbstractCommandListener;
 import com.o3dr.services.android.lib.model.SimpleCommandListener;
 import com.o3dr.services.android.lib.drone.property.Attitude;
-
-import java.util.List;
-
-import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 
 public class o3DRController extends AppCompatActivity implements DroneBTI, TowerListener, DroneListener, LinkListener {
     private static final String TAG = o3DRController.class.getSimpleName();

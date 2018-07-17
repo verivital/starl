@@ -5,14 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.regex.Pattern;
 
 import edu.illinois.mitra.starl.comms.RobotMessage;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
-import edu.illinois.mitra.starl.models.Model;
-import edu.illinois.mitra.starl.models.Model_Drone;
-import edu.illinois.mitra.starl.models.Model_Ground;
 import edu.illinois.mitra.starl.motion.MotionParameters;
 import edu.illinois.mitra.starl.motion.RRTNode;
 import edu.illinois.mitra.starl.objects.ItemPosition;
