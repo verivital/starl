@@ -108,14 +108,11 @@ public class DistributedSearchApp extends LogicThread {
 						for(int i=0; i < size; i+=mul){
 							for(int j = 0; j < mul; j++){
 								ItemPosition toAdd = new ItemPosition(gvh.gps.getWaypointPositions().getList().get(i+j));
-								//keep angle same as who it was assigned to
-								((Model_Ground)toAdd).angle = index;
 								Alldest.add(toAdd);
 								assign(toAdd, index);
 							}
 							if(remain>0){
 								ItemPosition toAdd = new ItemPosition(gvh.gps.getWaypointPositions().getList().get(i+mul));
-								((Model_Ground)toAdd).angle = index;
 								Alldest.add(toAdd);
 								remain--;
 								i++;
@@ -234,7 +231,7 @@ public class DistributedSearchApp extends LogicThread {
 
 	private void assign(ItemPosition toAdd, int index) {
 		//send the assign message to indexed bot
-		String botS = "bot"+index;
+		String botS = "iRobot"+index;
 		if(botS.equals(name)){
 			destinations.add(toAdd);
 			return;

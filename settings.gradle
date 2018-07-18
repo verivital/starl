@@ -1,5 +1,3 @@
-
-
 include ':ClientLib', ':Mavlink'
 include ':starLib', ':starlTemplate', ':starLSim'
 include ':FollowApp', ':RaceApp', ':circleapp', ':FlockingApp', ':ProjectApp', ':TestApp'

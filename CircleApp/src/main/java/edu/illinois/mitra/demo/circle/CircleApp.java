@@ -17,7 +17,7 @@ import edu.illinois.mitra.starl.interfaces.LeaderElection;
 import edu.illinois.mitra.starl.interfaces.Synchronizer;
 import edu.illinois.mitra.starl.objects.PositionList;
 
-//TODO: Fiz all num parse methods, set for iRobots currently.
+//TODO: Cleanup math.
 
 public class CircleApp extends LogicThread {
 
@@ -107,6 +107,7 @@ public class CircleApp extends LogicThread {
                         int x = 0, y = 0, theta = 0;
 
                         PositionList<ItemPosition> plAll = gvh.gps.get_robot_Positions();
+                        int N = plAll.getNumPositions();
                         for (ItemPosition rp : plAll.getList()) {
                             x += rp.getX();
                             y += rp.getY();
@@ -114,7 +115,7 @@ public class CircleApp extends LogicThread {
                             if(rp instanceof Model_Ground)
                             theta += ((Model_Ground) rp).getAngle();
                         }
-                        int N = plAll.getNumPositions();
+
                         int r = 130; // ~30mm
                         x = x / N;
                         y = y / N; // x and y define the centroid of a circle with radius N*r
@@ -125,12 +126,11 @@ public class CircleApp extends LogicThread {
 
                         x += N*m*r*Math.sin(robotNum);
                         y += N*m*r*Math.cos(robotNum);
-                        //destinations.update(new ItemPosition(name, robotNum * 100, 100 * ((robotNum % 2 == 0) ? 0 : 1), 0));
+                       /* destinations.update(new ItemPosition(name, robotNum * 100, 100 * ((robotNum % 2 == 0) ? 0 : 1), 0));
 
-                        //ItemPosition dest = new ItemPosition(name, x, y, theta);
+                        ItemPosition dest = new ItemPosition(name, x, y, theta);*/
 
                         //int offset = (int)Math.sqrt(N)* count; // default is i-1
-
                         int dir = leaderNum % 2 == 0 ? -1 : 1; // ccw vs. cw based on odd/even leader number
                         //int offset = dir * (int) (Math.min( Math.floor(Math.sqrt(N)) - 1, leaderNum) * count);
                         int offset = dir * 1;
@@ -149,7 +149,6 @@ public class CircleApp extends LogicThread {
                             double rny = N * 2;
                             dest = new ItemPosition(name, (int)rnx * (int)Math.toDegrees(Math.cos(2*Math.PI * (robotNum+offset) / N)), (int)rny *(int)Math.toDegrees(Math.sin(2*Math.PI * (robotNum+offset) / N)), 1);
                         }
-
                         //offset = 0;
                         //double tmpx = 2*Math.PI * (robotNum+offset) / N;
                         //double tmpy = 2*Math.PI * (robotNum+offset) / N;

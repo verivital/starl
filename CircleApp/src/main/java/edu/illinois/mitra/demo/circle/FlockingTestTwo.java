@@ -1,7 +1,6 @@
-package edu.illinois.mitra.demo.flocking;
+package edu.illinois.mitra.demo.circle;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,19 +16,20 @@ import edu.illinois.mitra.starl.motion.RobotMotion;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.PositionList;
 
+/**
+ * Very similar to circle app.
+ */
+
 public class FlockingTestTwo extends LogicThread {
 
     private enum STAGE { START, SYNC, ELECT, MOVE, DONE }
     private STAGE stage = STAGE.START;
 
-    final Map<String, ItemPosition> destinations = new HashMap<String, ItemPosition>();
-    ItemPosition currentDestination;
-
     private RobotMotion moat;
 
     private int n_waypoints;
     private int cur_waypoint = 0;
-    PositionList pl = new PositionList();
+    PositionList<ItemPosition> destinations = new PositionList();
     String wpn = "wp";
 
     private LeaderElection le;
@@ -47,12 +47,12 @@ public class FlockingTestTwo extends LogicThread {
         MotionParameters.Builder settings = new MotionParameters.Builder();
         settings = settings.ENABLE_ARCING(true);
         settings = settings.STOP_AT_DESTINATION(true);
+        settings = settings.COLAVOID_MODE(MotionParameters.COLAVOID_MODE_TYPE.USE_COLAVOID);
         MotionParameters param = settings.build();
         moat.setParameters(param);
         //n_waypoints = gvh.gps.getWaypointPositions().getNumPositions();
         n_waypoints = Integer.MAX_VALUE;
         String n = wpn + gvh.id.getName() + cur_waypoint;
-        pl.update(new ItemPosition(n, 2000, 2000, 0));
     }
 
     @Override
@@ -97,7 +97,7 @@ public class FlockingTestTwo extends LogicThread {
                         //System.out.println(robotName + ": I've stopped moving!");
                         String n = wpn + gvh.id.getName() + cur_waypoint;
 
-                        //System.out.println(robotName + ": New destination is (" + pl.getPosition(n).x + ", " + pl.getPosition(n).y + ")!");
+                        //System.out.println(robotName + ": New destination is (" + destinations.getPosition(n).x + ", " + destinations.getPosition(n).y + ")!");
 
                         cur_waypoint ++;
                         n = wpn + gvh.id.getName() + cur_waypoint;
@@ -122,7 +122,7 @@ public class FlockingTestTwo extends LogicThread {
 
                         x += N*m*r*Math.sin(robotNum);
                         y += N*m*r*Math.cos(robotNum);
-                        //pl.update(new ItemPosition(n, robotNum * 100, 100 * ((robotNum % 2 == 0) ? 0 : 1), 0));
+                        //destinations.update(new ItemPosition(n, robotNum * 100, 100 * ((robotNum % 2 == 0) ? 0 : 1), 0));
 
                         //ItemPosition dest = new ItemPosition(n, x, y, theta);
 
@@ -163,8 +163,9 @@ public class FlockingTestTwo extends LogicThread {
                         //tmpy = 13*Math.toDegrees(Math.cos(tmpy)) - 5*Math.toDegrees(Math.cos(2*tmpy)) - 2*Math.toDegrees(Math.cos(3*tmpy)) - Math.toDegrees(Math.cos(4*tmpy));
                         //dest = new ItemPosition(n, N/2*(int)tmpx, N/2*(int)tmpy, 0);
 
-                        //pl.update();
-                        //moat.goTo(pl.getPosition(n));
+                        //destinations.update();
+                        //moat.goTo(destinations.getPosition(n));
+                        destinations.update(dest);
                         moat.goTo(dest);
 
 

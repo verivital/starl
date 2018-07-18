@@ -18,12 +18,10 @@ public class Main {
 		settings.N_DISCOV_BOTS(1);
 	//	settings.N_RAND_BOTS(1);
 		settings.TIC_TIME_RATE(3);
-		settings.WAYPOINT_FILE("mazeapp/waypoints/dest.wpt");
-
-		settings.OBSPOINT_FILE("mazeapp/waypoints/Obstacles.wpt");
 		settings.THREE_D(true);
 		settings.DRAW_WAYPOINTS(false);
 		settings.DRAW_WAYPOINT_NAMES(false);
+		settings.DRAW_TRACE(true);
 		settings.DRAWER(new LawnDrawer());
 		settings.Detect_Precision(10);
 		settings.De_Radius(4);
