@@ -19,14 +19,13 @@ public class FlockingDrawer extends Drawer {
 		FlockingTestApp app = (FlockingTestApp) lt;
 
 		g.setColor(Color.RED);
-		for(ItemPosition dest : app.destinations.values()) {
+		for(ItemPosition dest : app.destinations) {
 			g.fillRect(dest.getX() - 13, dest.getY() - 13, 26, 26);
 		}
 
 		g.setColor(selectColor);
 		g.setStroke(stroke);
-		if(app.currentDestination != null)
-			g.drawOval(app.currentDestination.getX() - 20, app.currentDestination.getY() - 20, 40, 40);
+
 	}
 
 }

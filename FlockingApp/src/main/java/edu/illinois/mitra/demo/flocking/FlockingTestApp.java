@@ -9,6 +9,7 @@ import java.util.Map;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
 import edu.illinois.mitra.starl.models.Model_Ground;
+import edu.illinois.mitra.starl.motion.MotionParameters;
 import edu.illinois.mitra.starl.motion.RobotMotion;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.PositionList;
@@ -18,24 +19,25 @@ public class FlockingTestApp extends LogicThread {
     private enum STAGE { START, MOVE, DONE }
     private STAGE stage = STAGE.START;
 
-    final Map<String, ItemPosition> destinations = new HashMap<String, ItemPosition>();
-    ItemPosition currentDestination;
-
-    private RobotMotion moat;
-
     private int n_waypoints;
     private int cur_waypoint = 0;
-    PositionList pl = new PositionList();
+    PositionList<ItemPosition> destinations = new PositionList();
     String wpn = "wp";
 
     public FlockingTestApp(GlobalVarHolder gvh) {
         super(gvh);
 
-        moat = gvh.plat.moat;
+        MotionParameters.Builder settings = new MotionParameters.Builder();
+        settings = settings.ENABLE_ARCING(true);
+        settings = settings.STOP_AT_DESTINATION(true);
+        settings = settings.COLAVOID_MODE(MotionParameters.COLAVOID_MODE_TYPE.USE_COLAVOID); // buggy, just goes back, deadlocks...
+        MotionParameters param = settings.build();
+        gvh.plat.moat.setParameters(param);
+
         //n_waypoints = gvh.gps.getWaypointPositions().getNumPositions();
         n_waypoints = Integer.MAX_VALUE;
         String n = wpn + gvh.id.getName() + cur_waypoint;
-        pl.update(new ItemPosition(n, 500, 500, 0));
+        destinations.update(new ItemPosition(n, 500, 500, 0));
     }
 
     private double a_ij(double[] x_i, double[] x_j, double r_sig, double h, double epsilon) {
@@ -119,7 +121,7 @@ public class FlockingTestApp extends LogicThread {
     @Override
     public List<Object> callStarL() {
         String robotName = gvh.id.getName();
-        Integer robotNum = Integer.parseInt(robotName.substring(6)); // assumes: botYYY
+        Integer robotNum = gvh.id.getIdNumber();
 
         while(true) {
 
@@ -160,7 +162,7 @@ public class FlockingTestApp extends LogicThread {
 
                 case MOVE:
                 {
-                    //if(!moat.inMotion) {
+                    //if(!gvh.plat.moat.inMotion) {
                     //if(cur_waypoint < n_waypoints) {
                     //System.out.println(robotName + ": I've stopped moving!");
 
@@ -174,7 +176,8 @@ public class FlockingTestApp extends LogicThread {
 
                     PositionList<ItemPosition> plAll = gvh.gps.get_robot_Positions(); // all positions
 
-                    ItemPosition myRp = plAll.getPosition(robotName); // my position
+                    //ItemPosition myRp = plAll.getPosition(robotName); // my position
+                    ItemPosition myRp =gvh.gps.getMyPosition();
 
                     double[] u = {0.0, 0.0};
 
@@ -233,15 +236,15 @@ public class FlockingTestApp extends LogicThread {
                     //double m = (robotNum % 3 == 0) ? 0.33 : 1; // todo: concentric circles?
                     double m = 1.0;
 
-                    //x += num_nbrs*m*r*Math.sin(robotNum);
-                    //y += num_nbrs*m*r*Math.cos(robotNum);
-                    //pl.update(new ItemPosition(n, robotNum * 100, 100 * ((robotNum % 2 == 0) ? 0 : 1), 0));
+                    /*x += num_nbrs*m*r*Math.sin(robotNum);
+                    y += num_nbrs*m*r*Math.cos(robotNum);*/
+                    //destinations.update(new ItemPosition(n, robotNum * 100, 100 * ((robotNum % 2 == 0) ? 0 : 1), 0));
 
                     System.out.println(robotName + ": Controller values (" + u[0] + ", " + u[1] + ")!");
 
 
-                    //x = myRp.x + (int)u[0];
-                    //y = myRp.y + (int)u[1];
+                    /*x = myRp.getX() + (int)u[0];
+                    y = myRp.getY() + (int)u[1];*/
 
                     // acceleration and velocity
 
@@ -255,8 +258,9 @@ public class FlockingTestApp extends LogicThread {
                     //pr=pr + frvs.*(tcyc/tdiv);
 
 
-                    pl.update(new ItemPosition(n, x, y, theta));
-                    moat.goTo(pl.getPosition(n));
+                    destinations.update(new ItemPosition(n, x, y, theta));
+                    System.out.println(destinations.getPosition(n).toString() + " destination");
+                    gvh.plat.moat.goTo(destinations.getPosition(n));
 
 
                     //olfati-saber controller
@@ -265,7 +269,7 @@ public class FlockingTestApp extends LogicThread {
                     //uGamma(i,:) = -c1gamma*((q_delay(i,:) - qr(i,:))) - c2gamma*(p_delay(i,:) - pr(i,:));
                     //u(i,:) = uGradient(i,:) + uConsensus(i,:) + uGamma(i,:);
 
-                    System.out.println(robotName + ": New destination is (" + pl.getPosition(n).getX() + ", " + pl.getPosition(n).getY() + ")!");
+                    System.out.println(robotName + ": New destination is (" + destinations.getPosition(n).getX() + ", " + destinations.getPosition(n).getY() + ")!");
                     System.out.println(robotName + ": Current posn is (" + myRp.getX() + ", " + myRp.getY() + ")!");
 
 
@@ -275,11 +279,12 @@ public class FlockingTestApp extends LogicThread {
                     //}
                     //}
                     // wait here while robot is in motion
-                    while (moat.inMotion) {
+                    while (gvh.plat.moat.inMotion) {
                         gvh.sleep(100);
                     }
 
                     stage = STAGE.START; // repeat
+                    break;
 
 
                 }

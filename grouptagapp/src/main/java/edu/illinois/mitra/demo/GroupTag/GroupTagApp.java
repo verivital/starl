@@ -88,7 +88,7 @@ public class GroupTagApp extends LogicThread implements MessageListener {
     @Override
     public List<Object> callStarL() {
         MotionParameters.Builder mp = new MotionParameters.Builder();
-        mp = mp.COLAVOID_MODE(COLAVOID_MODE_TYPE.BUMPERCARS);
+        mp = mp.COLAVOID_MODE(COLAVOID_MODE_TYPE.BUMPERCARS);   //buggy
         mp = mp.STOP_AT_DESTINATION(false);
         MotionParameters param = mp.build();
         gvh.plat.moat.setParameters(param);
