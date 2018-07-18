@@ -34,7 +34,7 @@ public class CircleApp extends LogicThread {
     private LeaderElection le;
     private Synchronizer sn;
 
-	public CircleApp(GlobalVarHolder gvh) {
+    public CircleApp(GlobalVarHolder gvh) {
         super(gvh);
         //Common.MESSAGE_TIMING = Common.MessageTiming.MSG_ORDERING_LAMPORT;
         //gvh.trace.traceStart();
@@ -55,10 +55,10 @@ public class CircleApp extends LogicThread {
         //n_waypoints = gvh.gps.getWaypointPositions().getNumPositions();
         //n_waypoints = Integer.MAX_VALUE;
 
-	}
+    }
 
-	@Override
-	public List<Object> callStarL() {
+    @Override
+    public List<Object> callStarL() {
         String robotName = gvh.id.getName();
         Integer robotNum = gvh.id.getIdNumber();
         Integer count = 0;
@@ -113,7 +113,7 @@ public class CircleApp extends LogicThread {
                             y += rp.getY();
 
                             if(rp instanceof Model_Ground)
-                            theta += ((Model_Ground) rp).getAngle();
+                                theta += ((Model_Ground) rp).getAngle();
                         }
 
                         int r = 130; // ~30mm
@@ -197,15 +197,15 @@ public class CircleApp extends LogicThread {
             //gvh.sleep(100 + rand.nextInt(5)); // weird simulation behavior if things aren't sleep-synchronized
             //gvh.sleep( (robotNum + 1) * 25);
         }
-	}
+    }
 
-	private static final Random rand = new Random();
+    private static final Random rand = new Random();
 
-	@SuppressWarnings("unchecked")
-	private <X, T> T getRandomElement(Map<X, T> map) {
-		if(RANDOM_DESTINATION)
-			return (T) map.values().toArray()[rand.nextInt(map.size())];
-		else
-			return (T) map.values().toArray()[0];
-	}
+    @SuppressWarnings("unchecked")
+    private <X, T> T getRandomElement(Map<X, T> map) {
+        if(RANDOM_DESTINATION)
+            return (T) map.values().toArray()[rand.nextInt(map.size())];
+        else
+            return (T) map.values().toArray()[0];
+    }
 }

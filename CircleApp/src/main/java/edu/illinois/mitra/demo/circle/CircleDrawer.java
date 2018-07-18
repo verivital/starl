@@ -11,21 +11,21 @@ import edu.illinois.mitra.starlSim.draw.Drawer;
 
 public class CircleDrawer extends Drawer {
 
-	private Stroke stroke = new BasicStroke(8);
-	private Color selectColor = new Color(0,0,255,100);
-	
-	@Override
-	public void draw(LogicThread lt, Graphics2D g) {
-		CircleApp app = (CircleApp) lt;
+    private Stroke stroke = new BasicStroke(8);
+    private Color selectColor = new Color(0,0,255,100);
 
-		g.setColor(Color.RED);
-		for (ItemPosition pos : app.destinations) {
-			g.fillRect(pos.getX() - 13, pos.getY() - 13, 26, 26);
-		}
+    @Override
+    public void draw(LogicThread lt, Graphics2D g) {
+        CircleApp app = (CircleApp) lt;
 
-		g.setColor(selectColor);
-		g.setStroke(stroke);
+        g.setColor(Color.RED);
+        for (ItemPosition pos : app.destinations) {
+            g.fillRect(pos.getX() - 13, pos.getY() - 13, 26, 26);
+        }
 
-	}
+        g.setColor(selectColor);
+        g.setStroke(stroke);
+
+    }
 
 }
