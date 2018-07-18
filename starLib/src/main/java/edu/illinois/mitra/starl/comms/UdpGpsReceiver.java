@@ -118,11 +118,10 @@ public class UdpGpsReceiver extends Thread implements GpsReceiver {
 
 		    			case '#':
 		    				try {
-		    					//Model_iRobot newpos = new Model_iRobot(parts[i]);
-								Model newpos = ModelRegistry.create(Model_iRobot.class.getSimpleName(), part);
+								Model newpos = ModelRegistry.create("Model_iRobot", part);
 		    					robotPositions.update(newpos, gvh.time());
 		    					gvh.sendRobotEvent(Event.GPS);
-		    					if(newpos.name.equals(name)) {
+		    					if(newpos.getName().equals(name)) {
 		    						gvh.trace.traceEvent(TAG, "Received Position", newpos, gvh.time());
 		    						gvh.sendRobotEvent(Event.GPS_SELF);
 		    					}
@@ -132,15 +131,15 @@ public class UdpGpsReceiver extends Thread implements GpsReceiver {
 		    				break;
 		    			case '$':
 		    				try {
-		    					Model_Phantom newpos = new Model_Phantom(part); //TODO(TIM) MAKE THIS APPLY TO ALL ROBOTS SUPER IMPORTANT
+		    					Model newpos = ModelRegistry.create("Model_Phantom", part); //TODO(TIM) MAKE THIS APPLY TO ALL ROBOTS SUPER IMPORTANT
 		    					robotPositions.update(newpos, gvh.time());
 		    					gvh.sendRobotEvent(Event.GPS);
-		    					if(newpos.name.equals(name)) {
+		    					if(newpos.getName().equals(name)) {
 		    						gvh.trace.traceEvent(TAG, "Received Position", newpos, gvh.time());
 		    						gvh.sendRobotEvent(Event.GPS_SELF);
 		    					}
-		    				} catch(ItemFormattingException e){
-		    					gvh.log.e(TAG, "Invalid item formatting: " + e.getError());
+		    				} catch(RuntimeException e){
+		    					gvh.log.e(TAG, "Invalid item formatting: " + e);
 		    				}
 		    				break;
 		    			case 'G':

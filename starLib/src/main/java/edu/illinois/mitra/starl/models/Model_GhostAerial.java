@@ -64,9 +64,9 @@ public class Model_GhostAerial extends Model_Drone {
     @Override
     public PIDParams getPIDParams() {
         PIDParams p = new PIDParams();
-        p.Kp = 0.0314669809792096;
-        p.Ki = 0.0110786899216426;
-        p.Kd = 0.113205037832174;
+        p.Kp = 2.5E-4;//0.0314669809792096;
+        p.Ki = 0.75*p.Kp;//0.0110786899216426;
+        p.Kd = 1.5E-3;//0.113205037832174;
         p.saturationLimit = 50;
         p.windUpLimit = 185;
         p.filterLength = 8;

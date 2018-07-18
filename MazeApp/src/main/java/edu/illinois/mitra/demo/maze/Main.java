@@ -13,7 +13,7 @@ public class Main {
 	public static void main(String[] args) {
 		SimSettings.Builder settings = new SimSettings.Builder();
 		
-		settings.BOTS(Model_iRobot.class.getSimpleName()).COUNT = 2;
+		settings.BOTS("Model_iRobot").COUNT = 2;
 		settings.N_GOAL_BOTS(1);
 		settings.N_DISCOV_BOTS(1);
 	//	settings.N_RAND_BOTS(1);

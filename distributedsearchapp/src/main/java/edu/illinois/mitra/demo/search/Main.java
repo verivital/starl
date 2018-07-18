@@ -15,7 +15,7 @@ public class Main {
 		*/
 		SimSettings.Builder settings = new SimSettings.Builder();
 		
-		settings.BOTS(Model_iRobot.class.getSimpleName()).COUNT = 5;
+		settings.BOTS("Model_iRobot").COUNT = 5;
 		settings.N_GOAL_BOTS(0);
 		settings.TIC_TIME_RATE(5);
 		settings.WAYPOINT_FILE("distributedsearchapp/waypoints/dest.wpt");

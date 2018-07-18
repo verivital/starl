@@ -36,7 +36,7 @@ public class ModelRegistry {
                 Model_Mavic.class,
                 Model_Phantom.class,
                 Model_quadcopter.class
-        );
+
     }
 
     /**

@@ -41,22 +41,22 @@ public class BotInfoSelector {
                 }
                 switch (type) {
                     case Common.IROBOT:
-                        this.type = ModelRegistry.create(Model_iRobot.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_iRobot", name, 0, 0);
                         break;
                     case Common.MINIDRONE:
-                        this.type = ModelRegistry.create(Model_quadcopter.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_quadcopter", name, 0, 0);
                         break;
                     case Common.MAVIC:
-                        this.type = ModelRegistry.create(Model_Mavic.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_Mavic", name, 0, 0);
                         break;
                     case Common.o3DR:
-                        this.type = ModelRegistry.create(Model_3DR.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_3DR", name, 0, 0);
                         break;
                     case Common.PHANTOM:
-                        this.type = ModelRegistry.create(Model_Phantom.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_Phantom", name, 0, 0);
                         break;
                     case Common.GHOSTAERIAL:
-                        this.type = ModelRegistry.create(Model_GhostAerial.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_GhostAerial", name, 0, 0);
                         break;
                 }
                 break;
@@ -75,13 +75,13 @@ public class BotInfoSelector {
                 }
                 switch (type) {
                     case Common.IROBOT:
-                        this.type = ModelRegistry.create(Model_iRobot.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_iRobot", name, 0, 0);
                         break;
                     case Common.MINIDRONE:
-                        this.type = ModelRegistry.create(Model_quadcopter.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_quadcopter", name, 0, 0);
                         break;
                     case Common.GHOSTAERIAL:
-                        this.type = ModelRegistry.create(Model_GhostAerial.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_GhostAerial", name, 0, 0);
                         break;
                 }
                 break;
@@ -92,16 +92,16 @@ public class BotInfoSelector {
                 ip = "10.255.24.152";
                 switch (type) {
                     case Common.IROBOT:
-                        this.type = ModelRegistry.create(Model_iRobot.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_iRobot", name, 0, 0);
                         break;
                     case Common.MINIDRONE:
-                        this.type = ModelRegistry.create(Model_quadcopter.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_quadcopter", name, 0, 0);
                         break;
                     case Common.PHANTOM:
-                        this.type = ModelRegistry.create(Model_Phantom.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_Phantom", name, 0, 0);
                         break;
                     case Common.GHOSTAERIAL:
-                        this.type = ModelRegistry.create(Model_GhostAerial.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_GhostAerial", name, 0, 0);
                         break;
                 }
                 break;
@@ -112,12 +112,12 @@ public class BotInfoSelector {
                 ip = "10.255.24.113";
                 switch (type) {
                     case Common.IROBOT:
-                        this.type = ModelRegistry.create(Model_iRobot.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_iRobot", name, 0, 0);
                         break;
                     case Common.MINIDRONE:
                         break;
                     case Common.GHOSTAERIAL:
-                        this.type = ModelRegistry.create(Model_GhostAerial.class.getSimpleName(), name, 0, 0);
+                        this.type = ModelRegistry.create("Model_GhostAerial", name, 0, 0);
                         break;
                 }
                 break;

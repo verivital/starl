@@ -8,7 +8,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		SimSettings.Builder settings = new SimSettings.Builder();
-		settings.BOTS(Model_iRobot.class.getSimpleName()).COUNT = 5;
+		settings.BOTS("Model_iRobot").COUNT = 5;
 		settings.GPS_POSITION_NOISE(4);
 		settings.TIC_TIME_RATE(1);
         settings.WAYPOINT_FILE("grouptagapp/waypoints/tag.wpt");

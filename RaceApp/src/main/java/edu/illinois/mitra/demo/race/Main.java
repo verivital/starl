@@ -11,7 +11,7 @@ public class Main {
 		SimSettings.Builder settings = new SimSettings.Builder();
 		settings.OBSPOINT_FILE("raceApp/waypoints/Obstacles.wpt");
 		settings.OBSPOINT_FILE("");
-		settings.BOTS(Model_GhostAerial.class.getSimpleName()).COUNT = 1;
+		settings.BOTS("Model_GhostAerial").COUNT = 1;
 		settings.GPS_POSITION_NOISE(4);
 		settings.TIC_TIME_RATE(1);
         settings.WAYPOINT_FILE("raceApp/waypoints/four.wpt");
