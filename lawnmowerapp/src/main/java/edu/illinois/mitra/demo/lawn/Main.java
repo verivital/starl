@@ -1,6 +1,5 @@
 package edu.illinois.mitra.demo.lawn;
 
-import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starlSim.main.SimSettings;
 import edu.illinois.mitra.starlSim.main.Simulation;
 

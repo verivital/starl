@@ -12,7 +12,7 @@ public class RealisticSimMotionAutomaton_Ground extends MotionAutomaton_Ground {
 	public RealisticSimMotionAutomaton_Ground(GlobalVarHolder gvh, SimGpsProvider gpsp) {
 		super(gvh, null);
 		name = gvh.id.getName();
-		typeName = "Model_iRobot";
+		typeName = gvh.plat.model.getTypeName();
 		this.gpsp = gpsp;
 	}
 
@@ -29,8 +29,8 @@ public class RealisticSimMotionAutomaton_Ground extends MotionAutomaton_Ground {
 	protected void curve(int velocity, int radius) {
 		if(running) {
 			sendMotionEvent(Common.MOT_ARCING, velocity, radius);
-			// TODO: Determine if angular velocity formula works! 
-			gpsp.setVelocity(typeName,name, velocity, (int) Math.round((velocity*360.0)/(2*Math.PI*radius)));
+			// TODO: Determine if angular velocity formula works!
+			gpsp.setVelocity(typeName, name, velocity, (int) Math.round((velocity*360.0)/(2*Math.PI*radius)));
 		}
 	}
 

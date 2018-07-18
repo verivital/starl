@@ -1,7 +1,5 @@
 package edu.illinois.mitra.demo.race;
 
-import edu.illinois.mitra.starl.models.Model;
-import edu.illinois.mitra.starl.models.Model_GhostAerial;
 import edu.illinois.mitra.starlSim.main.SimSettings;
 import edu.illinois.mitra.starlSim.main.Simulation;
 

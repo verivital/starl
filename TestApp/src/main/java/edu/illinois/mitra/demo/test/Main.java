@@ -1,11 +1,5 @@
 package edu.illinois.mitra.demo.test;
 
-import edu.illinois.mitra.starl.models.Model_3DR;
-import edu.illinois.mitra.starl.models.Model_GhostAerial;
-import edu.illinois.mitra.starl.models.Model_Mavic;
-import edu.illinois.mitra.starl.models.Model_Phantom;
-import edu.illinois.mitra.starl.models.Model_iRobot;
-import edu.illinois.mitra.starl.models.Model_quadcopter;
 import edu.illinois.mitra.starlSim.main.SimSettings;
 import edu.illinois.mitra.starlSim.main.Simulation;
 
@@ -15,8 +9,8 @@ public class Main {
         SimSettings.Builder settings = new SimSettings.Builder();
 
         // Robots
-        settings.BOTS("Model_iRobot").COUNT = 0;  //works in all increments
-        settings.BOTS("Model_quadcopter").COUNT = 0;  //Works unless multiple crash. ; Tuned, but sways
+        settings.BOTS("Model_iRobot").COUNT = 2;  //works in all increments
+        settings.BOTS("Model_quadcopter").COUNT = 1;  //Works unless multiple crash. ; Tuned, but sways
         settings.BOTS("Model_3DR").COUNT = 0;     //Works; Tune
         settings.BOTS("Model_GhostAerial").COUNT = 1;   //Doesn't target correctly; Tuned. A little slow.
         settings.BOTS("Model_Mavic").COUNT = 0;   //Doesn't work, points switch without being hit; Tuned, but sways
