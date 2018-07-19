@@ -1,6 +1,7 @@
-package edu.illinois.mitra.starl.harness;
+package edu.illinois.mitra.starl.motion;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
+import edu.illinois.mitra.starl.harness.SimGpsProvider;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_Drone;
 
 
@@ -8,11 +9,11 @@ import edu.illinois.mitra.starl.motion.MotionAutomaton_Drone;
  * Motion Automaton class for drones that extends MotionAutomaton_Drone.
  * Used to send motion commands to the SimGpsProvider to simulate motion.
  */
-public class RealisticSimMotionAutomaton_Drone extends MotionAutomaton_Drone {
+public class SimMotionAutomaton_Drone extends MotionAutomaton_Drone {
     private SimGpsProvider gpsp;
     private String name;
 
-    public RealisticSimMotionAutomaton_Drone(GlobalVarHolder gvh, SimGpsProvider gpsp) {
+    public SimMotionAutomaton_Drone(GlobalVarHolder gvh, SimGpsProvider gpsp) {
         super(gvh);
         this.name = gvh.id.getName();
         this.gpsp = gpsp;

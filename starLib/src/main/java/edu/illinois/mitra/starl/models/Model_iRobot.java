@@ -1,8 +1,8 @@
 package edu.illinois.mitra.starl.models;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.motion.GroundBTI;
-import edu.illinois.mitra.starl.motion.IRobotBTI;
+import edu.illinois.mitra.starl.modelinterfaces.GroundInterface;
+import edu.illinois.mitra.starl.modelinterfaces.IRobotInterface;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 
 /**
@@ -46,7 +46,7 @@ public class Model_iRobot extends Model_Ground {
 	public String ip() { return "10.255.24.0"; }
 
 	@Override
-	public Class<? extends GroundBTI> getBluetoothInterface() {
-		return IRobotBTI.class;
+	public Class<? extends GroundInterface> getBluetoothInterface() {
+		return IRobotInterface.class;
 	}
 }

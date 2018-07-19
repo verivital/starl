@@ -1,4 +1,4 @@
-package edu.illinois.mitra.starl.motion;
+package edu.illinois.mitra.starl.modelinterfaces;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class BluetoothInterface {
 
 	public void connect() {
 		gvh.log.i(TAG, "Connecting to " + targetMacAddress);
-		task = new BluetoothConnectTask();
+		task = new BluetoothConnectTask(this);
 
 		if(btAdapter.isDiscovering())
 			btAdapter.cancelDiscovery();
@@ -84,7 +84,7 @@ public class BluetoothInterface {
 		}
 	}
 
-	public synchronized byte[] readBuffer(int n_bytes) {
+	private synchronized byte[] readBuffer(int n_bytes) {
 		byte[] buffer = new byte[n_bytes];
 		try {
 			inStream.read(buffer);
@@ -131,44 +131,51 @@ public class BluetoothInterface {
 		gvh.plat.sendMainMsg(HandlerMessage.MESSAGE_BLUETOOTH, HandlerMessage.BLUETOOTH_DISCONNECTED);
 	}
 
-	private class BluetoothConnectTask extends AsyncTask<BluetoothDevice, Void, Integer> {
+	private static class BluetoothConnectTask extends AsyncTask<BluetoothDevice, Void, Integer> {
+		// using reference in static class instead of nested class to prevent a possible leak
+		private BluetoothInterface bi;
+
+		BluetoothConnectTask(BluetoothInterface bluetoothInterface) {
+			this.bi = bluetoothInterface;
+		}
+
 		@Override
 		protected Integer doInBackground(BluetoothDevice... params) {
-			gvh.plat.sendMainMsg(HandlerMessage.MESSAGE_BLUETOOTH, HandlerMessage.BLUETOOTH_CONNECTING);
+			bi.gvh.plat.sendMainMsg(HandlerMessage.MESSAGE_BLUETOOTH, HandlerMessage.BLUETOOTH_CONNECTING);
 
 			BluetoothSocket tmp = null;
 			try {
 				tmp = params[0].createInsecureRfcommSocketToServiceRecord(MY_UUID);
 			} catch(IOException e) {
-				gvh.log.e(TAG, "Couldn't create socket!");
+				bi.gvh.log.e(TAG, "Couldn't create socket!");
 			}
-			mSocket = tmp;
+			bi.mSocket = tmp;
 
 			try {
-				mSocket.connect();
-				outStream = mSocket.getOutputStream();
-				inStream = new BufferedInputStream(mSocket.getInputStream());
+				bi.mSocket.connect();
+				bi.outStream = bi.mSocket.getOutputStream();
+				bi.inStream = new BufferedInputStream(bi.mSocket.getInputStream());
 			} catch(IOException e) {
-				outStream = null;
-				inStream = null;
-				gvh.log.e(TAG, "Failed to connect! Retrying...");
-				if(running)
-					BluetoothInterface.this.connect();
+				bi.outStream = null;
+				bi.inStream = null;
+				bi.gvh.log.e(TAG, "Failed to connect! Retrying...");
+				if(bi.running)
+					bi.connect();
 				return 1;
 			}
 
-			isConnected = true;
-			gvh.log.i(TAG, "Connection established.");
-			send(ENABLE_CONTROL);
-			send(PROGRAM_SONG);
+			bi.isConnected = true;
+			bi.gvh.log.i(TAG, "Connection established.");
+			bi.send(ENABLE_CONTROL);
+			bi.send(PROGRAM_SONG);
 			try {
 				// Clear the buffer
-				inStream.read(new byte[inStream.available()], 0, inStream.available());
+				bi.inStream.read(new byte[bi.inStream.available()], 0, bi.inStream.available());
 			} catch(IOException e) {
 				e.printStackTrace();
 			}
 			// Inform the GUI that bluetooth has been connected
-			gvh.plat.sendMainMsg(HandlerMessage.MESSAGE_BLUETOOTH, HandlerMessage.BLUETOOTH_CONNECTED);
+			bi.gvh.plat.sendMainMsg(HandlerMessage.MESSAGE_BLUETOOTH, HandlerMessage.BLUETOOTH_CONNECTED);
 			return 0;
 		}
 	}

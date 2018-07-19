@@ -2,7 +2,7 @@ package edu.illinois.mitra.starl.models;
 
 import java.util.Random;
 
-import edu.illinois.mitra.starl.motion.BTI;
+import edu.illinois.mitra.starl.modelinterfaces.ModelInterface;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Point3i;
@@ -38,7 +38,7 @@ public abstract class Model extends ItemPosition {
 
 	// to replace if-else chain with instanceof to determine the bluetooth interface for a particular model.
 	// This would be a static factory function if it didn't have to be polymorphic.
-	public abstract Class<? extends BTI> getBluetoothInterface();
+	public abstract Class<? extends ModelInterface> getBluetoothInterface();
 
 	public Model() {}
 

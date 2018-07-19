@@ -11,97 +11,33 @@ import edu.illinois.mitra.starl.objects.Common;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 
-public class MotionAutomaton_Ground extends RobotMotion {
+public abstract class MotionAutomaton_Ground extends RobotMotion {
     protected static final String TAG = "MotionAutomaton";
     protected static final String ERR = "Critical Error";
 
-    protected GlobalVarHolder gvh;
-    protected GroundBTI bti;
-
-
-
-
-    // MOTION CONTROL CONSTANTS
-    //	public static int R_arc = 700;
-//	public static int R_slowfwd = 700;
-//	public static int A_smallturn = 3;
-//	public static int A_straight = 6;
-//	public static int A_arc = 25;
-//	public static int A_arcexit = 30;
-//	public static final int param.SLOWTURN_ANGLE = 25;
-//	public static final int ROBOT_RADIUS = 180;
-
-    // DELAY BETWEEN EACH RUN OF THE AUTOMATON
-//	private static final int AUTOMATON_PERIOD = 60;
-//	public static final int SAMPLING_PERIOD = 300;
-
-    // COLLISION AVOIDANCE CONSTANTS
-//	public static final int COLLISION_STRAIGHTTIME = 1250;
-
+    protected final GlobalVarHolder gvh;
 
     // Motion tracking
     protected ItemPosition destination;
+    protected STAGE stage = STAGE.INIT;
+    protected boolean running = false;
+    private boolean colliding = false;
     private Model_Ground bot;
     private ItemPosition blocker;
     private ObstacleList obsList;
-
-
-    protected enum STAGE {
-        INIT, ARCING, STRAIGHT, TURN, SMALLTURN, GOAL, UNABLE
-    }
-
-
     private STAGE next = null;
-    protected STAGE stage = STAGE.INIT;
     private STAGE prev = null;
-    protected boolean running = false;
-    boolean colliding = false;
-
-    private enum OPMODE {
-        GO_TO, TURN_TO
-    }
-
     private OPMODE mode = OPMODE.GO_TO;
-
-    private static final MotionParameters DEFAULT_PARAMETERS = MotionParameters.defaultParameters();
-    private volatile MotionParameters param = DEFAULT_PARAMETERS;
-    //need to pass some more parameteres into this param
-//	MotionParameters.Builder settings = new MotionParameters.Builder();
-
-
-//	private volatile MotionParameters param = settings.build();
-
-
-    // Collision avoidance
-    private enum COLSTAGE {
-        TURN, STRAIGHT
-    }
+    private volatile MotionParameters param = MotionParameters.defaultParameters();
     private COLSTAGE colprev = null;
     private COLSTAGE colstage = COLSTAGE.TURN;
     private COLSTAGE colnext = null;
-
-    private enum COLSTAGE0 {
-        BACK, STRAIGHT
-    }
-    private COLSTAGE0 colprev0 = null;
     private COLSTAGE0 colstage0 = COLSTAGE0.STRAIGHT;
     private COLSTAGE0 colnext0 = null;
-
-    private enum COLSTAGE1 {
-        BACK, STRAIGHT, TURN, SMALLARC
-    }
-    private COLSTAGE1 colprev1 = null;
     private COLSTAGE1 colstage1 = COLSTAGE1.STRAIGHT;
     private COLSTAGE1 colnext1 = null;
-
-
-    private enum COLSTAGE2 {
-        BACK, RANDOM, STRAIGHT
-    }
-    private COLSTAGE2 colprev2 = null;
     private COLSTAGE2 colstage2 = COLSTAGE2.BACK;
     private COLSTAGE2 colnext2 = null;
-
     private int col_straightime = 0;
     private int col_backtime = 0;
     private int col_turntime = 0;
@@ -109,13 +45,10 @@ public class MotionAutomaton_Ground extends RobotMotion {
     private double linspeed;
     private double turnspeed;
 
-
-    public MotionAutomaton_Ground(GlobalVarHolder gvh, BTI bti) {
+    public MotionAutomaton_Ground(GlobalVarHolder gvh) {
         super(gvh.id.getName());
         this.gvh = gvh;
-        this.bti = (GroundBTI)bti;
-        this.linspeed = (param.LINSPEED_MAX - param.LINSPEED_MIN) / (double) (param.SLOWFWD_RADIUS - param.GOAL_RADIUS);
-        this.turnspeed = (param.TURNSPEED_MAX - param.TURNSPEED_MIN) / (param.SLOWTURN_ANGLE - param.SMALLTURN_ANGLE);
+        calcSpeeds(); // initialize linspeed and turnspeed
     }
 
     public void goTo(ItemPosition dest, ObstacleList obsList) {
@@ -153,7 +86,22 @@ public class MotionAutomaton_Ground extends RobotMotion {
         }
     }
 
-    public void takePicture(){}
+    @Override
+    public void motion_resume() {
+        running = true;
+    }
+
+    @Override
+    public abstract void motion_stop();
+
+    @Override
+    public void setParameters(MotionParameters param) {
+        this.param = param;
+        calcSpeeds();
+    }
+
+    @Override
+    public void userControl(ItemPosition dest, ObstacleList obs){ }
 
     @Override
     public synchronized void start() {
@@ -162,7 +110,7 @@ public class MotionAutomaton_Ground extends RobotMotion {
     }
 
     @Override
-    public void run() {
+    public final void run() {
         gvh.threadCreated(this);
 
 
@@ -320,6 +268,35 @@ public class MotionAutomaton_Ground extends RobotMotion {
         }
     }
 
+    public abstract void cancel();
+
+    // Ramp linearly from min at param.SMALLTURN_ANGLE to max at param.SLOWTURN_ANGLE
+    private int TurnSpeed(int angle) {
+        if(angle > param.SLOWTURN_ANGLE) {
+            return param.TURNSPEED_MAX;
+        } else if(angle > param.SMALLTURN_ANGLE && angle <= param.SLOWTURN_ANGLE) {
+            return param.TURNSPEED_MIN + (int) ((angle - param.SMALLTURN_ANGLE) * turnspeed);
+        } else {
+            return param.TURNSPEED_MIN;
+        }
+    }
+
+    @Override
+    public void receivedKeyInput(String key){
+        curKey = key;
+    }
+
+    protected void sendMotionEvent(int motiontype, int... argument) {
+        // TODO: This might not be necessary
+        gvh.trace.traceEvent(TAG, "Motion", Arrays.toString(argument), gvh.time());
+        gvh.sendRobotEvent(RobotEventListener.Event.MOTION, motiontype);
+    }
+
+    protected abstract void curve(int velocity, int radius);
+
+    protected abstract void straight(int velocity);
+
+    protected abstract void turn(int velocity, int angle);
 
     private void use_colavoid() {
         if(stage != null) {
@@ -397,15 +374,12 @@ public class MotionAutomaton_Ground extends RobotMotion {
         }
     }
 
-
-
     private void goalbot() {
         if(stage != null) {
             gvh.log.d(TAG, "Imminent collision detected!");
             stage = null;
             straight(0);
             colnext0 = null;
-            colprev0 = null;
             colstage0 = COLSTAGE0.BACK;
         }
 
@@ -416,7 +390,6 @@ public class MotionAutomaton_Ground extends RobotMotion {
                 if(col_backtime > param.COLLISION_AVOID_BACKTIME){
                     col_backtime = 0;
                     straight(0);
-                    colprev0 = null;
                     colnext0 = null;
                     colstage0 = null;
                     stage = STAGE.UNABLE;
@@ -431,7 +404,6 @@ public class MotionAutomaton_Ground extends RobotMotion {
                 }
                 break;
         }
-        colprev0 = colstage0;
         if(colnext0 != null) {
             colstage0 = colnext0;
             gvh.log.i(TAG, "Advancing stage to " + colnext);
@@ -446,7 +418,6 @@ public class MotionAutomaton_Ground extends RobotMotion {
             stage = null;
             straight(0);
             colnext1 = null;
-            colprev1 = null;
             colstage1 = COLSTAGE1.BACK;
         }
 
@@ -470,7 +441,6 @@ public class MotionAutomaton_Ground extends RobotMotion {
                     else{
                         col_straightime = 0;
                         straight(0);
-                        colprev1 = null;
                         colnext1 = null;
                         colstage1 = null;
                         stage = STAGE.UNABLE;
@@ -510,7 +480,6 @@ public class MotionAutomaton_Ground extends RobotMotion {
                 }
                 break;
         }
-        colprev1 = colstage1;
         if(colnext1 != null) {
             colstage1 = colnext1;
             gvh.log.i(TAG, "Advancing stage to " + colnext);
@@ -524,7 +493,6 @@ public class MotionAutomaton_Ground extends RobotMotion {
             stage = null;
             straight(0);
             colnext2 = null;
-            colprev2 = null;
             colstage2 = COLSTAGE2.BACK;
         }
         switch(colstage2) {
@@ -563,33 +531,11 @@ public class MotionAutomaton_Ground extends RobotMotion {
                 break;
 
         }
-        colprev2 = colstage2;
         if(colnext2 != null) {
             colstage2 = colnext2;
             gvh.log.i(TAG, "Advancing stage to " + colnext);
         }
         colnext2 = null;
-    }
-
-
-    public void cancel() {
-        running = false;
-        bti.sendReset();
-        bti.disconnect();
-    }
-
-    @Override
-    public void motion_stop() {
-        straight(0);
-        stage = STAGE.INIT;
-        this.destination = null;
-        running = false;
-        inMotion = false;
-    }
-
-    @Override
-    public void motion_resume() {
-        running = true;
     }
 
     // Calculates the radius of curvature to meet a target
@@ -608,51 +554,6 @@ public class MotionAutomaton_Ground extends RobotMotion {
         running = true;
         stage = STAGE.INIT;
         inMotion = true;
-    }
-
-    protected void sendMotionEvent(int motiontype, int... argument) {
-        // TODO: This might not be necessary
-        gvh.trace.traceEvent(TAG, "Motion", Arrays.toString(argument), gvh.time());
-        gvh.sendRobotEvent(RobotEventListener.Event.MOTION, motiontype);
-    }
-
-    protected void curve(int velocity, int radius) {
-        if(running) {
-            sendMotionEvent(Common.MOT_ARCING, velocity, radius);
-            bti.sendCurve(velocity, radius);
-        }
-    }
-
-    protected void straight(int velocity) {
-        gvh.log.i(TAG, "Straight at velocity " + velocity);
-        if(running) {
-            if(velocity != 0) {
-                sendMotionEvent(Common.MOT_STRAIGHT, velocity);
-            } else {
-                sendMotionEvent(Common.MOT_STOPPED, 0);
-            }
-            System.out.println("straight");
-            bti.sendStraight(velocity);
-        }
-    }
-
-    protected void turn(int velocity, int angle) {
-        if(running) {
-            sendMotionEvent(Common.MOT_TURNING, velocity, angle);
-            System.out.println("turn");
-            bti.sendTurn(velocity, angle);
-        }
-    }
-
-    // Ramp linearly from min at param.SMALLTURN_ANGLE to max at param.SLOWTURN_ANGLE
-    public int TurnSpeed(int angle) {
-        if(angle > param.SLOWTURN_ANGLE) {
-            return param.TURNSPEED_MAX;
-        } else if(angle > param.SMALLTURN_ANGLE && angle <= param.SLOWTURN_ANGLE) {
-            return param.TURNSPEED_MIN + (int) ((angle - param.SMALLTURN_ANGLE) * turnspeed);
-        } else {
-            return param.TURNSPEED_MIN;
-        }
     }
 
 	/**
@@ -702,20 +603,35 @@ public class MotionAutomaton_Ground extends RobotMotion {
         return toreturn;
     }
 
-    // Detects an imminent collision with another robot or with any obstacles
-
-    @Override
-    public void setParameters(MotionParameters param) {
-        this.param = param;
-        this.linspeed = (double) (param.LINSPEED_MAX - param.LINSPEED_MIN) / Math.abs((param.SLOWFWD_RADIUS - param.GOAL_RADIUS));
-        this.turnspeed = (param.TURNSPEED_MAX - param.TURNSPEED_MIN) / (param.SLOWTURN_ANGLE - param.SMALLTURN_ANGLE);
+    private void calcSpeeds() {
+        linspeed = (param.LINSPEED_MAX - param.LINSPEED_MIN) / Math.abs(param.SLOWFWD_RADIUS - param.GOAL_RADIUS);
+        turnspeed = (param.TURNSPEED_MAX - param.TURNSPEED_MIN) / (param.SLOWTURN_ANGLE - param.SMALLTURN_ANGLE);
     }
 
-    @Override
-    public void userControl(ItemPosition dest, ObstacleList obs){ }
+    protected enum STAGE {
+        INIT, ARCING, STRAIGHT, TURN, SMALLTURN, GOAL, UNABLE
+    }
 
-    @Override
-    public void receivedKeyInput(String key){
-        curKey = key;
+    private enum OPMODE {
+        GO_TO, TURN_TO
+    }
+
+    // Collision avoidance
+    private enum COLSTAGE {
+        TURN, STRAIGHT
+    }
+
+    // Detects an imminent collision with another robot or with any obstacles
+
+    private enum COLSTAGE0 {
+        BACK, STRAIGHT
+    }
+
+    private enum COLSTAGE1 {
+        BACK, STRAIGHT, TURN, SMALLARC
+    }
+
+    private enum COLSTAGE2 {
+        BACK, RANDOM, STRAIGHT
     }
 }

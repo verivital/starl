@@ -1,8 +1,8 @@
 package edu.illinois.mitra.starl.models;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.motion.DroneBTI;
-import edu.illinois.mitra.starl.motion.MiniDroneBTI;
+import edu.illinois.mitra.starl.modelinterfaces.DroneInterface;
+import edu.illinois.mitra.starl.modelinterfaces.MiniDroneInterface;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.PIDParams;
 /**
@@ -58,8 +58,8 @@ public class Model_quadcopter extends Model_Drone {
 	public double max_yaw_speed() { return 200; }
 
 	@Override
-	public Class<? extends DroneBTI> getBluetoothInterface() {
-		return MiniDroneBTI.class;
+	public Class<? extends DroneInterface> getBluetoothInterface() {
+		return MiniDroneInterface.class;
 	}
 
 	@Override

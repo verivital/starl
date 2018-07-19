@@ -2,8 +2,8 @@ package edu.illinois.mitra.starl.gvh;
 
 import java.util.HashMap;
 
-import edu.illinois.mitra.starl.harness.RealisticSimMotionAutomaton_Drone;
-import edu.illinois.mitra.starl.harness.RealisticSimMotionAutomaton_Ground;
+import edu.illinois.mitra.starl.motion.SimMotionAutomaton_Drone;
+import edu.illinois.mitra.starl.motion.SimMotionAutomaton_Ground;
 import edu.illinois.mitra.starl.harness.SimGpsReceiver;
 import edu.illinois.mitra.starl.harness.SimSmartComThread;
 import edu.illinois.mitra.starl.harness.SimulationEngine;
@@ -46,11 +46,11 @@ public class SimGlobalVarHolder extends GlobalVarHolder {
 		// Model_Drone is base class for all aerial robots.
 		// Model_Ground is base class for all ground robots
 		if(initpos instanceof Model_Ground){
-			plat.moat = new RealisticSimMotionAutomaton_Ground(this, engine.getGps());
+			plat.moat = new SimMotionAutomaton_Ground(this, engine.getGps());
 		} else if(initpos instanceof Model_Drone){
-			plat.moat = new RealisticSimMotionAutomaton_Drone(this, engine.getGps());
+			plat.moat = new SimMotionAutomaton_Drone(this, engine.getGps());
 		} else {
-			throw new RuntimeException("Initpos neither a Model_Ground or Model_Drone: " + initpos.getTypeName());
+			throw new RuntimeException("No known MotionAutomaton for type " + initpos.getTypeName());
 		}
 		plat.moat.start();
 	}

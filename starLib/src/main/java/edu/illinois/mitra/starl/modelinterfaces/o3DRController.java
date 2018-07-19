@@ -4,7 +4,7 @@
  */
 
 
-package edu.illinois.mitra.starl.motion;
+package edu.illinois.mitra.starl.modelinterfaces;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -40,7 +40,7 @@ import com.o3dr.services.android.lib.model.AbstractCommandListener;
 import com.o3dr.services.android.lib.model.SimpleCommandListener;
 import com.o3dr.services.android.lib.drone.property.Attitude;
 
-public class o3DRController extends AppCompatActivity implements DroneBTI, TowerListener, DroneListener, LinkListener {
+public class o3DRController extends AppCompatActivity implements DroneInterface, TowerListener, DroneListener, LinkListener {
     private static final String TAG = o3DRController.class.getSimpleName();
 
     private Drone drone;

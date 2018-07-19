@@ -1,4 +1,4 @@
-package edu.illinois.mitra.starl.motion;
+package edu.illinois.mitra.starl.modelinterfaces;
 
 /**
  * Created by VerivitalLab on 2/19/2016.
@@ -29,9 +29,9 @@ import java.util.List;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.objects.HandlerMessage;
 
-public class MiniDroneBTI implements DroneBTI, ARDiscoveryServicesDevicesListUpdatedReceiverDelegate, DeviceControllerListener {
+public class MiniDroneInterface implements DroneInterface, ARDiscoveryServicesDevicesListUpdatedReceiverDelegate, DeviceControllerListener {
 
-    private static String TAG = "MiniDroneBTI";
+    private static String TAG = "MiniDroneInterface";
 
 
     static
@@ -72,7 +72,7 @@ public class MiniDroneBTI implements DroneBTI, ARDiscoveryServicesDevicesListUpd
     boolean connected = false;
     private WifiManager.MulticastLock multicastLock;
     //private ConnectTask task;
-    public MiniDroneBTI(GlobalVarHolder gvh, Context context, String mac) {
+    public MiniDroneInterface(GlobalVarHolder gvh, Context context, String mac) {
         this.context = context;
         this.mac = mac;
         this.gvh = gvh;
