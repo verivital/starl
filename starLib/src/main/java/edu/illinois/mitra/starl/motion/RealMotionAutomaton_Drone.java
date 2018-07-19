@@ -1,22 +1,20 @@
-package edu.illinois.mitra.starl.harness;
+package edu.illinois.mitra.starl.motion;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
-import edu.illinois.mitra.starl.motion.BTI;
-import edu.illinois.mitra.starl.motion.DroneBTI;
+import edu.illinois.mitra.starl.modelinterfaces.DroneInterface;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_Drone;
-import edu.illinois.mitra.starl.motion.MotionParameters;
 
 
 /**
  * Motion Automaton class for drones that extends MotionAutomaton_Drone. Used to send motion commands via bluetooth for real applications.
  * Each robot model has a unique bluetooth interface.
  */
-public class RealisticMotionAutomaton_Drone extends MotionAutomaton_Drone {
-    private DroneBTI bti;
+public class RealMotionAutomaton_Drone extends MotionAutomaton_Drone {
+    private DroneInterface bti;
 
-    public RealisticMotionAutomaton_Drone(GlobalVarHolder gvh, BTI bti) {
+    public RealMotionAutomaton_Drone(GlobalVarHolder gvh, DroneInterface bti) {
         super(gvh);
-        this.bti = (DroneBTI)bti;
+        this.bti = bti;
     }
 
     @Override
@@ -53,11 +51,4 @@ public class RealisticMotionAutomaton_Drone extends MotionAutomaton_Drone {
     protected void setMaxTilt(float val) {
         bti.setMaxTilt(val);
     }
-
-    @Override
-    public void setParameters(MotionParameters param) {
-        // TODO Auto-generated method stub
-    }
-
-    public void takePicture(){}
 }

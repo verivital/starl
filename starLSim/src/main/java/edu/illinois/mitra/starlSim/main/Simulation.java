@@ -28,13 +28,7 @@ import edu.illinois.mitra.starl.harness.SimulationEngine;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
 import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.ModelRegistry;
-import edu.illinois.mitra.starl.models.Model_3DR;
-import edu.illinois.mitra.starl.models.Model_GhostAerial;
 import edu.illinois.mitra.starl.models.Model_Ground;
-import edu.illinois.mitra.starl.models.Model_Mavic;
-import edu.illinois.mitra.starl.models.Model_Phantom;
-import edu.illinois.mitra.starl.models.Model_iRobot;
-import edu.illinois.mitra.starl.models.Model_quadcopter;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.PositionList;
@@ -93,13 +87,6 @@ public class Simulation {
 
 		// Create the sim gps
 		// TODO: need to redefine the noises for models in general
-		// According to Yixiao, IdealSimGpsProvider should not be used anymore
-		// I've commented out this if statement so it cannot be used
-		/*if(settings.IDEAL_MOTION) {
-			gps = new IdealSimGpsProvider(simEngine, settings.GPS_PERIOD, settings.GPS_ANGLE_NOISE, settings.GPS_POSITION_NOISE);
-		} else {
-			gps = new RealisticSimGpsProvider(simEngine, settings.GPS_PERIOD, settings.GPS_ANGLE_NOISE, settings.GPS_POSITION_NOISE);
-		}*/
 		gps = new RealisticSimGpsProvider(simEngine, settings.GPS_PERIOD, settings.GPS_ANGLE_NOISE, settings.GPS_POSITION_NOISE);
 
 		// Load waypoints

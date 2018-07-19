@@ -1,4 +1,4 @@
-package edu.illinois.mitra.starl.motion;
+package edu.illinois.mitra.starl.modelinterfaces;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -18,7 +18,7 @@ import edu.illinois.mitra.starl.objects.HandlerMessage;
  * Created by wangcs2 on 6/1/2017.
  */
 
-public class GhostAerialBTI implements DroneBTI, DeviceControllerListener {
+public class GhostAerialInterface implements DroneInterface, DeviceControllerListener {
 
 
     private static String TAG = "GADroneBTI";
@@ -43,7 +43,7 @@ public class GhostAerialBTI implements DroneBTI, DeviceControllerListener {
     private OnConnectionListener GBoxListener;
 
     //private ConnectTask task;
-    public GhostAerialBTI(GlobalVarHolder gvh, Context context, String mac) {
+    public GhostAerialInterface(GlobalVarHolder gvh, Context context, String mac) {
         this.context = context;
         this.mac = mac;
         this.gvh = gvh;
@@ -160,7 +160,7 @@ public class GhostAerialBTI implements DroneBTI, DeviceControllerListener {
 
         private void initServices() {
             if (bluetoothServiceBinder == null) {
-                Intent i = new Intent(context, GhostAerialBTI.class);
+                Intent i = new Intent(context, GhostAerialInterface.class);
                 context.bindService(i, bluetoothServiceConnection, Context.BIND_AUTO_CREATE);
             }
 

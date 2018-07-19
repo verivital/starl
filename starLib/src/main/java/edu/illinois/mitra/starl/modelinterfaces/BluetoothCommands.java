@@ -1,4 +1,4 @@
-package edu.illinois.mitra.starl.motion;
+package edu.illinois.mitra.starl.modelinterfaces;
 
 
 /**

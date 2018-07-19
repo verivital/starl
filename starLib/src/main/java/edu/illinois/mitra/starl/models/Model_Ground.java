@@ -1,7 +1,7 @@
 package edu.illinois.mitra.starl.models;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.motion.GroundBTI;
+import edu.illinois.mitra.starl.modelinterfaces.GroundInterface;
 import edu.illinois.mitra.starl.objects.Common;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
@@ -54,7 +54,7 @@ public abstract class Model_Ground extends Model {
         this.angle = t_pos.index;
     }
 
-    public abstract Class<? extends GroundBTI> getBluetoothInterface();
+    public abstract Class<? extends GroundInterface> getBluetoothInterface();
 
     @Override
     public String toString() {

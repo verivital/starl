@@ -1,18 +1,24 @@
-package edu.illinois.mitra.starl.harness;
+package edu.illinois.mitra.starl.motion;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
+import edu.illinois.mitra.starl.harness.SimGpsProvider;
+import edu.illinois.mitra.starl.models.ModelRegistry;
+import edu.illinois.mitra.starl.models.Model_Ground;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_Ground;
 import edu.illinois.mitra.starl.objects.Common;
 
-public class RealisticSimMotionAutomaton_Ground extends MotionAutomaton_Ground {
+public class SimMotionAutomaton_Ground extends MotionAutomaton_Ground {
 	private SimGpsProvider gpsp;
 	private String name;
 	private String typeName;
 	
-	public RealisticSimMotionAutomaton_Ground(GlobalVarHolder gvh, SimGpsProvider gpsp) {
-		super(gvh, null);
+	public SimMotionAutomaton_Ground(GlobalVarHolder gvh, SimGpsProvider gpsp) {
+		super(gvh);
 		name = gvh.id.getName();
-		typeName = "Model_iRobot";
+		typeName = gvh.plat.model.getTypeName();
+		if (!(gvh.plat.model instanceof Model_Ground)) {
+			throw new IllegalArgumentException(typeName + " is not an instance of Model_Ground.");
+		}
 		this.gpsp = gpsp;
 	}
 
@@ -29,8 +35,8 @@ public class RealisticSimMotionAutomaton_Ground extends MotionAutomaton_Ground {
 	protected void curve(int velocity, int radius) {
 		if(running) {
 			sendMotionEvent(Common.MOT_ARCING, velocity, radius);
-			// TODO: Determine if angular velocity formula works! 
-			gpsp.setVelocity(typeName,name, velocity, (int) Math.round((velocity*360.0)/(2*Math.PI*radius)));
+			// TODO: Determine if angular velocity formula works!
+			gpsp.setVelocity(typeName, name, velocity, (int) Math.round((velocity*360.0)/(2*Math.PI*radius)));
 		}
 	}
 

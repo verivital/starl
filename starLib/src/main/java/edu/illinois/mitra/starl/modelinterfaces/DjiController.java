@@ -2,7 +2,7 @@
 //      Tim Liang - @timliang on verivital.slack.com for questions
 //      Stirling Carter - @stirlingcarter on verivital.slack.com for questions
 
-package edu.illinois.mitra.starl.motion;
+package edu.illinois.mitra.starl.modelinterfaces;
 
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +29,7 @@ import dji.sdk.sdkmanager.DJISDKManager;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.objects.HandlerMessage;
 
-public class DjiController implements DroneBTI {
+public class DjiController implements DroneInterface {
 
     private static final String FLAG_CONNECTION_CHANGE = "dji_sdk_connection_change";
     private static final boolean USING_WIFI_BRIDGE = false;
@@ -86,7 +86,7 @@ public class DjiController implements DroneBTI {
         }
     }
 
-    // Alias for setInputs to conform to DroneBTI interface
+    // Alias for setInputs to conform to DroneInterface interface
     public void setControlInput(double yaw, double pitch, double roll, double gaz) {
         setInputs((float)yaw, (float)pitch, (float)roll, (float)gaz);
     }

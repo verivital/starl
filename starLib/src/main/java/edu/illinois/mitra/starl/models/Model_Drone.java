@@ -1,7 +1,7 @@
 package edu.illinois.mitra.starl.models;
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.motion.DroneBTI;
+import edu.illinois.mitra.starl.modelinterfaces.DroneInterface;
 import edu.illinois.mitra.starl.objects.Common;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
@@ -27,7 +27,7 @@ public abstract class Model_Drone extends Model {
     public abstract double mass(); // kg
     public abstract double height();
 
-    public abstract Class<? extends DroneBTI> getBluetoothInterface();
+    public abstract Class<? extends DroneInterface> getBluetoothInterface();
     public abstract PIDParams getPIDParams();
 
     // platform specific control parameters: see page 78 of http://www.msh-tools.com/ardrone/ARDrone_Developer_Guide.pdf

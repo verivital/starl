@@ -88,12 +88,12 @@ public class RobotsActivity extends Activity implements MessageListener {
 		// Put number of robots being used here
 		numRobots = 1;
 		botInfo = new BotInfoSelector[numRobots];
-		// add color, robot type, and device type for each robot here
-		//botInfo[0] = new BotInfoSelector("red", Common.MAVIC, Common.NEXUS7);
-		//botInfo[1] = new BotInfoSelector("green", Common.IROBOT, Common.MOTOE);
-		//botInfo[2] = new BotInfoSelector("blue", Common.IROBOT, Common.NEXUS7);
-		// botInfo[3] = new BotInfoSelector("white", Common.IROBOT, Common.NEXUS7);
-		botInfo[0] = new BotInfoSelector("blue", Common.PHANTOM, Common.NEXUS7);
+		// add color, robot model, and device model for each robot here
+		//botInfo[0] = new BotInfoSelector("red", "Model_Mavic", Common.NEXUS7);
+		//botInfo[1] = new BotInfoSelector("green", "Model_iRobot", Common.MOTOE);
+		//botInfo[2] = new BotInfoSelector("blue", "Model_iRobot", Common.NEXUS7);
+		// botInfo[3] = new BotInfoSelector("white", "Model_iRobot", Common.NEXUS7);
+		botInfo[0] = new BotInfoSelector("blue", "Model_Phantom", Common.NEXUS7);
 
 		// Row 0 = names
 		// Row 1 = IPs
@@ -132,7 +132,7 @@ public class RobotsActivity extends Activity implements MessageListener {
 		for (int i = 0; i < participantNames.length; i++) {
 			hm_participants.put(participantNames[i], participantIPs[i]);
 		}
-		gvh = new RealGlobalVarHolder(participantNames[selectedRobot], hm_participants, botInfo[selectedRobot].type, mainHandler, this);
+		gvh = new RealGlobalVarHolder(participantNames[selectedRobot], hm_participants, botInfo[selectedRobot].model, mainHandler, this);
 		mainHandler.setGvh(gvh);
 
 		//Connect
@@ -226,7 +226,7 @@ public class RobotsActivity extends Activity implements MessageListener {
 		pbBattery.setMax(100);
 		cbRegistered = (CheckBox) findViewById(R.id.cbRegistered);
 
-		if (!(botInfo[selectedRobot].type instanceof Model_Drone)) {
+		if (!(botInfo[selectedRobot].model instanceof Model_Drone)) {
 			cbRegistered.setVisibility(View.GONE);
 		} else {
 			cbBluetooth.setText("Drone Connected");

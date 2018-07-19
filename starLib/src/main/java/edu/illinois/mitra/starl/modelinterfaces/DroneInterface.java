@@ -1,6 +1,8 @@
-package edu.illinois.mitra.starl.motion;
+package edu.illinois.mitra.starl.modelinterfaces;
 
-public interface DroneBTI extends BTI {
+import edu.illinois.mitra.starl.modelinterfaces.ModelInterface;
+
+public interface DroneInterface extends ModelInterface {
 
     void setControlInput(double yaw, double pitch, double roll, double gaz);
 

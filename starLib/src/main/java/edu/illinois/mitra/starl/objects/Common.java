@@ -21,15 +21,6 @@ public final class Common {
 	public static final Integer numOFbots = 5;
 	public static final Integer numOFgroups= 2;
 
-    // Bot types
-    public static final int IROBOT = 50;
-    public static final int MINIDRONE = 51;
-	public static final int GHOSTAERIAL=52;
-	public static final int MAVIC = 53;
-
-	public static final int o3DR = 54;      //cannot start a variable name with number, so add a letter o
-	public static final int PHANTOM = 55;
-
     // Mobile device types
     public static final int NEXUS7 = 60;
     public static final int MOTOE = 61;

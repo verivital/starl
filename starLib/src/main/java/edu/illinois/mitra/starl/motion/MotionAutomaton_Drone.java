@@ -15,70 +15,29 @@ import static java.lang.Math.toRadians;
 /**
  * TODO: Remove unncessary methods/cleanup, fix PID Controller.
  * Base logic for all drone motion, allowing apps to use a goTo method to reach a specific point, or control motion with arrow keys.
- * Extended by RealisticSimMotionAutomaton_Drone for simulation and RealisticMotionAutomaton_Drone for real life applications.
+ * Extended by SimMotionAutomaton_Drone for simulation and RealMotionAutomaton_Drone for real life applications.
  */
 public abstract class MotionAutomaton_Drone extends RobotMotion {
     protected static final String TAG = "MotionAutomaton";
     protected static final String ERR = "Critical Error";
     private static final int safeHeight = 500;
-    private boolean abort = false;
-
-    // control input is not sent right away, but delayed until the end of the loop
-    private double storedYaw, storedPitch, storedRoll, storedGaz;
-    boolean storeChanged;
-    protected void storeControlInput(double yaw, double pitch, double roll, double gaz) {
-        storedYaw = yaw;
-        storedPitch = pitch;
-        storedRoll = roll;
-        storedGaz = gaz;
-        storeChanged = true;
-    }
-    protected void storeYaw(double yaw) {
-        storedYaw = yaw;
-        storeChanged = true;
-    }
-    protected void storePitch(double pitch) {
-        storedPitch = pitch;
-        storeChanged = true;
-    }
-    protected void storeRoll(double roll) {
-        storedRoll = roll;
-        storeChanged = true;
-    }
-    protected void storeGaz(double gaz) {
-        storedGaz = gaz;
-        storeChanged = true;
-    }
-
+    private static final MotionParameters DEFAULT_PARAMETERS = MotionParameters.defaultParameters();
     protected GlobalVarHolder gvh;
-
     // Motion tracking
     protected ItemPosition destination;
     protected final Model_Drone drone;
-
-    protected enum STAGE {
-        INIT, MOVE, ROTATOR, HOVER, TAKEOFF, LAND, GOAL, STOP, USER_CONTROL
-    }
-
-    private STAGE next = null;
     protected volatile STAGE stage = STAGE.INIT;
-    private STAGE prev = null;
     protected volatile boolean running = false;
-
+    private boolean abort = false;
+    // control input is not sent right away, but delayed until the end of the loop
+    private double storedYaw, storedPitch, storedRoll, storedGaz;
+    private boolean storeChanged;
+    private STAGE next = null;
+    private STAGE prev = null;
     private final PIDController PID_x;
     private final PIDController PID_y;
-
-    private enum OPMODE {
-        GO_TO, USER_CONTROL
-    }
     private OPMODE mode = OPMODE.GO_TO;
-
-    private static final MotionParameters DEFAULT_PARAMETERS = MotionParameters.defaultParameters();
     private volatile MotionParameters param = DEFAULT_PARAMETERS;
-    //need to pass some more parameteres into this param
-    //	MotionParameters.Builder settings = new MotionParameters.Builder();
-
-
     public MotionAutomaton_Drone(GlobalVarHolder gvh) {
         super(gvh.id.getName());
         this.gvh = gvh;
@@ -89,17 +48,57 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
         PID_y = new PIDController(pidParams);
     }
 
-    public void goTo(ItemPosition dest, ObstacleList obsList) {
+    public final void goTo(ItemPosition dest, ObstacleList obsList) {
         goTo(dest);
     }
 
-    public void goTo(ItemPosition dest) {
+    public final void goTo(ItemPosition dest) {
         if(!inMotion || !this.destination.equals(dest)) {
             done = false;
             this.destination = dest;
             this.mode = OPMODE.GO_TO;
             startMotion();
         }
+    }
+
+    @Override
+    public final void turnTo(ItemPosition dest) {
+        throw new IllegalArgumentException("quadcopter does not have a corresponding turn to");
+    }
+
+    @Override
+    public final void motion_resume() {
+        running = true;
+    }
+
+    @Override
+    public final void motion_stop() {
+        abort = true;
+        inMotion = false;
+        this.destination = null;
+        running = false;
+    }
+
+    @Override
+    public final void setParameters(MotionParameters param) {
+        // TODO Auto-generated method stub
+        this.param = param;
+    }
+    //need to pass some more parameteres into this param
+    //	MotionParameters.Builder settings = new MotionParameters.Builder();
+
+    /**
+     * Enables user control when called from App.
+     * @param dest -- Location of waypoint
+     * @param obs -- Location of obstacles
+     */
+    @Override
+    public final void userControl(ItemPosition dest, ObstacleList obs){
+        done = false;
+        running = true;
+        this.destination = new ItemPosition(dest);
+        this.mode = OPMODE.USER_CONTROL;
+        startMotion();
     }
 
     @Override
@@ -186,59 +185,6 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
         land();
     }
 
-    private void startMotion() {
-        running = true;
-        stage = STAGE.INIT;
-        inMotion = true;
-    }
-
-    @Override
-    public void motion_stop() {
-        abort = true;
-        inMotion = false;
-        this.destination = null;
-        running = false;
-    }
-
-    @Override
-    public void motion_resume() {
-        running = true;
-    }
-
-    protected void sendMotionEvent(int motiontype, int... argument) {
-        // TODO: This might not be necessary
-        gvh.trace.traceEvent(TAG, "Motion", Arrays.toString(argument), gvh.time());
-        gvh.sendRobotEvent(Event.MOTION, motiontype);
-    }
-
-    //private void setControlInputRescale(double yaw_v, double pitch, double roll, double gaz){
-    //    setControlInput(rescale(yaw_v, drone.max_yaw_speed()), rescale(pitch, drone.max_pitch_roll()), rescale(roll, drone.max_pitch_roll()), rescale(gaz, drone.max_gaz()));
-    //}
-
-    @Override
-    public void turnTo(ItemPosition dest) {
-        throw new IllegalArgumentException("quadcopter does not have a corresponding turn to");
-    }
-
-    @Override
-    public void setParameters(MotionParameters param) {
-        // TODO Auto-generated method stub
-    }
-
-    /**
-     * Enables user control when called from App.
-     * @param dest -- Location of waypoint
-     * @param obs -- Location of obstacles
-     */
-    @Override
-    public void userControl(ItemPosition dest, ObstacleList obs){
-        done = false;
-        running = true;
-        this.destination = new ItemPosition(dest);
-        this.mode = OPMODE.USER_CONTROL;
-        startMotion();
-    }
-
     /**
      * Receves string representing which key was pressed. "forward" for up arrow, "back" for down arrow,
      * "left" and "right" for arrows, "up" for W, "down" for S, "turnL" for A, "turnR" for D. Once a key is released,
@@ -250,7 +196,52 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
         curKey = key;
     }
 
-    public void takePicture(){}
+    protected static double rescale(double value, double max_value){
+        if(Math.abs(value) > max_value){
+            return (Math.signum(value));
+        }
+        else{
+            return value/max_value;
+        }
+    }
+
+    protected void storeControlInput(double yaw, double pitch, double roll, double gaz) {
+        storedYaw = yaw;
+        storedPitch = pitch;
+        storedRoll = roll;
+        storedGaz = gaz;
+        storeChanged = true;
+    }
+
+    protected void storeYaw(double yaw) {
+        storedYaw = yaw;
+        storeChanged = true;
+    }
+
+    protected void storePitch(double pitch) {
+        storedPitch = pitch;
+        storeChanged = true;
+    }
+
+    //private void setControlInputRescale(double yaw_v, double pitch, double roll, double gaz){
+    //    setControlInput(rescale(yaw_v, drone.max_yaw_speed()), rescale(pitch, drone.max_pitch_roll()), rescale(roll, drone.max_pitch_roll()), rescale(gaz, drone.max_gaz()));
+    //}
+
+    protected void storeRoll(double roll) {
+        storedRoll = roll;
+        storeChanged = true;
+    }
+
+    protected void storeGaz(double gaz) {
+        storedGaz = gaz;
+        storeChanged = true;
+    }
+
+    protected void sendMotionEvent(int motiontype, int... argument) {
+        // TODO: This might not be necessary
+        gvh.trace.traceEvent(TAG, "Motion", Arrays.toString(argument), gvh.time());
+        gvh.sendRobotEvent(Event.MOTION, motiontype);
+    }
 
     protected final void abort() {
         abort = true;
@@ -275,13 +266,10 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
 
     protected abstract void setMaxTilt(float val);
 
-    protected static double rescale(double value, double max_value){
-        if(Math.abs(value) > max_value){
-            return (Math.signum(value));
-        }
-        else{
-            return value/max_value;
-        }
+    private void startMotion() {
+        running = true;
+        stage = STAGE.INIT;
+        inMotion = true;
     }
 
     /**            _____                   _____
@@ -432,5 +420,13 @@ public abstract class MotionAutomaton_Drone extends RobotMotion {
         if(curKey.equals("forward") && drone.getPitch() <= .9){
             storePitch(storedPitch + .01);
         }
+    }
+
+    protected enum STAGE {
+        INIT, MOVE, ROTATOR, HOVER, TAKEOFF, LAND, GOAL, STOP, USER_CONTROL
+    }
+
+    private enum OPMODE {
+        GO_TO, USER_CONTROL
     }
 }

@@ -7,12 +7,14 @@ import android.content.Context;
 import android.os.Handler;
 import edu.illinois.mitra.starl.comms.SmartUdpComThread;
 import edu.illinois.mitra.starl.comms.UdpGpsReceiver;
-import edu.illinois.mitra.starl.harness.RealisticMotionAutomaton_Drone;
+import edu.illinois.mitra.starl.motion.RealMotionAutomaton_Drone;
+import edu.illinois.mitra.starl.motion.RealMotionAutomaton_Ground;
 import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.models.Model_Ground;
-import edu.illinois.mitra.starl.motion.BTI;
-import edu.illinois.mitra.starl.motion.MotionAutomaton_Ground;
+import edu.illinois.mitra.starl.modelinterfaces.DroneInterface;
+import edu.illinois.mitra.starl.modelinterfaces.ModelInterface;
+import edu.illinois.mitra.starl.modelinterfaces.GroundInterface;
 import edu.illinois.mitra.starl.motion.ReachAvoid;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.PositionList;
@@ -42,17 +44,17 @@ public class RealGlobalVarHolder extends GlobalVarHolder {
 		plat.model = initpos;
 		plat.reachAvoid = new ReachAvoid(this);
 
-		BTI bti; // bluetooth interface
+		ModelInterface modelInterface; // bluetooth interface
 		try {
-			bti = plat.model.getBluetoothInterface().newInstance();
+			modelInterface = plat.model.getBluetoothInterface().newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new IllegalArgumentException("Could not access bluetooth interface. ", e);
 		}
 
 		if (initpos instanceof Model_Drone) {
-			plat.moat = new RealisticMotionAutomaton_Drone(this, bti);
+			plat.moat = new RealMotionAutomaton_Drone(this, (DroneInterface)modelInterface);
 		} else if (initpos instanceof Model_Ground) {
-			plat.moat = new MotionAutomaton_Ground(this, bti);
+			plat.moat = new RealMotionAutomaton_Ground(this, (GroundInterface)modelInterface);
 		} else {
 			throw new IllegalArgumentException("No known MotionAutomaton for type " + plat.model.getTypeName());
 		}
@@ -62,7 +64,7 @@ public class RealGlobalVarHolder extends GlobalVarHolder {
             plat.moat = new MotionAutomaton(this, new BluetoothInterface(this, robotMac.trim()));
         }
         else if(type == Common.MINIDRONE) {
-            plat.moat = new MotionAutomatonMiniDrone(this, new MiniDroneBTI(this, context, robotMac));
+            plat.moat = new MotionAutomatonMiniDrone(this, new MiniDroneInterface(this, context, robotMac));
         }
 */
 		plat.moat.start();

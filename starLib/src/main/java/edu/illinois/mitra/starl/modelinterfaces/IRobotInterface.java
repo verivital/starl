@@ -1,13 +1,11 @@
-package edu.illinois.mitra.starl.motion;
+package edu.illinois.mitra.starl.modelinterfaces;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
-import edu.illinois.mitra.starl.motion.BluetoothInterface;
-import edu.illinois.mitra.starl.motion.BluetoothCommands;
 
-public class IRobotBTI implements GroundBTI {
+public class IRobotInterface implements GroundInterface {
     private BluetoothInterface bti;
 
-    public IRobotBTI(GlobalVarHolder gvh, String mac) {
+    public IRobotInterface(GlobalVarHolder gvh, String mac) {
         bti = new BluetoothInterface(gvh, mac);
     }
 

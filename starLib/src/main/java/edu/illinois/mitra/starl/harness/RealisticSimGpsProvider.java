@@ -8,7 +8,7 @@ import java.util.Vector;
 
 import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_Drone;
-import edu.illinois.mitra.starl.models.Model_iRobot;
+import edu.illinois.mitra.starl.models.Model_Ground;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Obstacles;
@@ -41,7 +41,6 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 		return subMap;
 	}
 	private final Map<String, Map<String, TrackedModel<Model>>> models;
-
 
 	// Represents waypoint modelPositions and robot modelPositions that are shared among all robots.
 
@@ -96,6 +95,7 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 	@Override
 	public synchronized void addRobot(Model bot) {
 		allpos.update(bot);
+		System.out.println("Tracking " + allpos.getNumPositions() + " bots.");
 
 		String typeName = bot.getTypeName();
 		synchronized(models) {
@@ -112,16 +112,19 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 
 	@Override
 	public void setVelocity(String typename, String name, int fwd, int rad) {
-		Model_iRobot iRobot = (Model_iRobot)getModels(typename).get(name).cur;
-		iRobot.vFwd = fwd;
-		iRobot.vRad = rad;
+		Model model = getModels(typename).get(name).cur;
+		Model_Ground modelGround;
+		try {
+			modelGround = (Model_Ground)model;
+		} catch (ClassCastException e) {
+			throw new IllegalArgumentException("Cannot setVelocity on a non-ground robot.", e);
+		}
+		modelGround.vFwd = fwd;
+		modelGround.vRad = rad;
 	}
 
 	@Override
 	public void setControlInput(String typename, String name, double v_yaw, double pitch, double roll, double gaz) {
-		/** TODO: replace with PID model here
-		*/
-
         Model_Drone drone = (Model_Drone)models.get(typename).get(name).cur;
 		drone.setV_yawR(v_yaw);
 		drone.setPitchR(pitch);

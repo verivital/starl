@@ -1,6 +1,8 @@
-package edu.illinois.mitra.starl.motion;
+package edu.illinois.mitra.starl.modelinterfaces;
 
-public interface GroundBTI extends BTI {
+import edu.illinois.mitra.starl.modelinterfaces.ModelInterface;
+
+public interface GroundInterface extends ModelInterface {
 
     void sendCurve(int velocity, int radius);
 

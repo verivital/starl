@@ -5,8 +5,8 @@ package edu.illinois.mitra.starl.models;
  */
 
 import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
-import edu.illinois.mitra.starl.motion.DroneBTI;
-import edu.illinois.mitra.starl.motion.o3DRController;
+import edu.illinois.mitra.starl.modelinterfaces.DroneInterface;
+import edu.illinois.mitra.starl.modelinterfaces.o3DRController;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.PIDParams;
 
@@ -57,7 +57,7 @@ public class Model_3DR extends Model_Drone {
     public double max_yaw_speed() { return 200; }
 
     @Override
-    public Class<? extends DroneBTI> getBluetoothInterface() {
+    public Class<? extends DroneInterface> getBluetoothInterface() {
         return o3DRController.class;
     }
 

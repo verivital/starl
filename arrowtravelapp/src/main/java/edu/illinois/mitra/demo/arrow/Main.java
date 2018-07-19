@@ -1,6 +1,5 @@
 package edu.illinois.mitra.demo.arrow;
 
-import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starl.objects.Common;
 import edu.illinois.mitra.starlSim.main.SimSettings;
 import edu.illinois.mitra.starlSim.main.Simulation;
