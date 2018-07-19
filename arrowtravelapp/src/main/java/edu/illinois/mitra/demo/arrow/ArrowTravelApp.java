@@ -7,6 +7,9 @@ package edu.illinois.mitra.demo.arrow;
 //A leader is chosen through a determined leader selection (bot0 will always be the leader)
 //The robots will then travel (while maintaining the arrow shape) to a series of waypoints
 
+//App not currently working, simplistic flocking formation based on going to waypoints without any
+//neighbour monitoring.
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +25,7 @@ import edu.illinois.mitra.starl.interfaces.LeaderElection;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
 import edu.illinois.mitra.starl.interfaces.MessageListener;
 import edu.illinois.mitra.starl.interfaces.Synchronizer;
+import edu.illinois.mitra.starl.motion.MotionParameters;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.PositionList;
 import edu.illinois.mitra.starlSim.main.SimSettings;
@@ -30,7 +34,7 @@ import edu.illinois.mitra.starlSim.main.SimSettings;
 
 public class ArrowTravelApp extends LogicThread implements MessageListener {
 
-    SortedSet<String> toVisit = new TreeSet<String>();
+    SortedSet<ItemPosition> toVisit = new TreeSet<ItemPosition>();
     SortedSet<String> toVisit2 = new TreeSet<String>();
     SortedSet<String> arrived = new TreeSet<String>();
 
@@ -39,7 +43,7 @@ public class ArrowTravelApp extends LogicThread implements MessageListener {
 
     private static final String TAG = "Logic";
 
-    private String destname = null;
+    private ItemPosition destname = null;
     private String leader = null;
 
     private boolean running = true;
@@ -48,18 +52,13 @@ public class ArrowTravelApp extends LogicThread implements MessageListener {
     private SimSettings.Builder settings = new SimSettings.Builder();
     private LeaderElection le;
     private Synchronizer sync;
-    private int d_r=500; //Some distance that each robot will be from the nearest robot
+    private int d_r=700; //Some distance that each robot will be from the nearest robot
     private double theta_r=Math.PI/4; //0<theta_r<2*PI, theta_r != PI/2, 3*PI/2... Be wary of angles <PI/2.7
-    ItemPosition leaderstart=new ItemPosition("goHere",settings.getGRID_XSIZE()/2, settings.getGRID_YSIZE()/2, 0);
 
     String robotName = gvh.id.getName();
-    Integer robotNum = Integer.parseInt(robotName.substring(6));
-    private int numbots=gvh.id.getParticipants().size();
+    Integer robotNum = gvh.id.getIdNumber();
 
 
-
-
-    PositionList posList = new PositionList();
     private final static String SYNC_START = "1";
 
 
@@ -73,8 +72,14 @@ public class ArrowTravelApp extends LogicThread implements MessageListener {
 
         // Get the list of position to travel to
         for(ItemPosition ip : gvh.gps.getWaypointPositions().getList()) {
-            toVisit.add(ip.name);
+            toVisit.add(ip);
+            destinations.put(ip.getName(),ip);
         }
+
+        MotionParameters.Builder settings = new MotionParameters.Builder();
+        settings = settings.COLAVOID_MODE(MotionParameters.COLAVOID_MODE_TYPE.USE_COLAVOID); // buggy, just goes back, deadlocks...
+        MotionParameters param = settings.build();
+        gvh.plat.moat.setParameters(param);
 
         // Progress messages are broadcast with message ID 99
         gvh.comms.addMsgListener(this,99);
@@ -84,8 +89,8 @@ public class ArrowTravelApp extends LogicThread implements MessageListener {
 
         sync = new BarrierSynchronizer(gvh);
         le = new PickedLeaderElection(gvh);
-        for(int i=0; i<numbots;i++)
-            arrived.add("bot"+i);
+
+
 
 
     }
@@ -104,6 +109,11 @@ public class ArrowTravelApp extends LogicThread implements MessageListener {
                     setup = STAGE.SYNC;
                     gvh.log.d(TAG, "Syncing...");
                     System.out.println("Syncing..." + name);
+                    PositionList<ItemPosition> plAll = gvh.gps.get_robot_Positions();
+                    for (ItemPosition rp : plAll) {
+                        arrived.add(rp.getName());
+                        System.out.println(arrived + " " + gvh.id.getName());
+                    }
                     break;
                 case SYNC:
                     if (sync.barrierProceed(SYNC_START)) {
@@ -125,10 +135,13 @@ public class ArrowTravelApp extends LogicThread implements MessageListener {
 
                 case MOVE:
 
-                    gvh.plat.moat.goTo(startpoint());
+                    ItemPosition startPoint = startpoint();
+                    System.out.println(startPoint + " " + gvh.id.getName());
+                    destinations.put(startPoint.getName(),startPoint);
+                    gvh.plat.moat.goTo(startPoint);
                     boolean motionSuccess = true;
                     while(gvh.plat.moat.inMotion) {
-                        gvh.sleep(10);
+                        gvh.sleep(100);
                         if(!toVisit2.contains("START POINT" + robotNum)) {
                             motionSuccess = false;
                             break;
@@ -141,6 +154,7 @@ public class ArrowTravelApp extends LogicThread implements MessageListener {
 
                     }
                     else if (!toVisit2.isEmpty()) {
+
                         toVisit2.remove("START POINT" + robotNum);
                     }
 
@@ -156,7 +170,7 @@ public class ArrowTravelApp extends LogicThread implements MessageListener {
                     motionSuccess = true;
                     while(gvh.plat.moat.inMotion) {
                         gvh.sleep(10);
-                        if(!toVisit2.contains(destname)) {
+                        if(!toVisit2.contains(destname.getName())) {
                             motionSuccess = false;
                             break;
                         }
@@ -166,7 +180,7 @@ public class ArrowTravelApp extends LogicThread implements MessageListener {
                     if(motionSuccess) {
                         RobotMessage inform = new RobotMessage("ALL", name, 99, "bot"+robotNum);
                         gvh.comms.addOutgoingMessage(inform);
-                        arrived.remove("bot"+robotNum);
+                        arrived.remove(gvh.id.getName());
                         setup = STAGE.WAYPOINT_CALC;
                     }
 
@@ -178,8 +192,8 @@ public class ArrowTravelApp extends LogicThread implements MessageListener {
 
                 case WAYPOINT_CALC:
                     //Calculation of waypoints for other robots
-                    if (arrived.isEmpty())
-                    {newpoint();
+                    if (arrived.isEmpty()) {
+                        newpoint();
                         setup=STAGE.WAYPOINT_TRAVEL;
                         break;}
                     else{
@@ -197,7 +211,9 @@ public class ArrowTravelApp extends LogicThread implements MessageListener {
                     if (arrived.isEmpty())
                     {
 
-                        gvh.plat.moat.goTo(newpoint());
+                        ItemPosition newPoint = newpoint();
+                        destinations.put(newPoint.getName(),newPoint);
+                        gvh.plat.moat.goTo(newPoint);
                         while (gvh.plat.moat.inMotion)
                         {
                             gvh.sleep(1);
@@ -252,18 +268,21 @@ public class ArrowTravelApp extends LogicThread implements MessageListener {
     private ItemPosition startpoint() {
 
         String robotName = gvh.id.getName();
-        Integer robotNum = Integer.parseInt(robotName.substring(6)); // assumes: botYYY
+        Integer robotNum = gvh.id.getIdNumber();
         toVisit2.add("START POINT" + robotNum);
         if(iamleader){
             return new ItemPosition("goHere",settings.getGRID_XSIZE()/2, settings.getGRID_YSIZE()/2, 0);
         }
         else {
-            if (robotNum % 2 == 0 && !iamleader)
-            {return new ItemPosition("goHere",(int) (settings.getGRID_XSIZE()/2 +d_r*robotNum/2*Math.cos(theta_r)), (int) (settings.getGRID_YSIZE()/2 -d_r*robotNum/2*Math.sin(theta_r)), 0);
+            if(robotNum == 0){
+                robotNum = le.getLeaderID();
+            }
+            if (robotNum % 2 == 0 && !iamleader) {
+                return new ItemPosition("goHere",(int) (settings.getGRID_XSIZE()/2 +d_r*robotNum/2*Math.cos(theta_r)), (int) (settings.getGRID_YSIZE()/2 -d_r*robotNum/2*Math.sin(theta_r)), 0);
             }
 
-            if (robotNum % 2 == 1)
-            {return new ItemPosition("goHere",(int) (settings.getGRID_XSIZE()/2 -d_r*(robotNum+1)/2*Math.cos(theta_r)), (int) (settings.getGRID_YSIZE()/2 -d_r*(robotNum+1)/2*Math.sin(theta_r)), 0);
+            if (robotNum % 2 == 1) {
+                return new ItemPosition("goHere",(int) (settings.getGRID_XSIZE()/2 -d_r*(robotNum+1)/2*Math.cos(theta_r)), (int) (settings.getGRID_YSIZE()/2 -d_r*(robotNum+1)/2*Math.sin(theta_r)), 0);
             }
             else
             {return null;}
@@ -278,15 +297,18 @@ public class ArrowTravelApp extends LogicThread implements MessageListener {
 
         if(iamleader){
 
-            return new ItemPosition("goHere", gvh.gps.getWaypointPosition(destname).getX(),  gvh.gps.getWaypointPosition(destname).getY(), 0);
+            return new ItemPosition("goHere", destname.getX(), destname.getY(), 0);
         }
         else {
+            if(robotNum == 0){
+                robotNum = le.getLeaderID();
+            }
             if (robotNum % 2 == 0 && !iamleader)
-            {return new ItemPosition("goHere",(int) (gvh.gps.getWaypointPosition(destname).getX() +d_r*robotNum/2*Math.cos(theta_r)), (int) (gvh.gps.getWaypointPosition(destname).getY() -d_r*robotNum/2*Math.sin(theta_r)), 0);
+            {return new ItemPosition("goHere",(int)(destname.getX() + d_r*robotNum/2*Math.cos(theta_r)), (int) (destname.getY() -d_r*robotNum/2*Math.sin(theta_r)), 0);
             }
 
             if (robotNum % 2 == 1)
-            {return new ItemPosition("goHere",(int) (gvh.gps.getWaypointPosition(destname).getX() -d_r*(robotNum+1)/2*Math.cos(theta_r)), (int) (gvh.gps.getWaypointPosition(destname).getY() -d_r*(robotNum+1)/2*Math.sin(theta_r)), 0);
+            {return new ItemPosition("goHere",(int)(destname.getX() -d_r*(robotNum+1)/2*Math.cos(theta_r)), (int) (destname.getY() -d_r*(robotNum+1)/2*Math.sin(theta_r)), 0);
             }
             else
             {return null;}

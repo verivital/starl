@@ -4,6 +4,8 @@ package edu.illinois.mitra.demo.follow;
  * Created by VerivitalLab on 2/26/2016.
  * This app was created to test the drones. The bots will each go to an assigned waypoint.
  * Once both bots have arrived at their respective waypoints, they will then go to the next waypoints.
+ *
+ * wpt files must have keys starting at 0-A and increasing numerically #-A
  */
 
 
@@ -49,12 +51,12 @@ public class FollowApp extends LogicThread {
         settings.COLAVOID_MODE(COLAVOID_MODE_TYPE.USE_COLAVOID);
         MotionParameters param = settings.build();
         gvh.plat.moat.setParameters(param);
+
         for(ItemPosition i : gvh.gps.getWaypointPositions())
             destinations.put(i.getName(), i);
+
         gvh.comms.addMsgListener(this, ARRIVED_MSG);
-        // bot names must be bot0, bot1, ... botn for this to work
-        String intValue = name.replaceFirst("[^0-9]+", "");
-        destIndex = Integer.parseInt(intValue);
+        destIndex = gvh.id.getIdNumber();
         numBots = gvh.id.getParticipants().size();
     }
 
@@ -63,8 +65,6 @@ public class FollowApp extends LogicThread {
         while(true) {
             switch(stage) {
                 case INIT:
-                    for(ItemPosition i : gvh.gps.getWaypointPositions())
-                        destinations.put(i.getName(), i);
                     numWaypoints = destinations.size();
                     stage = Stage.PICK;
                 case PICK:
@@ -79,6 +79,8 @@ public class FollowApp extends LogicThread {
                             destIndex = 0;
                         }
                         currentDestination = getDestination(destinations, destIndex);
+                        System.out.println(destinations);
+                        System.out.println(currentDestination);
                         //Log.d(TAG, currentDestination.toString());
                         destIndex++;
                         gvh.plat.moat.goTo(currentDestination);
@@ -121,6 +123,7 @@ public class FollowApp extends LogicThread {
     protected void receive(RobotMessage m) {
         boolean alreadyReceived = false;
         for(RobotMessage msg : receivedMsgs) {
+
             if(msg.getFrom().equals(m.getFrom()) && msg.getContents().equals(m.getContents())) {
                 alreadyReceived = true;
                 break;
@@ -142,6 +145,7 @@ public class FollowApp extends LogicThread {
     private <X, T> T getDestination(Map<X, T> map, int index) {
         // Keys must be 0-A format for this to work
         String key = Integer.toString(index) + "-A";
+        System.out.println(key);
         // this is for key that is just an int, no -A
         //String key = Integer.toString(index);
         return map.get(key);

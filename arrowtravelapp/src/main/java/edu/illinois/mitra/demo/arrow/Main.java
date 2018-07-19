@@ -18,7 +18,7 @@ public class Main {
 		settings.DRAW_WAYPOINT_NAMES(false);
 		settings.DRAWER(new ArrowDrawer());
 
-		Simulation sim = new Simulation(CelebrityChaserApp.class, settings.build());
+		Simulation sim = new Simulation(ArrowTravelApp.class, settings.build());
 		sim.start();
 	}
 

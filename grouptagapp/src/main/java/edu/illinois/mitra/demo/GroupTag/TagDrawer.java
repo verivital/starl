@@ -16,7 +16,7 @@ public class TagDrawer extends Drawer {
 
 	@Override
 	public void draw(LogicThread lt, Graphics2D g) {
-		GroupTagApp app = (GroupTagApp) lt;
+		CelebrityChaserApp app = (CelebrityChaserApp) lt;
 
 		g.setColor(Color.RED);
 		for(ItemPosition dest : app.destinations.values()) {
