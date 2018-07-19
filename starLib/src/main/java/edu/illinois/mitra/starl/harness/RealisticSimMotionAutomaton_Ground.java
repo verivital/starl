@@ -1,6 +1,8 @@
 package edu.illinois.mitra.starl.harness;
 
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
+import edu.illinois.mitra.starl.models.ModelRegistry;
+import edu.illinois.mitra.starl.models.Model_Ground;
 import edu.illinois.mitra.starl.motion.MotionAutomaton_Ground;
 import edu.illinois.mitra.starl.objects.Common;
 
@@ -13,6 +15,9 @@ public class RealisticSimMotionAutomaton_Ground extends MotionAutomaton_Ground {
 		super(gvh, null);
 		name = gvh.id.getName();
 		typeName = gvh.plat.model.getTypeName();
+		if (!(gvh.plat.model instanceof Model_Ground)) {
+			throw new IllegalArgumentException(typeName + " is not an instance of Model_Ground.");
+		}
 		this.gpsp = gpsp;
 	}
 

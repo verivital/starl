@@ -16,11 +16,11 @@ public interface SimGpsProvider {
 	// Implemented only by ideal gps provider
 	void setDestination(String name, ItemPosition dest, int vel);
 
-	// TODO fix bad interface, specific to Model_quadcopter
+	// Specific to Model_Drone subclasses
 	void setControlInput(String typename, String name, double v_yaw, double pitch, double roll, double gaz);
 
 	// Implemented only be realistic gps provider
-	// TODO fix bad interface, specific to Model_iRobot
+	// Specific to Model_Ground subclasses
 	void setVelocity(String typename, String name, int fwd, int rad);
 
 	void halt(String name);

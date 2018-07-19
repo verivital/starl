@@ -9,7 +9,6 @@ import java.util.Vector;
 import edu.illinois.mitra.starl.models.Model;
 import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.models.Model_Ground;
-import edu.illinois.mitra.starl.models.Model_iRobot;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Obstacles;
@@ -42,7 +41,6 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 		return subMap;
 	}
 	private final Map<String, Map<String, TrackedModel<Model>>> models;
-
 
 	// Represents waypoint modelPositions and robot modelPositions that are shared among all robots.
 
@@ -127,9 +125,6 @@ public class RealisticSimGpsProvider extends Observable implements SimGpsProvide
 
 	@Override
 	public void setControlInput(String typename, String name, double v_yaw, double pitch, double roll, double gaz) {
-		/** TODO: replace with PID model here
-		*/
-
         Model_Drone drone = (Model_Drone)models.get(typename).get(name).cur;
 		drone.setV_yawR(v_yaw);
 		drone.setPitchR(pitch);

@@ -2,8 +2,6 @@ package edu.illinois.mitra.starl.gvh;
 
 import java.util.HashMap;
 
-import edu.illinois.mitra.starl.harness.IdealSimGpsProvider;
-import edu.illinois.mitra.starl.harness.IdealSimMotionAutomaton;
 import edu.illinois.mitra.starl.harness.RealisticSimMotionAutomaton_Drone;
 import edu.illinois.mitra.starl.harness.RealisticSimMotionAutomaton_Ground;
 import edu.illinois.mitra.starl.harness.SimGpsReceiver;
@@ -45,22 +43,16 @@ public class SimGlobalVarHolder extends GlobalVarHolder {
 		plat.reachAvoid = new ReachAvoid(this);
 
 
-		// Yixiao says IdealSimGpsProvider shouldn't be used. Should probably remove the if else here.
 		// Model_Drone is base class for all aerial robots.
-		// Model_Ground base class for all ground robots
+		// Model_Ground is base class for all ground robots
 		if(initpos instanceof Model_Ground){
-			if(engine.getGps() instanceof IdealSimGpsProvider) {
-				plat.moat = new IdealSimMotionAutomaton(this, (IdealSimGpsProvider)engine.getGps());
-			} else {
-				plat.moat = new RealisticSimMotionAutomaton_Ground(this, engine.getGps());
-				plat.moat.start();
-			}
+			plat.moat = new RealisticSimMotionAutomaton_Ground(this, engine.getGps());
 		} else if(initpos instanceof Model_Drone){
 			plat.moat = new RealisticSimMotionAutomaton_Drone(this, engine.getGps());
-			plat.moat.start();
 		} else {
 			throw new RuntimeException("Initpos neither a Model_Ground or Model_Drone: " + initpos.getTypeName());
 		}
+		plat.moat.start();
 	}
 
 	@Override
