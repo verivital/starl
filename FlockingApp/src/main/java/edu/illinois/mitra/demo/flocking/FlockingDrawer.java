@@ -16,7 +16,7 @@ public class FlockingDrawer extends Drawer {
 	
 	@Override
 	public void draw(LogicThread lt, Graphics2D g) {
-		FlockingTestApp app = (FlockingTestApp) lt;
+		FlockingApp app = (FlockingApp) lt;
 
 		g.setColor(Color.RED);
 		for(ItemPosition dest : app.destinations) {

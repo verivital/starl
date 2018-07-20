@@ -16,7 +16,7 @@ public class ArrowDrawer extends Drawer {
 	
 	@Override
 	public void draw(LogicThread lt, Graphics2D g) {
-		CelebrityChaserApp app = (CelebrityChaserApp) lt;
+		ArrowTravelApp app = (ArrowTravelApp) lt;
 
 		g.setColor(Color.RED);
 		for(ItemPosition dest : app.destinations.values()) {

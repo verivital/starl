@@ -14,22 +14,18 @@ import edu.illinois.mitra.starl.motion.*;
 import edu.illinois.mitra.starl.motion.MotionParameters.COLAVOID_MODE_TYPE;
 
 public class DistributedSearchApp extends LogicThread {
-	ItemPosition CS_A = new ItemPosition("CS_A", 2250, 2750, 0);
-	ItemPosition CS_B = new ItemPosition("CS_B", 2750, 2750, 0);
-	ItemPosition CS_C = new ItemPosition("CS_C", 2250, 2250, 0);
-	ItemPosition CS_D = new ItemPosition("CS_D", 2750, 2250, 0);
+
 	public static final int TASK_MSG = 21;
 	public static final int ASSIGN_MSG = 22;
 	public static final int FAILED_MSG = 23;
 	public static final int DONE_MSG = 24;
 	public static final int FOUND_MSG = 25;
-	private static final MotionParameters DEFAULT_PARAMETERS = MotionParameters.defaultParameters();
-	private volatile MotionParameters param = DEFAULT_PARAMETERS;
+
 	Queue<ItemPosition> destinations = new LinkedList<ItemPosition>();
 	Queue<ItemPosition> Alldest;
-	public PositionList SensePt;
-	//SensePt is just for display purpose
+	public PositionList SensePt;	//SensePt is just for display purpose
 	private LeaderElection le;
+
 	private boolean iamleader=false;
 	private long Start_time;
 	
@@ -40,23 +36,34 @@ public class DistributedSearchApp extends LogicThread {
 	LinkedList<ItemPosition> searchPath;
 	
 	ObstacleList obEnvironment;
-	int robotIndex;
+	public int robotIndex;
+	private String robotName;
+	private int goalRadius;
 	ItemPosition currentDestination, preDestination, searchTemp ;
 		
 	private enum Stage {
 		ELECT, ASSIGN, PICK, GO, HOLD, SEARCH, DONE
 	};
 
-	private Stage stage = Stage.ELECT;
+	/*ItemPosition CS_A = new ItemPosition("CS_A", 2250, 2750, 0);
+	ItemPosition CS_B = new ItemPosition("CS_B", 2750, 2750, 0);
+	ItemPosition CS_C = new ItemPosition("CS_C", 2250, 2250, 0);
+	ItemPosition CS_D = new ItemPosition("CS_D", 2750, 2250, 0);*/
+
+	private Stage stage;
 
 	public DistributedSearchApp(GlobalVarHolder gvh) {
 		super(gvh);
-		
-		robotIndex = Integer.parseInt(name.substring(6,name.length()));
+		stage = stage.ELECT;
+		robotIndex = gvh.id.getIdNumber();
+		robotName =gvh.id.getName();
+
 		MotionParameters.Builder settings = new MotionParameters.Builder();
-		settings.COLAVOID_MODE(COLAVOID_MODE_TYPE.USE_COLBACK);
-		//settings.GOAL_RADIUS(15);
-		param = settings.build();
+		settings.COLAVOID_MODE(COLAVOID_MODE_TYPE.USE_COLAVOID);
+
+		goalRadius = 15;
+		settings.GOAL_RADIUS(goalRadius);
+		MotionParameters param = settings.build();
 		gvh.plat.moat.setParameters(param);
 		obEnvironment = gvh.gps.getObspointPositions();
 
@@ -67,7 +74,6 @@ public class DistributedSearchApp extends LogicThread {
 		gvh.comms.addMsgListener(this, FAILED_MSG);
 		gvh.comms.addMsgListener(this, FOUND_MSG);
 		
-		
 	}
 
 	@Override
@@ -76,10 +82,10 @@ public class DistributedSearchApp extends LogicThread {
 		while(true) {
 			if(gvh.gps.getMyPosition().circleSensor && stage != Stage.DONE){
 				MessageContents content = new MessageContents("Got it!");
-				RobotMessage got_it_msg = new RobotMessage("ALL", name, FOUND_MSG, content);
+				RobotMessage got_it_msg = new RobotMessage("ALL", robotName, FOUND_MSG, content);
 				gvh.comms.addOutgoingMessage(got_it_msg);
 				stage= Stage.DONE;
-				System.out.println(name + " Got it!");
+				System.out.println(robotName + " Got it!");
 			}
 			if((((Model_Ground)gvh.plat.model).type == Model_Ground.Type.GET_TO_GOAL)
 						|| (((Model_Ground)gvh.plat.model).type == Model_Ground.Type.EXPLORE_AREA)){
@@ -90,9 +96,9 @@ public class DistributedSearchApp extends LogicThread {
 						le.elect();
 					}
 					if(le.getLeader() != null) {
-						iamleader = le.getLeader().equals(name);
+						iamleader = le.getLeader().equals(robotName);
 						if(iamleader){
-							System.out.println(name);
+							System.out.println(robotName);
 						}
 						stage = Stage.ASSIGN;
 					}
@@ -122,7 +128,7 @@ public class DistributedSearchApp extends LogicThread {
 						}
 						//assign finished, tell individual to start
 						MessageContents content = new MessageContents("20000");
-						RobotMessage start_task_msg = new RobotMessage("ALL", name, TASK_MSG, content);
+						RobotMessage start_task_msg = new RobotMessage("ALL", robotName, TASK_MSG, content);
 						gvh.comms.addOutgoingMessage(start_task_msg);
 						Start_time = 20000*robotIndex + gvh.time();
 						stage = Stage.PICK;
@@ -131,16 +137,15 @@ public class DistributedSearchApp extends LogicThread {
 				case PICK:
 					if(gvh.time()>Start_time){
 						if(destinations.isEmpty()) {
-							RobotMessage done_task_msg = new RobotMessage("ALL", name, DONE_MSG, "done");
+							RobotMessage done_task_msg = new RobotMessage("ALL", robotName, DONE_MSG, "done");
 							gvh.comms.addOutgoingMessage(done_task_msg);
 							stage = Stage.DONE;
-						} else 
-						{
+						} else {
 							currentDestination = (ItemPosition)destinations.peek();
-							RRTNode path = new RRTNode(gvh.gps.getPosition(name).getX(), gvh.gps.getPosition(name).getY());
+							RRTNode path = new RRTNode(gvh.gps.getPosition(robotName).getX(), gvh.gps.getPosition(robotName).getY());
 
 							//TODO: Fix x/y upper and lower limits
-							pathStack = path.findRoute(currentDestination, 5000, obEnvironment, 12330, 0,0, 8500, (gvh.gps.getPosition(name)), (int) (gvh.plat.model.radius()));
+							pathStack = path.findRoute(currentDestination, 5000, obEnvironment,0, 12330, 0, 8500, (gvh.gps.getPosition(robotName)), (int) (gvh.plat.model.radius()));
 							kdTree = RRTNode.stopNode;
 							//wait when can not find path
 							if(pathStack == null){
@@ -160,7 +165,7 @@ public class DistributedSearchApp extends LogicThread {
 						if(!pathStack.empty()){
 							//if did not reach last midway point, go back to path planning
 							if(preDestination != null){
-								if((gvh.gps.getPosition(name).distanceTo(preDestination)>param.GOAL_RADIUS)){
+								if((gvh.gps.getPosition(robotName).distanceTo(preDestination) > goalRadius)){
 									pathStack.clear();
 									stage = Stage.PICK;
 									break;
@@ -174,7 +179,7 @@ public class DistributedSearchApp extends LogicThread {
 							gvh.plat.moat.goTo(goMidPoint);
 						}
 						else{
-							if((gvh.gps.getPosition(name).distanceTo(currentDestination)>param.GOAL_RADIUS)){
+							if((gvh.gps.getPosition(robotName).distanceTo(currentDestination)>goalRadius)){
 								pathStack.clear();
 								stage = Stage.PICK;
 							}
@@ -191,8 +196,8 @@ public class DistributedSearchApp extends LogicThread {
 					
 					if(!gvh.plat.moat.inMotion) {
 						if(searchTemp.distanceTo(gvh.gps.getMyPosition())>100){
-							MessageContents content = new MessageContents(currentDestination.name);
-							RobotMessage task_fail_msg = new RobotMessage("ALL", name, FAILED_MSG, content);
+							MessageContents content = new MessageContents(currentDestination.getName());
+							RobotMessage task_fail_msg = new RobotMessage("ALL", robotName, FAILED_MSG, content);
 							gvh.comms.addOutgoingMessage(task_fail_msg);
 							stage= Stage.DONE;
 							break;
@@ -231,39 +236,39 @@ public class DistributedSearchApp extends LogicThread {
 
 	private void assign(ItemPosition toAdd, int index) {
 		//send the assign message to indexed bot
-		String botS = "iRobot"+index;
-		if(botS.equals(name)){
+		String botS = "irobot"+index;
+		if(botS.equals(robotName)){
 			destinations.add(toAdd);
 			return;
 		}
 		String[] temp = new String[3];
-		temp[0] = toAdd.name;
+		temp[0] = toAdd.getName();
 		temp[1] = Integer.toString(toAdd.getX());
 		temp[2] = Integer.toString(toAdd.getY());
 		MessageContents content = new MessageContents(temp);
-		RobotMessage assign_msg = new RobotMessage(botS, name, ASSIGN_MSG, content);
+		RobotMessage assign_msg = new RobotMessage(botS, robotName, ASSIGN_MSG, content);
 		gvh.comms.addOutgoingMessage(assign_msg);
 		System.out.println("Assign "+ content+ " to "+botS);
 	}
 
 	@Override
 	protected void receive(RobotMessage m) {
-		if(m.getTo().equals(name) || m.getTo().equals("ALL")){
+		if(m.getTo().equals(robotName) || m.getTo().equals("ALL")){
 			if(m.getMID() == ASSIGN_MSG){
-			//	System.out.println("bot "+name + " got point " + m.getContents(0));
+			//	System.out.println("bot "+robotName + " got point " + m.getContents(0));
 				MessageContents msg_content = m.getContents();
 				List<String> assignedP = new ArrayList<String>(msg_content.getContents());
 				ItemPosition point = new ItemPosition(assignedP.get(0), Integer.parseInt(assignedP.get(1)), Integer.parseInt(assignedP.get(2)), 0);
 				destinations.add(point);
 			}
 			if(m.getMID() == TASK_MSG){
-				//	System.out.println("bot "+name + " got point " + m.getContents(0));
+				//	System.out.println("bot "+robotName + " got point " + m.getContents(0));
 					MessageContents msg_content = m.getContents();
 					Start_time = Integer.parseInt(msg_content.getContents().get(0))*robotIndex + gvh.time();
 					stage = Stage.PICK;
 			}
 			if(m.getMID() == FOUND_MSG){
-				//	System.out.println("bot "+name + " got point " + m.getContents(0));
+				//	System.out.println("bot "+robotName + " got point " + m.getContents(0));
 					stage = Stage.DONE;
 			}
 		}
@@ -272,7 +277,7 @@ public class DistributedSearchApp extends LogicThread {
 	private LinkedList<ItemPosition> robotCoverageAlg(ItemPosition door){
 		//This is the algorithm for finding a path that will cover the room. We will not focus on this algorithm, therefore we pre-enter the points
 		LinkedList<ItemPosition> toReturn = new LinkedList<ItemPosition>();
-		switch(door.name){
+		switch(door.getName()){
 			case "A":
 				toReturn.add(new ItemPosition("temp",2800,3000,0));
 				toReturn.add(new ItemPosition("temp",3400,3000,0));

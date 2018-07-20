@@ -226,6 +226,7 @@ public class FlockingApp extends LogicThread {
 
                                 //*********************** If Robot is the Rightmost (Last robot in the group)
                                 if (gvh.BotGroup.isLast) {
+                                    System.out.println(newX + " newX");
 
 
                                     newX = (beforeX + newX + gvh.BotGroup.rf) / 2;
@@ -250,6 +251,7 @@ public class FlockingApp extends LogicThread {
                             //*********************** Leader doesn't need any change
                             // if (!gvh.id.getName().equals(le.getLeader())) {
 
+                            //Once flocking, rotate by theta degrees
                             if (is_Flocking()) {
                                 gvh.BotGroup.theta = gvh.BotGroup.theta + 20;
 
@@ -361,7 +363,7 @@ public class FlockingApp extends LogicThread {
                 PositionList<ItemPosition> plAll = gvh.gps.get_robot_Positions();
                 for (ItemPosition rp : plAll.getList()) {
                     //TODO: will have to change string for each robot.
-                    if (rp.getName().equals("iRobot" + i))
+                    if (rp.getName().equals("irobot" + i))
                         Bot = rp;
                     if (rp.getName().equals(Common.bots_neighbour[i][0]))
                         BeforeBot = rp;
@@ -371,9 +373,12 @@ public class FlockingApp extends LogicThread {
                     }
 
                 }
+                System.out.println(Bot.name + " " + BeforeBot.name);
+                System.out.println(Bot.getX() + " X " +  BeforeBot.getX() + " " + Bot.getY() + " Y " + BeforeBot.getY());
 
                 // Distance between the bot and his before (left) neighbour
                 double botDistance = Math.sqrt((Bot.getX() - BeforeBot.getX()) * (Bot.getX() - BeforeBot.getX()) + (Bot.getY() - BeforeBot.getY()) * (Bot.getY() - BeforeBot.getY()));
+                System.out.println(botDistance + " Before " + (groupDis - groupDis * 0.3) + " " + (groupDis + groupDis * 0.3) );
                 if (botDistance < (groupDis - groupDis * 0.3) || botDistance > (groupDis + groupDis * 0.3)) {
 
                     System.out.println("It is false because before bot is out of the range, their distance between each other is " + String.valueOf(botDistance));
@@ -384,6 +389,7 @@ public class FlockingApp extends LogicThread {
                 if (!Common.bots_neighbour[i][1].equals("none")) {
                     double botDistanceAfter = Math.sqrt((Bot.getX() - AfterBot.getX()) * (Bot.getX() - AfterBot.getX()) + (Bot.getY() - AfterBot.getY()) * (Bot.getY() - AfterBot.getY()));
 
+                    System.out.println(botDistanceAfter + " After " + (groupDis - groupDis * 0.3) + " " + (groupDis + groupDis * 0.3) );
                     if (botDistanceAfter < (groupDis - groupDis * 0.3) || botDistanceAfter > (groupDis + groupDis * 0.3)) {
                         System.out.println("It is false because after bot is out of the range, their distance between each other is " + String.valueOf(botDistance));
                         return false;

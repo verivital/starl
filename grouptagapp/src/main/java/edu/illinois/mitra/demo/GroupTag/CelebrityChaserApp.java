@@ -8,7 +8,7 @@
 //They first check her starting location (for the sake of the simulation, assume this is their house)
 //Any time the celebrity is 'seen' they update their path to catch up
 
-package edu.illinois.mitra.demo.arrow;
+package edu.illinois.mitra.demo.GroupTag;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,12 +25,9 @@ import edu.illinois.mitra.starl.interfaces.LeaderElection;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
 import edu.illinois.mitra.starl.interfaces.MessageListener;
 import edu.illinois.mitra.starl.interfaces.Synchronizer;
+import edu.illinois.mitra.starl.motion.MotionParameters;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.PositionList;
-
-
-
-
 
 public class CelebrityChaserApp extends LogicThread implements MessageListener {
 
@@ -77,6 +74,12 @@ public class CelebrityChaserApp extends LogicThread implements MessageListener {
 
         sync = new BarrierSynchronizer(gvh);
         le = new RandomLeaderElection(gvh);
+
+        MotionParameters.Builder settings = new MotionParameters.Builder();
+        settings = settings.STOP_AT_DESTINATION(true);
+        settings = settings.COLAVOID_MODE(MotionParameters.COLAVOID_MODE_TYPE.USE_COLAVOID); // buggy, just goes back, deadlocks...
+        MotionParameters param = settings.build();
+        gvh.plat.moat.setParameters(param);
 
 
 

@@ -29,6 +29,7 @@ public class MazeApp extends LogicThread {
 	private volatile MotionParameters param = DEFAULT_PARAMETERS;
 	final Map<String, ItemPosition> destinations = new HashMap<String, ItemPosition>();
 	int robotIndex;
+	private String robotLeader;
 	
 	// used to find path through obstacles
 	Stack<ItemPosition> pathStack;	
@@ -49,20 +50,13 @@ public class MazeApp extends LogicThread {
 		PICK, GO, DONE, ELECT, HOLD, MIDWAY
 	};
 
-	private Stage stage = Stage.PICK;
+	private Stage stage = Stage.ELECT;
 
 	public MazeApp(GlobalVarHolder gvh) {
 		super(gvh);
-		for(int i = 0; i< gvh.gps.get_robot_Positions().getNumPositions(); i++){
-			if(gvh.gps.get_robot_Positions().getList().get(i).name == name){
-				robotIndex = i;
-				break;
-			}
-		}
-		
+		robotIndex = gvh.id.getIdNumber();
 		le = new RandomLeaderElection(gvh);
-		
-		
+
 		MotionParameters.Builder settings = new MotionParameters.Builder();
 //		settings.ROBOT_RADIUS(400);
 		settings.COLAVOID_MODE(COLAVOID_MODE_TYPE.USE_COLBACK);
@@ -80,6 +74,7 @@ public class MazeApp extends LogicThread {
 		obsList = gvh.gps.getViews().elementAt(robotIndex) ;
 		
 		gvh.comms.addMsgListener(this, ARRIVED_MSG);
+		le.elect();
 	}
 
 	@Override
@@ -93,26 +88,24 @@ public class MazeApp extends LogicThread {
 					
 				switch(stage) {
 				case ELECT:
-					/*
-					le.elect();
+					System.out.println("here");
+
 					if(le.getLeader() != null) {
-						results[1] = le.getLeader();
+						robotLeader = le.getLeader();
+						System.out.println(robotLeader);
+						stage = Stage.PICK;
 					}
-					*/
-					stage = Stage.PICK;
-	
+
 					break;
 				case PICK:
 					if(destinations.isEmpty()) {
 						stage = Stage.DONE;
-					} else 
-					{
+					} else {
 	
-			//			RobotMessage informleader = new RobotMessage("ALL", name, 21, le.getLeader());
-			//			gvh.comms.addOutgoingMessage(informleader);
+						RobotMessage informleader = new RobotMessage("ALL", name, 21, robotLeader);
+						gvh.comms.addOutgoingMessage(informleader);
 	
-			//			iamleader = le.getLeader().equals(name);
-						iamleader = true;
+						iamleader = le.getLeader().equals(name);
 						
 						if(iamleader)
 						{
@@ -134,34 +127,31 @@ public class MazeApp extends LogicThread {
 							}
 						}
 						
-						/*
 						else
 						{
-						currentDestination = gvh.gps.getPosition(le.getLeader());	
-						currentDestination1 = new ItemPosition(currentDestination); 
+						currentDestination = gvh.gps.getPosition(le.getLeader());
 						int newx, newy;
-						if(gvh.gps.getPosition(name).getX() < currentDestination1.getX())
+						if(gvh.gps.getPosition(name).getX() < currentDestination.getX())
 						{
-							newx = gvh.gps.getPosition(name).getX() - currentDestination1.getX()/8;
+							newx = gvh.gps.getPosition(name).getX() - currentDestination.getX()/8;
 						}
 						else
 						{
-							newx = gvh.gps.getPosition(name).getX() + currentDestination1.getX()/8;
+							newx = gvh.gps.getPosition(name).getX() + currentDestination.getX()/8;
 						}
-						if(gvh.gps.getPosition(name).getY() < currentDestination1.getY())
+						if(gvh.gps.getPosition(name).getY() < currentDestination.getY())
 						{
-							newy = gvh.gps.getPosition(name).getY() - currentDestination1.getY()/8;
+							newy = gvh.gps.getPosition(name).getY() - currentDestination.getY()/8;
 						}
 						else
 						{
-							newy = gvh.gps.getPosition(name).getY() + currentDestination1.getY()/8;
+							newy = gvh.gps.getPosition(name).getY() + currentDestination.getY()/8;
 						}
-						currentDestination1.setPos(newx, newy, (currentDestination1.getAngle())); 
-		//				currentDestination1.setPos(currentDestination);
-						gvh.plat.moat.goTo(currentDestination1, obsList);
+						currentDestination.setPos(newx, newy, (int)(((Model_Ground)currentDestination).getAngle()));
+		//				currentDestination.setPos(currentDestination);
+						gvh.plat.moat.goTo(currentDestination, obsList);
 						stage = Stage.HOLD;
 						}
-						*/
 					}
 					break;
 				

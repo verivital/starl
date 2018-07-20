@@ -23,12 +23,11 @@ import edu.illinois.mitra.starl.motion.RobotMotion;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.PositionList;
 
-public class GroupTagApp extends LogicThread implements MessageListener {
+public class GroupTagApp extends LogicThread {
     private static final String TAG = "Logic";
     private static final String ERR = "Critical Error";
 
     private boolean running = true;
-    private RobotMotion motion = null;
     private MutualExclusion mutex = null;
 
     private boolean iamleader = false;
@@ -46,9 +45,10 @@ public class GroupTagApp extends LogicThread implements MessageListener {
     private boolean firstFollow = true;
     private boolean playing =true;
     private boolean goingToMiddle = false;
+    private boolean recieved = false;
 
     private final static int MSG_GAME_OVER=50;
-    private final static int MSG_NEWFOLLOWERTAGGED = 25;
+    public static final int MSG_NEWFOLLOWERTAGGED = 25;
     private final static int DIST_THRESHOLD = 230;
     private final static int ANGLE_THRESHOLD = 10;
     private final static int SIDE_THRESHOLD = 200;
@@ -74,23 +74,21 @@ public class GroupTagApp extends LogicThread implements MessageListener {
 
     public GroupTagApp(GlobalVarHolder gvh) {
         super(gvh);
- //       gvh.trace.traceStart();
+        gvh.trace.traceStart();
         gvh.log.i(TAG, "I AM " + name);
 
         sync = new BarrierSynchronizer(gvh);
         le = new RandomLeaderElection(gvh);
-        gvh.comms.addMsgListener(this,MSG_NEWFOLLOWERTAGGED);
-        gvh.comms.addMsgListener(this,MSG_GAME_OVER);
-        motion = gvh.plat.moat;
-    }
 
-    @Override
-    public List<Object> callStarL() {
         MotionParameters.Builder mp = new MotionParameters.Builder();
         mp = mp.COLAVOID_MODE(COLAVOID_MODE_TYPE.BUMPERCARS);   //buggy
         mp = mp.STOP_AT_DESTINATION(false);
         MotionParameters param = mp.build();
         gvh.plat.moat.setParameters(param);
+    }
+
+    @Override
+    public List<Object> callStarL() {
 
         while (running) {
             gvh.sleep(100);
@@ -127,7 +125,7 @@ public class GroupTagApp extends LogicThread implements MessageListener {
                         gvh.plat.moat.goTo(dest);
                         while (gvh.plat.moat.inMotion)
                         {
-                            gvh.sleep(1);
+                            gvh.sleep(100);
                         }
                         System.out.println("Leader at middle");
                     }
@@ -145,14 +143,13 @@ public class GroupTagApp extends LogicThread implements MessageListener {
                     gvh.plat.moat.motion_stop();
                     return Arrays.asList(results);
                 case PLAYING:
-                    //System.out.println(stage);
+                    String target = getTarget();
                     if(iamleader){
-                        String target = getTarget();
                         targetLocation = gvh.gps.getPosition(target);
                         gvh.plat.moat.goTo(targetLocation);
                         while (gvh.plat.moat.inMotion) {
                             target = getTarget();
-                            gvh.sleep(10);
+                            gvh.sleep(100);
                             if (gvh.plat.moat.inMotion&& ((Model_Ground)gvh.gps.getMyPosition()).angleTo(gvh.gps.getPosition(target)) > ANGLE_THRESHOLD) {
                                 break;
                             }
@@ -164,7 +161,7 @@ public class GroupTagApp extends LogicThread implements MessageListener {
                     }
                     else if(iamfollower){
                         if(firstFollow){
-                            //motion.cancel();
+                            //gvh.plat.motion.cancel();
                             gvh.sleep(200);
                             xdistance = gvh.gps.getPosition(myName).getX()-gvh.gps.getPosition(leader).getX();
                             ydistance = gvh.gps.getPosition(myName).getY()-gvh.gps.getPosition(leader).getY();
@@ -222,7 +219,7 @@ public class GroupTagApp extends LogicThread implements MessageListener {
                         else{
                             runAway();
                         }
-                        while (gvh.plat.moat.inMotion && !iamleader &&!goingToMiddle) {
+                        while (gvh.plat.moat.inMotion && !iamleader && !goingToMiddle) {
                             if(iamfollower)	{
                                 break;
                             } else if (nearedge()){
@@ -244,7 +241,7 @@ public class GroupTagApp extends LogicThread implements MessageListener {
     }
 
     @Override
-    public void receive(RobotMessage m) {
+    protected void receive(RobotMessage m) {
         switch (m.getMID()) {
             case MSG_NEWFOLLOWERTAGGED:
                 if(m.getContents(0).equals(myName))
@@ -268,15 +265,16 @@ public class GroupTagApp extends LogicThread implements MessageListener {
     }
 
     public boolean nearedge(){
-        return ((gvh.gps.getMyPosition().getX() < DIST_THRESHOLD+ gvh.gps.getWaypointPosition("SideA").getX())
+        return ((gvh.gps.getMyPosition().getX() < DIST_THRESHOLD + gvh.gps.getWaypointPosition("SideA").getX())
                 || (gvh.gps.getMyPosition().getX() > gvh.gps.getWaypointPosition("SideB").getX()- DIST_THRESHOLD)
-                || (gvh.gps.getMyPosition().getY() < DIST_THRESHOLD+ gvh.gps.getWaypointPosition("Back").getY())
+                || (gvh.gps.getMyPosition().getY() < DIST_THRESHOLD + gvh.gps.getWaypointPosition("Back").getY())
                 || (gvh.gps.getMyPosition().getY() > +gvh.gps.getWaypointPosition("Front").getY()- DIST_THRESHOLD));
     }
 
     public void tagger(String target){
         RobotMessage informNewLeader = new RobotMessage("ALL", name, MSG_NEWFOLLOWERTAGGED, target);
         gvh.comms.addOutgoingMessage(informNewLeader);
+        System.out.println("tag message");
         toTag.remove(target);
         System.out.println("Tagged " + target);
         if(toTag.isEmpty()){
@@ -316,6 +314,13 @@ public class GroupTagApp extends LogicThread implements MessageListener {
             yRun=-yRun;
         }
         runTo = new ItemPosition("runTo", gvh.gps.getMyPosition().getX()+xRun, gvh.gps.getMyPosition().getY()+ yRun, 0);
+        System.out.println(gvh.id.getName() + " at current position " + gvh.gps.getMyPosition() + " running to " + runTo);
+        System.out.println(gvh.gps.getPosition(leader) + " leader");
         gvh.plat.moat.goTo(runTo);
+
+        while(gvh.plat.moat.inMotion){
+            gvh.sleep(100);
+
+        }
     }
 }

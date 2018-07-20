@@ -22,7 +22,7 @@ public class Main {
 		settings.DRAW_WAYPOINT_NAMES(false);
 		settings.DRAWER(new FlockingDrawer());
 		
-		Simulation sim = new Simulation(FlockingTestApp.class, settings.build());
+		Simulation sim = new Simulation(FlockingApp.class, settings.build());
 		sim.start();
 	}
 
