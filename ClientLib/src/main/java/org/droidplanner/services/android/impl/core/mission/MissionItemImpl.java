@@ -35,8 +35,6 @@ public abstract class MissionItemImpl implements Comparable<MissionItemImpl> {
 
 	/**
 	 * Gets data from MAVLinkMessage msg_mission_item for this MissionItem
-	 * 
-	 * @return
 	 */
 	public abstract void unpackMAVMessage(msg_mission_item mavMsg);
 

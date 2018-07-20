@@ -326,7 +326,8 @@ public class ControllerLinkManager extends AbstractLinkManager<ControllerLinkLis
     /**
      * Return the current controller unit
      *
-     * @return @see {@link SoloControllerUnits.ControllerUnit}
+     * @return the current controller unit
+     * @see SoloControllerUnits.ControllerUnit
      */
     public
     @SoloControllerUnits.ControllerUnit

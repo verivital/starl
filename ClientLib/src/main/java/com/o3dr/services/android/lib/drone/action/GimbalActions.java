@@ -18,7 +18,7 @@ public class GimbalActions {
 
     /**
      * Gimbal mount mode.
-     * @see {@link com.MAVLink.enums.MAV_MOUNT_MODE}
+     * @see com.MAVLink.enums.MAV_MOUNT_MODE
      */
     public static final String GIMBAL_MOUNT_MODE ="gimbal_mount_mode";
 

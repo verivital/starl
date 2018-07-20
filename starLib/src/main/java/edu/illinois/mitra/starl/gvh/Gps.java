@@ -10,7 +10,7 @@ import edu.illinois.mitra.starl.objects.PositionList;
 /**
  * Handles receiving GPS broadcasts and updating the robot position and waypoints. Instantiated by the GlobalVarHolder
  * 
- * @author Adam Zimmerman & Yixiao Lin
+ * @author Adam Zimmerman, Yixiao Lin
  * @version 1.1
  * @see GlobalVarHolder
  *

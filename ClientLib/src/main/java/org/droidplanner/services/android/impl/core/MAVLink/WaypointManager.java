@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * Class to manage the communication of waypoints to the MAV.
- * <p/>
+ * <p>
  * Should be initialized with a MAVLink Object, so the manager can send messages
  * via the MAV link. The function processMessage must be called with every new
  * MAV Message.
@@ -81,7 +81,7 @@ public class WaypointManager extends DroneVariable {
 
     /**
      * Try to receive all waypoints from the MAV.
-     * <p/>
+     * <p>
      * If all runs well the callback will return the list of waypoints.
      */
     public void getWaypoints() {
@@ -99,7 +99,7 @@ public class WaypointManager extends DroneVariable {
 
     /**
      * Write a list of waypoints to the MAV.
-     * <p/>
+     * <p>
      * The callback will return the status of this operation
      *
      * @param data waypoints to be written
@@ -124,7 +124,7 @@ public class WaypointManager extends DroneVariable {
 
     /**
      * Sets the current waypoint in the MAV
-     * <p/>
+     * <p>
      * The callback will return the status of this operation
      */
     public void setCurrentWaypoint(int i) {

@@ -47,7 +47,7 @@ public final class GimbalApi extends Api implements DroneListener {
 
         /**
          * Indicates errors occurring from attempting to set the gimbal orientation.
-         * @param error @see {@link com.o3dr.services.android.lib.drone.attribute.error.CommandExecutionError}
+         * @param error {@link com.o3dr.services.android.lib.drone.attribute.error.CommandExecutionError}
          */
         void onGimbalOrientationCommandError(int error);
     }

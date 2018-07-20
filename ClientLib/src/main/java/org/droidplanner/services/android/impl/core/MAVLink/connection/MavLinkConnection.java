@@ -44,7 +44,7 @@ public abstract class MavLinkConnection {
     private static final int READ_BUFFER_SIZE = 4096;
 
     /**
-     * @see {@link android.net.Network}
+     * @see android.net.Network
      */
     public static final String EXTRA_NETWORK = "extra_network";
 

@@ -19,7 +19,7 @@ import edu.illinois.mitra.starl.objects.PositionList;
  * This defines methods for initializing motion environment related objects
  * It also updates robots' movement, collision, other sensor info
  *
- * @author Yixiao Lin & Adam Zimmerman
+ * @author Yixiao Lin, Adam Zimmerman
  * @version 2.0
  */
 

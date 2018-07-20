@@ -10,20 +10,20 @@ import java.nio.ByteBuffer;
 
 /**
  * Bidirectional
- * <p/>
+ * <p>
  * Used to transmit proposed or actual Keypoints on the current camera Path.
- * <p/>
+ * <p>
  * Shotmanager uses this message for two things:
  * To transmit Keypoints it creates in response to Artoo button presses or SOLO_MESSAGE_RECORD_POSITION messages.
  * To confirm the validity of Keypoints it receives from the app;  to ACK those Keypoints.
- * <p/>
+ * <p>
  * When shotmanager creates a Keypoint, it assigns an index.  When the app receives this message and a Keypoint with the index already exists, it updates the Keypoint to the values in this message;  it replaces the existing Keypoint.
- * <p/>
+ * <p>
  * The app uses this message to load Keypoints from previously recorded, known valid Paths into shotmanager.
- * <p/>
+ * <p>
  * In every case, shotmanager sends a SOLO_SPLINE_POINT message back to the app to confirm it was able to create the Keypoint.  If it can't create the Keypoint, it sends a failure status.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * Created by Fredia Huya-Kouadio on 12/8/15.
  *
  * @since 2.8.0

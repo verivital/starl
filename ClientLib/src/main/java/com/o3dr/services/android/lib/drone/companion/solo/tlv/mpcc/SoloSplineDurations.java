@@ -9,10 +9,10 @@ import java.nio.ByteBuffer;
 
 /**
  * Used by ShotManager to transmit time information about the currently defined Path. It is sent at least once after ShotManager enters play mode to define the time bounds for the Path.
- * <p/>
+ * <p>
  * Optionally, ShotManager can also resend the information any time previous values become invalid. For example, high winds or a low battery might mean that the previously reported maxUVelocity isn’t realistic; ShotManager would re-send the message to advise the app to change its estimates.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * Created by Fredia Huya-Kouadio on 12/8/15.
  *
  * @since 2.8.0

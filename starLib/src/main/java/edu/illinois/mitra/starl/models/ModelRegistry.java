@@ -46,7 +46,8 @@ public class ModelRegistry {
      * through the methods {@link #create(String, Object...)}, {@link #canCreate(String)}, etc.
      *
      * @param classes one or more Class objects representing the type(s) to be registered
-     * @throws RuntimeException if the type has already been registered or has no default constructor
+     * @throws RuntimeException if the type has already been registered or is abstract
+     * @see Model
      */
     @SafeVarargs
     public static void register(Class<? extends Model>... classes) {
@@ -69,11 +70,19 @@ public class ModelRegistry {
      * Instantiates a subclass of Model given by the typeName parameter. Although this is
      * a more expensive operation than a raw <code>new</code>, it enables Models to be created
      * with any arguments without knowing the explicit type.
+     * <p>
+     * Waits for concurrent {link #register()} calls to complete and disables future
+     * {link #register()} calls.
+     * <p>
+     * Note: because primitive types are boxed in variadic args, they are unboxed before calling
+     * the constructor. This means that any constructor that takes a boxed type (Integer, etc.)
+     * will not be found; prefer using primitive types.
      *
      * @param typeName the type of Model to instantiate
      * @param args the arguments to the Model constructor
      * @return a new instance of class typeName
      * @throws RuntimeException if typeName is not registered or if construction fails
+     * @see Model
      */
     public static Model create(String typeName, Object... args) throws RuntimeException {
         access(); // make read-only
@@ -110,6 +119,10 @@ public class ModelRegistry {
 
     /**
      * Checks whether a type is in the registry.
+     * <p>
+     * Waits for concurrent {link #register()} calls to complete and disables future
+     * {link #register()} calls.
+     *
      * @param typeName the type of Model to be looked up in the registry
      * @return whether {@link #create(String, Object...)} will return successfully, barring a construction failure
      */
@@ -120,6 +133,10 @@ public class ModelRegistry {
 
     /**
      * Checks whether a type is or is a subclass of the given class object.
+     * <p>
+     * Waits for concurrent {link #register()} calls to complete and disables future
+     * {link #register()} calls.
+     *
      * @param typeName the type of Model to be looked up in the registry
      * @param c the class object to check to be a superclass
      * @return whether the class represented by typeName is an instance of the class represented by c
@@ -134,6 +151,10 @@ public class ModelRegistry {
 
     /**
      * Lists the types contained in the registry.
+     * <p>
+     * Waits for concurrent {link #register()} calls to complete and disables future
+     * {link #register()} calls.
+     *
      * @return an unmodifiable set of typenames
      */
     public static Set<String> getTypes() {

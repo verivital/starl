@@ -9,9 +9,9 @@ import java.nio.ByteBuffer;
 
 /**
  * ShotManager sends this message to the app to indicate the vehicle's parametric position and cruise state along the Path. The source, precision, and accuracy of these values is solely determined by ShotManager. They are for visualization in the app, but not control; they are intended to convey the information, "the vehicle was at this point, trying to move at this cruise speed when the message was sent" with as much certainty as practically possible. But there are no guarantees.
- * <p/>
+ * <p>
  * The frequency at which ShotManager sends these messages is currently 10Hz. At a minimum, in playback mode ShotManager will send this message:
- * <p/>
+ * <p>
  * When the vehicle attaches to the path in response to the first SOLO_SPLINE_SEEK message received after entering Play mode.
  * Each time the vehicle passes a Keypoint, including the beginning and end of the path
  * When the vehicle starts or stops moving.

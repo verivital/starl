@@ -12,8 +12,8 @@ public interface RobotEventListener {
 	public static enum Event {MOTION, GPS, GPS_SELF, WAYPOINT_RECEIVED};
 	/**
 	 * Called by robot event providers when an event occurs
-	 * @param type the event type
-	 * @param event (optional) any data associated with the event
+	 * @param eventType the event type
+	 * @param eventData (optional) any data associated with the event
 	 */
 	public void robotEvent(Event eventType, int eventData);
 }

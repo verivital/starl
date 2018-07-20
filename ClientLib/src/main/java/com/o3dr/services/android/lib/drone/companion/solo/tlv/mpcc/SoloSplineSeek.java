@@ -8,7 +8,7 @@ import com.o3dr.services.android.lib.drone.companion.solo.tlv.TLVPacket;
 import java.nio.ByteBuffer;
 
 /**
- * Sent by: App -> ShotManager.
+ * Sent by: App -&gt; ShotManager.
  * Valid: Valid only in Play mode when the vehicle is attached to the Path. Ignored at other times.
  * This message tells ShotManager to fly the vehicle to a position along the normalized length of the Path.
  * The cruiseState value indicates pause/play state of the vehicle. This does not overwrite the stored cruise speed set by SOLO_SPLINE_PATH_SETTINGS.

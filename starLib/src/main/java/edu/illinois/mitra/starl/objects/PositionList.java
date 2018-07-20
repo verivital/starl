@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 /**
- * PositionList is a thin wrapper for a HashMap (String -> ItemPosition). Collections of ItemPositions
+ * PositionList is a thin wrapper for a HashMap (String -&gt; ItemPosition). Collections of ItemPositions
  * are stored in PositionLists.
  * they are sorted in the natural order of their keys
  * @author Adam Zimmerman, Yixiao Lin
