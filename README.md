@@ -1,5 +1,7 @@
 # StarL 1.5.1
 
+Find the documentation [here](https://verivital-starl-undergrads.github.io/starl/).
+
 https://wiki.cites.illinois.edu/wiki/display/MitraResearch/StarL
 
 https://www.verivital.slack.com
