@@ -117,8 +117,6 @@ public abstract class MotionAutomaton_Ground extends RobotMotion {
         while(true) {
 //			gvh.gps.getObspointPositions().updateObs();
             if(running) {
-                // why is getModel being used? Think it should be get position.
-                //bot = (Model_iRobot)gvh.plat.getModel();
                 bot = (Model_Ground)gvh.gps.getMyPosition();
                 int distance = (int) bot.distanceTo(destination);
                 int angle = bot.angleTo(destination);

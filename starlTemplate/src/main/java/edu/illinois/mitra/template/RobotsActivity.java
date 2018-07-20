@@ -60,9 +60,7 @@ public class RobotsActivity extends Activity implements MessageListener {
 	private MainHandler mainHandler;
 	private WifiManager.MulticastLock multicastLock;
 
-	private int numRobots;
 	private BotInfoSelector[] botInfo;
-	private int i;
 
 
 	@Override
@@ -84,22 +82,14 @@ public class RobotsActivity extends Activity implements MessageListener {
 		multicastLock.acquire();
 
 		// Load the participants
-		//participants = IdentityLoader.loadIdentities(IDENTITY_FILE_URL);
-		// Put number of robots being used here
-		numRobots = 1;
-		botInfo = new BotInfoSelector[numRobots];
-		// add color, robot model, and device model for each robot here
-		//botInfo[0] = new BotInfoSelector("red", "Model_Mavic", Common.NEXUS7);
-		//botInfo[1] = new BotInfoSelector("green", "Model_iRobot", Common.MOTOE);
-		//botInfo[2] = new BotInfoSelector("blue", "Model_iRobot", Common.NEXUS7);
-		// botInfo[3] = new BotInfoSelector("white", "Model_iRobot", Common.NEXUS7);
-		botInfo[0] = new BotInfoSelector("blue", "Model_Phantom", Common.NEXUS7);
+		//botInfo = IdentityLoader.loadIdentities(IDENTITY_FILE_URL);
+		botInfo = loadBotInfo();
 
 		// Row 0 = names
 		// Row 1 = IPs
-		String[] participantNames = new String[numRobots];
-		String[] participantIPs = new String[numRobots];
-		for (i = 0; i < numRobots; i++) {
+		String[] participantNames = new String[botInfo.length];
+		String[] participantIPs = new String[botInfo.length];
+		for (int i = 0; i < botInfo.length; i++) {
 			participantNames[i] = botInfo[i].name;
 			participantIPs[i] = botInfo[i].ip;
 		}
@@ -142,9 +132,9 @@ public class RobotsActivity extends Activity implements MessageListener {
 	}
 
 	public void createAppInstance(GlobalVarHolder gvh) {
-		//runThread = new FollowApp(gvh);    // Instantiate your application here!
-		runThread = new FollowApp(gvh);
+		// Instantiate your application here!
 		// Example: runThread = new LightPaintActivity(gvh);
+		runThread = new FollowApp(gvh);
 	}
 
 	public void launch(int numWaypoints, int runNum) {
@@ -281,6 +271,20 @@ public class RobotsActivity extends Activity implements MessageListener {
 				gvh.plat.sendMainMsg(HandlerMessage.MESSAGE_ABORT, null);
 				break;
 		}
+	}
+
+	/**
+	 * add color, robot model, and device model for each robot here
+	 * @return an array of BotInfoSelector objects representing tablet and robot info
+	 */
+	private BotInfoSelector[] loadBotInfo() {
+		return new BotInfoSelector[] {
+				new BotInfoSelector("blue", "Model_Phantom", Common.NEXUS7)
+				//, new BotInfoSelector("red", "Model_Mavic", Common.NEXUS7)
+				//, new BotInfoSelector("green", "Model_iRobot", Common.MOTOE)
+				//, new BotInfoSelector("blue", "Model_iRobot", Common.NEXUS7)
+				//, new BotInfoSelector("white", "Model_iRobot", Common.NEXUS7)
+		};
 	}
 
 }

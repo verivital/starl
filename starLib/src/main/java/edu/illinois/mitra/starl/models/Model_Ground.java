@@ -149,7 +149,7 @@ public abstract class Model_Ground extends Model {
         this.angle = angle;
     }
 
-    public void setPos(Model_iRobot other) {
+    public void setPos(Model_Ground other) {
         this.setPos(other.getPos());
         this.angle = other.angle;
     }

@@ -152,8 +152,6 @@ public class Simulation {
 				@Override
 				public void update(Observable o, Object arg) {
 					Vector<ObstacleList> views = gps.getViews();
-					//				ArrayList<Model_iRobot> pos;
-					//				ArrayList<Model_quadcopter> pos2;
 					ArrayList<RobotData> rd = new ArrayList<RobotData>();
 					if (!(arg instanceof PositionList)) {
 						return;
@@ -161,13 +159,13 @@ public class Simulation {
 					PositionList<? extends ItemPosition> argList = (PositionList<? extends ItemPosition>)arg;
 					ArrayList<? extends ItemPosition> targetList = argList.getList();
 
-					for (int i = 0, iiRobot = 0; i < targetList.size(); i++) {
+					for (int i = 0, iGround = 0; i < targetList.size(); i++) {
 						ItemPosition ip = targetList.get(i);
 						RobotData nextBot;
 						if (ip instanceof Model_Ground) {
-							//tracks ith iRobot since only iRobots access the views vector
-							nextBot = new RobotData(ip, Color.black, views.elementAt(iiRobot));
-							iiRobot++;
+							//tracks ith ground robot since only ground robots access the views vector
+							nextBot = new RobotData(ip, Color.black, views.elementAt(iGround));
+							iGround++;
 						} else {
 							nextBot = new RobotData(ip);
 						}

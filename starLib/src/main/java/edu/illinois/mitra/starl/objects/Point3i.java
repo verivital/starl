@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 
 /**
  * This class represents an immutable point in XYZ plane.
- * Robots or any other points with extra properties should be sub classed from this class
  * @author Yixiao Lin
  * @version 1.0
  */
