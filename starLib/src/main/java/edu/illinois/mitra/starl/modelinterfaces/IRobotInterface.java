@@ -23,7 +23,7 @@ public class IRobotInterface implements GroundInterface {
 
     public void sendReset() {
         // 7 is the reset opcode for the create
-        byte[] reset = {7}; //new byte[]{(byte) 7};
+        byte[] reset = {7};
         bti.send(reset);
     }
 

@@ -13,7 +13,6 @@ import static java.lang.Math.asin;
 import static java.lang.Math.toRadians;
 
 /**
- * TODO: Remove unncessary methods/cleanup, fix PID Controller.
  * Base logic for all drone motion, allowing apps to use a goTo method to reach a specific point, or control motion with arrow keys.
  * Extended by SimMotionAutomaton_Drone for simulation and RealMotionAutomaton_Drone for real life applications.
  */

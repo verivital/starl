@@ -77,22 +77,39 @@ public final class Vector3i implements Traceable {
         return Math.sqrt(magnitudeSq());
     }
 
+    /**
+     * @return the length of the vector in two dimensions
+     */
     public double magnitude2D() {
         return Math.sqrt(magnitudeSq2D());
     }
 
+    /**
+     * @return the squared length of the vector
+     */
     public int magnitudeSq() {
         return x * x + y * y + z * z;
     }
 
+    /**
+     * @return the squared length of the vector in two dimensions
+     */
     public int magnitudeSq2D() {
         return x * x + y * y;
     }
 
+    /**
+     * @return a new {@link Vector3f} representing this
+     */
     public Vector3f toVector3f() {
         return new Vector3f(x, y, z);
     }
 
+    /**
+     * @param obj the object to compare equal
+     * @return true if obj is a Vector3f and the difference between this and obj
+     * is the zero vector.
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj != null && obj instanceof Vector3i) {
@@ -102,15 +119,24 @@ public final class Vector3i implements Traceable {
         return false;
     }
 
+    /**
+     * @return true if this is equal to the zero vector
+     */
     public boolean isZero() {
         return x == 0 && y == 0 && z == 0;
     }
 
+    /**
+     * @return a String with the components, comma-separated
+     */
     @Override
     public String toString() {
         return getX() + ", " + getY() + ", " + getZ();
     }
 
+    /**
+     * @return a HashMap representing this object
+     */
     @Override
     public HashMap<String, Object> getXML() {
         HashMap<String, Object> retval = new HashMap<String,Object>();

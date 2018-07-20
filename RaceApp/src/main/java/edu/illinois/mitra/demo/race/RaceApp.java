@@ -53,7 +53,7 @@ public class RaceApp extends LogicThread {
 	@Override
 	public List<Object> callStarL() {
 		while(true) {
-			///Model_quadcopter log_p = (Model_quadcopter) gvh.gps.getMyPosition();
+			///Model_Minidrone log_p = (Model_Minidrone) gvh.gps.getMyPosition();
 			///gvh.log.i("POSITION", log_p.name + " " + log_p.getX  + " " +log_p.getY  + " " +log_p.getZ  + " " +log_p.yaw  + " " +log_p.pitch  + " " +log_p.roll  + " " +log_p.gaz);
 			//gvh.log.i("POSITION", gvh.gps.getMyPosition().toString());
 			//	Model_iRobot log_p = (Model_iRobot) gvh.gps.getMyPosition();

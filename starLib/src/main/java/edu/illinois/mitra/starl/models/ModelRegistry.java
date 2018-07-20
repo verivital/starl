@@ -35,7 +35,7 @@ public class ModelRegistry {
                 Model_iRobot.class,
                 Model_Mavic.class,
                 Model_Phantom.class,
-                Model_quadcopter.class
+                Model_Minidrone.class
         );
     }
 

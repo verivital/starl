@@ -7,9 +7,8 @@ import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.PIDParams;
 
 /**
- * This class represents a simple model of the quadcopter
- * @author Yixiao Lin
- * @version 1.0
+ * A model of the DJI Phantom.
+ * @see Model_Drone
  */
 
 public class Model_Phantom extends Model_Drone {
@@ -17,18 +16,22 @@ public class Model_Phantom extends Model_Drone {
 	@SuppressWarnings("unused")
 	public Model_Phantom() {}
 
+	@SuppressWarnings("unused")
 	public Model_Phantom(String received) throws ItemFormattingException {
 		super(received);
 	}
 
+	@SuppressWarnings("unused")
 	public Model_Phantom(String name, int x, int y) {
 		super(name, x, y);
 	}
 
+	@SuppressWarnings("unused")
 	public Model_Phantom(String name, int x, int y, int z) {
 		super(name, x, y, z);
 	}
 
+	@SuppressWarnings("unused")
 	public Model_Phantom(ItemPosition t_pos) {
 		super(t_pos);
 	}
@@ -58,7 +61,7 @@ public class Model_Phantom extends Model_Drone {
 	public double max_yaw_speed() { return 200; }
 
 	@Override
-	public Class<? extends DroneInterface> getBluetoothInterface() {
+	public Class<? extends DroneInterface> getModelInterface() {
 		return DjiController.class;
 	}
 

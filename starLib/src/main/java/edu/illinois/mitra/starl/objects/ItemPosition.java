@@ -6,8 +6,8 @@ import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
 import edu.illinois.mitra.starl.interfaces.Traceable;
 
 /**
- * This class represents the position of a point in XYZ plane.
- * Robots or any other points with extra properties should be sub classed from this class
+ * This class represents the named position of a point in XYZ plane.
+ * Any object that is an item with a position should be sub classed from this class
  * @author Yixiao Lin, Adam Zimmerman
  * @version 2.0
  */

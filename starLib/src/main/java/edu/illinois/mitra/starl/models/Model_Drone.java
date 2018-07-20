@@ -17,6 +17,8 @@ import edu.illinois.mitra.starl.objects.Vector3i;
  * and updateSensor() used in other classes.
  *
  * Subclasses must override the abstract methods, making sure each returns a constant value.
+ *
+ * @see Model
  */
 public abstract class Model_Drone extends Model {
 
@@ -27,7 +29,7 @@ public abstract class Model_Drone extends Model {
     public abstract double mass(); // kg
     public abstract double height();
 
-    public abstract Class<? extends DroneInterface> getBluetoothInterface();
+    public abstract Class<? extends DroneInterface> getModelInterface();
     public abstract PIDParams getPIDParams();
 
     // platform specific control parameters: see page 78 of http://www.msh-tools.com/ardrone/ARDrone_Developer_Guide.pdf

@@ -36,9 +36,9 @@ public abstract class Model extends ItemPosition {
 	public abstract int radius();
 	public abstract String ip();
 
-	// to replace if-else chain with instanceof to determine the bluetooth interface for a particular model.
+	// to replace if-else chain with instanceof to determine the model interface for a particular model.
 	// This would be a static factory function if it didn't have to be polymorphic.
-	public abstract Class<? extends ModelInterface> getBluetoothInterface();
+	public abstract Class<? extends ModelInterface> getModelInterface();
 
 	public Model() {}
 

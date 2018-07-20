@@ -77,40 +77,67 @@ public final class Vector3f implements Traceable {
         return Math.sqrt(magnitudeSq());
     }
 
+    /**
+     * @return the length of the vector in two dimensions
+     */
     public double magnitude2D() {
         return Math.sqrt(magnitudeSq2D());
     }
 
+    /**
+     * @return the squared length of the vector
+     */
     public double magnitudeSq() {
         return x * x + y * y + z * z;
     }
 
+    /**
+     * @return the squared length of the vector in two dimensions
+     */
     public double magnitudeSq2D() {
         return x * x + y * y;
     }
 
+    /**
+     * @return a new {@link Vector3i} representing this, with rounded components
+     */
     public Vector3i toVector3i() {
         return new Vector3i((int)Math.round(x), (int)Math.round(y), (int)Math.round(z));
     }
 
+    /**
+     * @param obj the object to compare equal
+     * @return true if obj is a Vector3f and the difference between this and obj
+     * is approximately the zero vector.
+     * @see #isZero()
+     */
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof Vector3f) {
-            Vector3f point = (Vector3f)obj;
-            return getX() == point.getX() && getY() == point.getY() && getZ() == point.getZ();
+        if (obj instanceof Vector3f) {
+            Vector3f vec = (Vector3f)obj;
+            return this.subtract(vec).isZero();
         }
         return false;
     }
 
+    /**
+     * @return true if this is approximately equal to the zero vector
+     */
     public boolean isZero() {
         return magnitudeSq() < 1E-12;
     }
 
+    /**
+     * @return a String with the components, comma-separated
+     */
     @Override
     public String toString() {
         return getX() + ", " + getY() + ", " + getZ();
     }
 
+    /**
+     * @return a HashMap representing this object
+     */
     @Override
     public HashMap<String, Object> getXML() {
         HashMap<String, Object> retval = new HashMap<String,Object>();
@@ -121,13 +148,9 @@ public final class Vector3f implements Traceable {
         return retval;
     }
 
-    // Hashing and equals checks are done only against the position's name. Position names are unique!
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + toString().hashCode();
-        return result;
+        return toString().hashCode();
     }
 
     public double getX() {

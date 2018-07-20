@@ -46,7 +46,7 @@ public class RealGlobalVarHolder extends GlobalVarHolder {
 
 		ModelInterface modelInterface; // bluetooth interface
 		try {
-			modelInterface = plat.model.getBluetoothInterface().newInstance();
+			modelInterface = plat.model.getModelInterface().newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new IllegalArgumentException("Could not access bluetooth interface. ", e);
 		}

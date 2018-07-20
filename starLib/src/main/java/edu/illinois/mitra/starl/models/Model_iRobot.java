@@ -6,11 +6,8 @@ import edu.illinois.mitra.starl.modelinterfaces.IRobotInterface;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 
 /**
- * This class represents a simple model of the iRobot Create, including angle, radius, type, velocity, leftBump, rightBump, circleSensor, vFwd, vRad
- * and some prediction on x and y based on vFwd and vRad
- *
- * @author Yixiao Lin
- * @version 1.0
+ * A model of the iRobot Create.
+ * @see Model_Ground
  */
 public class Model_iRobot extends Model_Ground {
 
@@ -46,7 +43,7 @@ public class Model_iRobot extends Model_Ground {
 	public String ip() { return "10.255.24.0"; }
 
 	@Override
-	public Class<? extends GroundInterface> getBluetoothInterface() {
+	public Class<? extends GroundInterface> getModelInterface() {
 		return IRobotInterface.class;
 	}
 }

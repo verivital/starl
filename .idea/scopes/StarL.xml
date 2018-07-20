@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="StarL" pattern="file[starlTemplate]:src/main/java//* ||file[starLSim]:src/main/java//*||file[starLib]:src/main/java//*" />
+  <scope name="StarL" pattern="file[starlTemplate]:src/main/java//*||file[starLSim]:src/main/java//*||file[starLib]:src/main/java//*" />
 </component>
