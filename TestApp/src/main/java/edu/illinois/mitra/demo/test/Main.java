@@ -9,11 +9,11 @@ public class Main {
         SimSettings.Builder settings = new SimSettings.Builder();
 
         // Robots
-        settings.BOTS("Model_iRobot").COUNT = 2;  //works in all increments
-        settings.BOTS("Model_Minidrone").COUNT = 1;  //Works unless multiple crash. ; Tuned, but sways
-        settings.BOTS("Model_3DR").COUNT = 0;     //Works; Tune
-        settings.BOTS("Model_GhostAerial").COUNT = 1;   //Doesn't target correctly; Tuned. A little slow.
-        settings.BOTS("Model_Mavic").COUNT = 0;   //Doesn't work, points switch without being hit; Tuned, but sways
+        settings.BOTS("Model_iRobot").COUNT = 0;  //works in all increments
+        settings.BOTS("Model_quadcopter").COUNT = 0;  //Works unless multiple crash. ; Tuned
+        settings.BOTS("Model_3DR").COUNT = 0;     //Works; Tuned
+        settings.BOTS("Model_GhostAerial").COUNT = 0;   //Doesn't target correctly; Tuned. A little slow.
+        settings.BOTS("Model_Mavic").COUNT = 1;   //Doesn't work, points switch without being hit; Tuned. A little slow.
         settings.BOTS("Model_Phantom").COUNT = 0; //Doesn't move; Tuned.
         // Files
         settings.WAYPOINT_FILE("TestApp/waypoints/single.wpt");     //Found in top level waypoints directory, key must be #-Model_*, or # for others

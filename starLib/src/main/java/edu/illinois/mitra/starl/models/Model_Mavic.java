@@ -67,9 +67,9 @@ public class Model_Mavic extends Model_Drone {
 	@Override
 	public PIDParams getPIDParams() {
 		PIDParams p = new PIDParams();
-		p.Kp = 0.075;//0.0714669809792096;
+		p.Kp = 3.25E-4;//0.0714669809792096;
 		p.Ki = 0.75*p.Kp;//0.0110786899216426;
-		p.Kd = 0.5;//0.113205037832174;
+		p.Kd = 1.75E-3;//0.113205037832174;
 		p.saturationLimit = 50;
 		p.windUpLimit = 185;
 		p.filterLength = 8;
