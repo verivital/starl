@@ -32,8 +32,8 @@ public abstract class GeoTagAsyncTask extends AsyncTask<Void, Integer, GeoTagUti
      * Warning: this copies data to external storage
      *
      * @param rootDir  {@link File}
-     * @param events   {@link List<  com.o3dr.android.client.utils.data.tlog.TLogParser.Event>} list of events to geotag photos.
-     * @param photos   {@link List<File>} list of files of photos to geotag.
+     * @param events   {@link List} list of events to geotag photos.
+     * @param photos   {@link List} list of files of photos to geotag.
      */
     public GeoTagAsyncTask(File rootDir, List<TLogParser.Event> events, ArrayList<File> photos) {
         this(rootDir, events, photos, new SimpleGeoTagAlgorithm());
@@ -76,8 +76,8 @@ public abstract class GeoTagAsyncTask extends AsyncTask<Void, Integer, GeoTagUti
     /**
      * Callback for successful geotagging
      *
-     * @param geoTaggedPhotos {@link HashMap<File, File>} map of files sent in to the geotagged files.
-     * @param failedFiles     {@link HashMap<File, Exception>} map of files sent in to exception that occurred when geotagging.
+     * @param geoTaggedPhotos {@link HashMap} map of files sent in to the geotagged files.
+     * @param failedFiles     {@link HashMap} map of files sent in to exception that occurred when geotagging.
      */
     public abstract void onResult(HashMap<File, File> geoTaggedPhotos, HashMap<File, Exception> failedFiles);
 

@@ -1,37 +1,47 @@
 apply plugin: 'com.android.application'
-android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
-    defaultConfig {
 
+android {
+    compileSdkVersion android_build_sdk_version
+
+    defaultConfig {
         applicationId "edu.illinois.mitra.template"
-        minSdkVersion 19
-        targetSdkVersion 25
+        minSdkVersion android_build_min_sdk_version
+        targetSdkVersion android_build_target_sdk_version
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
     }
+
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
     dexOptions {
         additionalParameters=['--core-library']
     }
 
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
 }
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:multidex:1.0.1'
-    compile project(':dJISDKLIB')
-    compile project(':ClientLib')
-    compile project(':starLib')
-    compile project(':followApp')
+    // include the Android SDK, relies on ANDROID_HOME environment variable
+    implementation files("$android_classpath")
 
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'com.android.support:multidex:1.0.3'
+
+    implementation project(':ClientLib')
+    implementation project(':starLib')
+
+    // add the appropriate project for your app here:
+    implementation project(':FollowApp')
 }
 

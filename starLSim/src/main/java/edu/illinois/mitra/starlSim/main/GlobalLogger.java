@@ -38,8 +38,8 @@ public class GlobalLogger {
 
         try {
             writer = new CsvWriter("test5.csv", "N Robots",
-                    "Execution duration", "Robot ID", "x",
-                    "y", "Pose", "Local time");
+                    "Execution duration", "Robot ID", "getX",
+                    "getY", "Pose", "Local time");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -58,10 +58,10 @@ public class GlobalLogger {
 		try {
 			fileWriter.write(Long.toString(time) + "\n");
 			for(RobotData d : data) {
-				fileWriter.write(d.name + "," + d.x + "," + d.y + "," + d.degrees + "," + d.time + "\n");
+				fileWriter.write(d.getName() + "," + d.getX() + "," + d.getY() + "," + d.getDegrees() + "," + d.getTime() + "\n");
 
                 // todo: get real number of robots from settings, etc.
-                writer.commit(4, Long.toString(time), d.name, d.x, d.y, d.degrees, d.time);
+                writer.commit(4, Long.toString(time), d.getName(), d.getX(), d.getY(), d.getDegrees(), d.getTime());
 			}
 			fileWriter.write("\n\n");
 			fileWriter.flush();

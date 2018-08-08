@@ -1,5 +1,6 @@
 package edu.illinois.mitra.starl.interfaces;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -62,7 +63,7 @@ public abstract class StarLCallable implements Callable<List<Object>> {
 	 * @return the List representation of the results variable
 	 */
 	protected List<Object> returnResults() {
-		return Arrays.asList(results);
+		return new ArrayList<Object>(Arrays.asList(results));
 	}
 	
 	/**

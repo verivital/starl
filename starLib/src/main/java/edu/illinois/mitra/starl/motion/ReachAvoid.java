@@ -3,13 +3,8 @@ package edu.illinois.mitra.starl.motion;
 import java.util.Stack;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.Cancellable;
-import edu.illinois.mitra.starl.interfaces.TrackedRobot;
-import edu.illinois.mitra.starl.models.Model_3DR;
-import edu.illinois.mitra.starl.models.Model_GhostAerial;
-import edu.illinois.mitra.starl.models.Model_Mavic;
-import edu.illinois.mitra.starl.models.Model_Phantom;
-import edu.illinois.mitra.starl.models.Model_iRobot;
-import edu.illinois.mitra.starl.models.Model_quadcopter;
+import edu.illinois.mitra.starl.models.Model;
+import edu.illinois.mitra.starl.models.Model_Drone;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 
@@ -20,47 +15,38 @@ public class ReachAvoid extends Thread implements Cancellable {
 	/**
 	 * default 5 retries using different parameters, can be set to other values 
 	 */
-	public int tries = 5;
-	public int radius;
+	private static final int TRIES = 5;
+	private int radius;
+
 	protected enum STAGE_R {
 		IDLE, PLAN, PICK, MOVE
 	}
 	protected GlobalVarHolder gvh;
-	public boolean running;
-	public RRTNode kdTree;
-	ItemPosition start;
-	ItemPosition dest;
-	ObstacleList unsafe;
-	ObstacleList planObs;
-	public boolean activeFlag, doneFlag, failFlag;
-	STAGE_R stage;
-	public Stack<ItemPosition> pathStack;
-	int counter;
-	int xLower, xUpper, yLower, yUpper;
+	private boolean running;
+	private RRTNode kdTree;
+	private ItemPosition start;
+	private ItemPosition dest;
+	private ObstacleList unsafe;
+	private ObstacleList planObs;
+	private boolean activeFlag;
+	private boolean doneFlag;
+	private boolean failFlag;
+	private STAGE_R stage;
+	private Stack<ItemPosition> pathStack;
+	private int counter;
 	
 	
 	public ReachAvoid(GlobalVarHolder gvh){
 		this.gvh = gvh;
 		stage = STAGE_R.IDLE;
-		TrackedRobot model = gvh.plat.model;
-		if(model instanceof Model_iRobot){
-			radius = ((Model_iRobot) model).radius;
-		}else if(model instanceof Model_quadcopter){
-			radius = 110 + ((Model_quadcopter) model).radius;
-		}else if(model instanceof Model_GhostAerial){
-			radius = 110 + ((Model_GhostAerial) model).radius;
-		}else if(model instanceof Model_Mavic){
-			radius = 110 + ((Model_Mavic) model).radius;
-		}else if(model instanceof Model_Phantom){
-			radius = 110 + ((Model_Phantom) model).radius;
-		}else if(model instanceof Model_3DR){
-			radius = 110 + ((Model_3DR) model).radius;
-		}
+		Model model = gvh.plat.model;
 
-		else{
-			//default value here;
-			radius = 200;
-		}
+		if (model instanceof Model_Drone) {
+		    radius = 110 + model.radius(); // increase radius of airborne models
+        } else {
+		    radius = model.radius();
+        }
+
 		activeFlag = false;
 		doneFlag = failFlag = false;
 	}
@@ -104,19 +90,20 @@ public class ReachAvoid extends Thread implements Cancellable {
 				break;
 			case PLAN:
 				double magic = .0011;
-				int xRange = Math.abs(start.x - dest.x);
-				int yRange = Math.abs(start.y - dest.y);
-				xLower = Math.min(start.x, dest.x) - (int)((xRange+radius)*(counter+1)*radius*magic);
-				xUpper = Math.max(start.x, dest.x) + (int)((xRange+radius)*(counter+1)*radius*magic);
-				yLower = Math.min(start.y, dest.y) - (int)((yRange+radius)*(counter+1)*radius*magic);
-				yUpper = Math.max(start.y, dest.y) + (int)((yRange+radius)*(counter+1)*radius*magic);
+				double xRange = Math.abs(start.getX() - dest.getX());
+				double yRange = Math.abs(start.getY() - dest.getY());
+				int xLower, xUpper, yLower, yUpper;
+				xLower = Math.min(start.getX(), dest.getX()) - (int)((xRange+radius)*(counter+1)*radius*magic);
+				xUpper = Math.max(start.getX(), dest.getX()) + (int)((xRange+radius)*(counter+1)*radius*magic);
+				yLower = Math.min(start.getY(), dest.getY()) - (int)((yRange+radius)*(counter+1)*radius*magic);
+				yUpper = Math.max(start.getY(), dest.getY()) + (int)((yRange+radius)*(counter+1)*radius*magic);
 				
-				RRTNode path = new RRTNode(start.x, start.y);
+				RRTNode path = new RRTNode(start.getX(), start.getY());
 				System.out.println("Getting pathStack from " + start  + " to " + dest);
 				pathStack = path.findRoute(dest, 1000, planObs, xLower, xUpper, yLower,yUpper, start, radius);
 				if(pathStack == null){
 					counter ++ ; 
-					if(counter > tries){
+					if(counter > TRIES){
 						activeFlag = false;
 						gvh.log.i(TAG, "RRT could not find solution, giving up");
 						return;
@@ -144,8 +131,7 @@ public class ReachAvoid extends Thread implements Cancellable {
 					gvh.plat.moat.goTo(goMidPoint);
 					gvh.log.i(TAG, " go to called to: " + goMidPoint.toString());
 					stage = STAGE_R.MOVE;
-				}
-				else{
+				} else {
 					System.out.println("pathStack is empty");
 					if(gvh.plat.moat.done){
 						System.out.println("ReachAvoid Done");
@@ -166,7 +152,7 @@ public class ReachAvoid extends Thread implements Cancellable {
 				}
 				break;
 			case MOVE:
-				System.out.println("MOVING");
+				//System.out.println("MOVING");
 				if(!unsafe.validstarts(gvh.gps.getMyPosition(), radius +1) ){
 					System.out.println("reachAvoid failed, safty ");
 					gvh.log.i(TAG, " Failed: " + dest.toString());
@@ -186,6 +172,22 @@ public class ReachAvoid extends Thread implements Cancellable {
 			}
 			gvh.sleep(100);
 		}
+	}
+
+	public RRTNode getKdTree() {
+		return kdTree;
+	}
+
+	public boolean isActive() {
+		return activeFlag;
+	}
+
+	public boolean isDone() {
+		return doneFlag;
+	}
+
+	public boolean isFail() {
+		return failFlag;
 	}
 }
 

@@ -7,7 +7,6 @@ package edu.illinois.mitra.starl.gvh;
 import java.util.ArrayList;
 
 import edu.illinois.mitra.starl.objects.Common;
-import edu.illinois.mitra.starl.objects.ItemPosition;
 
 
 public class RobotGroup {
@@ -25,7 +24,7 @@ public class RobotGroup {
 
     public RobotGroup(String id, Integer numOFgroup){
 
-        String intValue = id.replaceAll("[^0-9]", ""); // this will work for bots with sequential numbers in their names, not irobot0 quadrotor0
+        String intValue = id.replaceFirst("[^0-9]+", ""); // this will work for bots with sequential numbers in their names, not irobot0 quadrotor0
         Integer i = Integer.parseInt(intValue);
         groupNum = i % numOFgroup;
         setAfterBefore= true;
@@ -43,7 +42,7 @@ public class RobotGroup {
         }
         // rf = 500* (groupNum+1);
 
-        rf = 750;
+        rf = 1000;  //Has problems with lower values
 
 
         System.out.println("This robot is "+id+ " and it is assigned to group number "+ getGroupNum().toString()+" and ts theta is "+ theta.toString());

@@ -13,7 +13,7 @@ public class LinkEvent {
     /**
      * Notifies what the link connection status currently is.
      *
-     * @see {@link LinkEventExtra#EXTRA_CONNECTION_STATUS}
+     * @see LinkEventExtra#EXTRA_CONNECTION_STATUS
      */
     public static final String LINK_STATE_UPDATED = PACKAGE_NAME + ".LINK_STATE_UPDATED";
 

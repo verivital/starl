@@ -27,7 +27,7 @@ import timber.log.Timber;
 
 /**
  * Class to manage the communication of parameters to the MAV.
- * <p/>
+ * <p>
  * Should be initialized with a MAVLink Object, so the manager can send messages
  * via the MAV link. The function processMessage must be called with every new
  * MAV Message.

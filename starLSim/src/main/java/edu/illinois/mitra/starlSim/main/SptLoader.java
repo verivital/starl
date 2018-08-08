@@ -21,7 +21,7 @@ public final class SptLoader {
         }else{
 
             try {
-                in = new BufferedReader(new FileReader("waypoints/" + file));
+                in = new BufferedReader(new FileReader(file));
             } catch (FileNotFoundException e) {
                 System.err.println("File " + file + " not found! No sensepoints loaded.");
                 return new PositionList<ItemPosition>();

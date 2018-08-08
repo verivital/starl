@@ -78,7 +78,7 @@ import org.droidplanner.services.android.impl.utils.video.VideoManager;
 /**
  * Base drone implementation.
  * Supports mavlink messages belonging to the common set: https://pixhawk.ethz.ch/mavlink/
- * <p/>
+ * <p>
  * Created by Fredia Huya-Kouadio on 9/10/15.
  */
 public class GenericMavLinkDrone implements MavLinkDrone {

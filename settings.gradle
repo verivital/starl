@@ -1,8 +1,4 @@
-
-
-include ':starLib', ':ClientLib', ':Mavlink'
-include ':starlTemplate'
-include ':followApp'
-include ':dJISDKLIB'
-include ':starLSim'
-include ':raceApp'
+include ':ClientLib', ':Mavlink', ':circleapp', ':olfati_saber'
+include ':starLib', ':starlTemplate', ':starLSim'
+include ':FollowApp', ':RaceApp', ':circleapp', ':FlockingApp', ':ProjectApp', ':TestApp'
+include ':MazeApp', ':distributedsearchapp', ':arrowtravelapp',':grouptagapp', ':lawnmowerapp'

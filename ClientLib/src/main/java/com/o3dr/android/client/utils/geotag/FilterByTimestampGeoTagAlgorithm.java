@@ -27,7 +27,7 @@ public class FilterByTimestampGeoTagAlgorithm implements GeoTagAsyncTask.GeoTagA
      * The list of events must start with an event whose mavlink message is a msg_named_value_int.
      * That msg_named_value_int contains the start time and label for the mission whose data we are geotagging.
      *
-     * The mission start time, and end time (max event timestamp > start time) will be used to filter the media data set.
+     * The mission start time, and end time (max event timestamp &gt; start time) will be used to filter the media data set.
      *
      * @param events
      * @param photos

@@ -1,5 +1,6 @@
 package edu.illinois.mitra.starl.motion;
 
+import edu.illinois.mitra.starl.interfaces.AcceptsKeyInput;
 import edu.illinois.mitra.starl.interfaces.Cancellable;
 import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
@@ -9,11 +10,13 @@ import edu.illinois.mitra.starl.objects.ObstacleList;
  * @author Adam Zimmerman
  *
  */
-public abstract class RobotMotion extends Thread implements Cancellable {
+public abstract class RobotMotion extends Thread implements Cancellable, AcceptsKeyInput {
 	
 	public boolean inMotion = false;
 	
 	public boolean done = false;
+
+	public String curKey;	//String representing the current key being pressed or "stop"
 		
 	public RobotMotion() {}
 	
@@ -50,6 +53,16 @@ public abstract class RobotMotion extends Thread implements Cancellable {
 	 * @param param the parameters to use by default
 	 */
 	public abstract void setParameters(MotionParameters param);
+
+
+	/**
+	 * Motion method called in App classes to enable user control of drones with the keyboard.
+	 * @param dest -- Location of waypoint
+	 * @param obs -- Location of obstacles
+	 */
+	public abstract void userControl(ItemPosition dest, ObstacleList obs);
+
+
 
 
 }

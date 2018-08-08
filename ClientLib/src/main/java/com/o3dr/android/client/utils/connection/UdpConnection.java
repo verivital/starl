@@ -57,7 +57,7 @@ public class UdpConnection extends AbstractIpConnection {
     protected void open(Bundle extras) throws IOException {
         Log.d(TAG, "Opening udp connection.");
 
-        socket = (serverPort == -1) ?new DatagramSocket() : new DatagramSocket(serverPort);
+        socket = (serverPort == -1) ? new DatagramSocket() : new DatagramSocket(serverPort);
         socket.setBroadcast(true);
         socket.setReuseAddress(true);
         socket.setSoTimeout(readTimeout);

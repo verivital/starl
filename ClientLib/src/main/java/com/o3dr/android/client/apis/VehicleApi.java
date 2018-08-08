@@ -144,7 +144,6 @@ public class VehicleApi extends Api {
      * Generate action used to write the given parameters to the connected drone.
      *
      * @param parameters parameters to write to the drone.
-     * @return
      */
     public void writeParameters(Parameters parameters) {
         Bundle params = new Bundle();

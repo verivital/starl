@@ -11,9 +11,10 @@ sourceSets {
 }
 
 jar {
+    // use the output jar as a dependency for ClientLib
     destinationDir (new File("${rootDir}/ClientLib/libs"))
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 }

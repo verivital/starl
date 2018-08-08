@@ -21,7 +21,6 @@ import edu.illinois.mitra.starl.interfaces.SmartComThread;
  * @version 1.0
  * @see RobotMessage
  * @see SmartComThread
- * @see CommsHandler
  */
 public class SmartCommsHandler extends Thread {
 	private static final String TAG = "SmartCommsHandler";

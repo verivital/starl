@@ -21,15 +21,6 @@ public final class Common {
 	public static final Integer numOFbots = 5;
 	public static final Integer numOFgroups= 2;
 
-    // Bot types
-    public static final int IROBOT = 50;
-    public static final int MINIDRONE = 51;
-	public static final int GHOSTAERIAL=52;
-	public static final int MAVIC = 53;
-
-	public static final int o3DR = 54;      //cannot start a variable name with number, so add a letter o
-	public static final int PHANTOM = 55;
-
     // Mobile device types
     public static final int NEXUS7 = 60;
     public static final int MOTOE = 61;
@@ -180,6 +171,17 @@ public final class Common {
 			return val;
 		}
 	}
+
+	public static double cap(double val, double min, double max) {
+		// limits the absolute value of 'value' to center plus or minus absLimit, if absLimit is positive
+		if (val > max) {
+			return max;
+		}
+		if (val < min) {
+			return min;
+		}
+		return val;
+	}
 	
     public static InetAddress getLocalAddress()throws IOException {
 		try {
@@ -203,7 +205,7 @@ public final class Common {
 	 * @param b a byte array of length 2
 	 * @return an int representing the unsigned short
 	 */
-	public static final int unsignedShortToInt(byte[] b) 
+	public static int unsignedShortToInt(byte[] b)
 	{
 		if(b.length != 2){
 			return -99;
@@ -215,7 +217,7 @@ public final class Common {
 	    return i;
 	}
 	
-	public static final int signedShortToInt(byte[] b)
+	public static int signedShortToInt(byte[] b)
 	{
 		if(b.length != 2) {
 			return -99;
@@ -229,17 +231,17 @@ public final class Common {
 
 	
 	/**
-	 * Converts an input value to an angle between -90 and 270 degrees (360 degree range) 
+	 * Converts an input value to an angle between 0 and 359 degrees (360 degree range)
 	 * @param angle the angle to be rectified
 	 * @return a rectified angle value
 	 */
-	public static int angleWrap(int angle) {
-		int retval = angle % 360;
-		if(retval > 270) {
-			retval = retval - 360;
-		} if(retval < -90) {
-			retval = retval + 360;
-		}
-		return retval;
+	public static double angleWrap(double angle) {
+		angle = angle % 360;
+		return angle < 0 ? angle + 360 : angle;
 	}
+
+
+	// Following array represents the neighbours for each bot and rf distance between them. Index represents the bot num. As following:
+	// bots_neighbour [bot_number][0= beforeBot_name], bots_neighbour [bot_number][1= afterBot_name], bots_neighbour [bot_number][2= rf]
+	public static String[][] bots_neighbour = new String[numOFbots][3];
 }

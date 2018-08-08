@@ -6,7 +6,8 @@ package edu.illinois.mitra.starl.motion;
  * 
  * @author Adam Zimmerman
  * @see RobotMotion
- * @see MotionAutomaton_iRobot
+ * @see MotionAutomaton_Drone
+ * @see MotionAutomaton_Ground
  */
 public class MotionParameters {
 
@@ -111,11 +112,11 @@ public class MotionParameters {
 	public final int AUTOMATON_PERIOD;
 
 	/**
-	 * Sets the collision avoidance mode. Options are:</br> USE_COLAVOID - use
-	 * the standard collision avoidance algorithm</br> STOP_ON_COLLISION - stop
-	 * if a collision is imminent and don't resume until the blocker moves</br>
+	 * Sets the collision avoidance mode. Options are:<br> USE_COLAVOID - use
+	 * the standard collision avoidance algorithm<br> STOP_ON_COLLISION - stop
+	 * if a collision is imminent and don't resume until the blocker moves<br>
 	 * BUMPERCARS - ignore collision detection and just keep going no matter
-	 * what</br>
+	 * what<br>
 	 */
 	public final COLAVOID_MODE_TYPE COLAVOID_MODE;
 

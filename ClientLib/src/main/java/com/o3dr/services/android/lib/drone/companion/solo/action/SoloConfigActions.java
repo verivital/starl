@@ -20,7 +20,7 @@ public class SoloConfigActions {
     /**
      * Used to retrieve the button settings to push to the sololink companion computer.
      *
-     * @see {@link com.o3dr.services.android.lib.drone.companion.solo.tlv.SoloButtonSettingSetter}
+     * @see com.o3dr.services.android.lib.drone.companion.solo.tlv.SoloButtonSettingSetter
      */
     public static final String EXTRA_BUTTON_SETTINGS = "extra_button_settings";
 
@@ -29,7 +29,7 @@ public class SoloConfigActions {
     /**
      * Controller mode to apply.
      *
-     * @see {@link com.o3dr.services.android.lib.drone.companion.solo.controller.SoloControllerMode.ControllerMode}
+     * @see com.o3dr.services.android.lib.drone.companion.solo.controller.SoloControllerMode.ControllerMode
      */
     public static final String EXTRA_CONTROLLER_MODE = "extra_controller_mode";
 
@@ -45,7 +45,7 @@ public class SoloConfigActions {
 
     /**
      * Controller unit system to apply.
-     * @see {@link com.o3dr.services.android.lib.drone.companion.solo.controller.SoloControllerUnits.ControllerUnit}
+     * @see com.o3dr.services.android.lib.drone.companion.solo.controller.SoloControllerUnits.ControllerUnit
      */
     public static final String EXTRA_CONTROLLER_UNIT = "extra_controller_unit";
 

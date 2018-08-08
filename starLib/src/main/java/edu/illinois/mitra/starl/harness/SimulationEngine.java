@@ -1,5 +1,9 @@
 package edu.illinois.mitra.starl.harness;
 
+import android.database.DatabaseErrorHandler;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +11,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
-import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.gvh.Logging;
 import edu.illinois.mitra.starl.interfaces.ExplicitlyDrawable;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
@@ -108,7 +111,7 @@ public class SimulationEngine extends Thread {
 		Thread thread = entry.getKey();
 		if((entry.getValue() == null) && (now - lastUpdateTime.get(thread)) > THREAD_DEADLOCK_TIMEOUT/ticRate) {
 
-			System.err.println("\n\nPossible deadlock encountered at " + now);
+			System.err.println("\n\nPossible deadlock encountered at " + SimpleDateFormat.getTimeInstance().format(new Date(now)));
 
 			System.err.println(thread.getId() + " - " + thread.getName());
 			StackTraceElement[] st = thread.getStackTrace();

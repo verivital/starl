@@ -1,5 +1,7 @@
 # StarL 1.5.1
 
+Find the documentation [here](https://verivital-starl-undergrads.github.io/starl/).
+
 https://wiki.cites.illinois.edu/wiki/display/MitraResearch/StarL
 
 https://www.verivital.slack.com
@@ -23,37 +25,41 @@ in the `build.gradle` of starlTemplate.
 ```gradle
 dependencies {
     ...
-    compile project(':followApp')
+    implementation project(':followApp')
 }
 ```
 ### Setting the Tablet and Drone Info
-Open `BotInfoSelector.java` and set the name, IP addresses, and Bluetooth addresses for each colored
+Open `BotInfoSelector.java` and set the name and IP address for each colored
 robot. For example:
 ```java
-if(color.equals("blue")) {
-     name = "bot2"; // this name has to match the one in MatLab for the color
-     ip = "10.255.24.152"; // ip address for the mobile device
-     if(type == Common.IROBOT) {
-         bluetooth = "5C:F3:70:76:CE:B4"; // bluetooth address if using iRobot
-         this.type = new Model_iRobot(name, 0,0);
-     }
-     else if(type == Common.MINIDRONE) {
-         bluetooth = "Travis_064729"; // bluetooth address if using Minidrone
-         this.type = new Model_quadcopter(name, 0,0);
-     }
-     else if(type == Common.PHANTOM){
-         bluetooth = "Wifi Bridge IP"; // Device IP for wifi bridge if applicable
-         this.type = new Model_Phantom(name, 0, 0);
-     }
- }
+...
+case "blue":
+    name = "bot2"; // this name has to match the one in MatLab for the color
+    ip = "10.255.24.152"; // ip address for the mobile device
+    switch (type) {
+        case Common.IROBOT:
+            this.type = ModelRegistry.create("Model_iRobot", name, 0, 0);
+            break;
+        case Common.MINIDRONE:
+            this.type = ModelRegistry.create("Model_quadcopter", name, 0, 0);
+            break;
+        case Common.PHANTOM:
+            this.type = ModelRegistry.create("Model_Phantom", name, 0, 0);
+            break;
+        case Common.GHOSTAERIAL:
+            this.type = ModelRegistry.create("Model_GhostAerial", name, 0, 0);
+            break;
+    }
+    break;
+...
 ```
-Then back in `RobotsActivity.java` you can create a robot in the `botInfo[]` array with the corresponding color:
+Then back in `RobotsActivity.java` in the `loadBotInfo()` method you can create each robot info 
+with the corresponding color:
 ```java
-botInfo[0] = new BotInfoSelector("blue", Common.PHANTOM, Common.NEXUS7);
-```
-The total number of robots must be set with:
-```java
-numRobots = 1;
+return new BotInfoSelector[] {
+        new BotInfoSelector("blue", "Model_Phantom", Common.NEXUS7)
+        //, other entries
+};
 ```
 
 ### Configuring the MatLab "GPS"
@@ -61,7 +67,7 @@ In `UdpGpsReceiver.java` you must set the incoming robot position data to be the
 ```java
 case '$':
     try{
-        Model_Phantom newpos = new Model_Phantom(parts[i]);
+        Model newpos = ModelRegistry.create("Model_Phantom", part);
         ...
     }
 ```
@@ -109,8 +115,8 @@ and runs the simulation.
 It is important for every new StarL application to have the appropriate dependencies. The `build.gradle` should contain the following:
 ```gradle
 dependencies {
-    compile project(':starLib')
-    compile project(':starLSim')
+    implementation project(':starLSim')
+    implementation project(':starLib')
 }
 ```
 ## Features to be Implemented

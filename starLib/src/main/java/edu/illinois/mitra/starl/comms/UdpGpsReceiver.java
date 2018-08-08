@@ -14,9 +14,8 @@ import edu.illinois.mitra.starl.exceptions.ItemFormattingException;
 import edu.illinois.mitra.starl.gvh.GlobalVarHolder;
 import edu.illinois.mitra.starl.interfaces.GpsReceiver;
 import edu.illinois.mitra.starl.interfaces.RobotEventListener.Event;
-import edu.illinois.mitra.starl.models.Model_Phantom;
-import edu.illinois.mitra.starl.models.Model_iRobot;
-import edu.illinois.mitra.starl.models.Model_quadcopter;
+import edu.illinois.mitra.starl.models.Model;
+import edu.illinois.mitra.starl.models.ModelRegistry;
 import edu.illinois.mitra.starl.objects.Common;
 import edu.illinois.mitra.starl.objects.HandlerMessage;
 import edu.illinois.mitra.starl.objects.ItemPosition;
@@ -32,7 +31,7 @@ public class UdpGpsReceiver extends Thread implements GpsReceiver {
 	private static final String TAG = "GPSReceiver";
 	private static final String ERR = "Critical Error";
 	
-	public PositionList robotPositions;
+	public PositionList<ItemPosition> robotPositions;
 	public PositionList<ItemPosition> waypointPositions;
 	public ObstacleList obs;
 	public Vector<ObstacleList> viewsOfWorld;
@@ -102,12 +101,12 @@ public class UdpGpsReceiver extends Thread implements GpsReceiver {
     				gvh.plat.sendMainMsg(HandlerMessage.MESSAGE_LOCATION, HandlerMessage.GPS_RECEIVING);
     				received = true;
     			}    			
-    			for(int i = 0; i < parts.length; i++) {
-    				if(parts[i].length() >= 2) {
-		    			switch(parts[i].charAt(0)) {
+    			for(String part : parts) {
+    				if(part.length() >= 2) {
+		    			switch(part.charAt(0)) {
 		    			case '@':
 		    				try {
-		    					ItemPosition newpos = new ItemPosition(parts[i]);
+		    					ItemPosition newpos = new ItemPosition(part);
 		    					waypointPositions.update(newpos, gvh.time());
 		    					gvh.trace.traceEvent(TAG, "Received Waypoint", newpos, gvh.time());
 		    				} catch(ItemFormattingException e){
@@ -117,33 +116,33 @@ public class UdpGpsReceiver extends Thread implements GpsReceiver {
 
 		    			case '#':
 		    				try {
-		    					Model_iRobot newpos = new Model_iRobot(parts[i]);
+								Model newpos = ModelRegistry.create("Model_iRobot", part);
 		    					robotPositions.update(newpos, gvh.time());
 		    					gvh.sendRobotEvent(Event.GPS);
-		    					if(newpos.name.equals(name)) {
+		    					if(newpos.getName().equals(name)) {
 		    						gvh.trace.traceEvent(TAG, "Received Position", newpos, gvh.time());
 		    						gvh.sendRobotEvent(Event.GPS_SELF);
 		    					}
-		    				} catch(ItemFormattingException e){
-		    					gvh.log.e(TAG, "Invalid item formatting: " + e.getError());
+		    				} catch(RuntimeException e){
+		    					gvh.log.e(TAG, "Invalid item formatting: " + e);
 		    				}
 		    				break;
 		    			case '$':
 		    				try {
-		    					Model_Phantom newpos = new Model_Phantom(parts[i]); //TODO(TIM) MAKE THIS APPLY TO ALL ROBOTS SUPER IMPORTANT
+		    					Model newpos = ModelRegistry.create("Model_Phantom", part); //TODO(TIM) MAKE THIS APPLY TO ALL ROBOTS SUPER IMPORTANT
 		    					robotPositions.update(newpos, gvh.time());
 		    					gvh.sendRobotEvent(Event.GPS);
-		    					if(newpos.name.equals(name)) {
+		    					if(newpos.getName().equals(name)) {
 		    						gvh.trace.traceEvent(TAG, "Received Position", newpos, gvh.time());
 		    						gvh.sendRobotEvent(Event.GPS_SELF);
 		    					}
-		    				} catch(ItemFormattingException e){
-		    					gvh.log.e(TAG, "Invalid item formatting: " + e.getError());
+		    				} catch(RuntimeException e){
+		    					gvh.log.e(TAG, "Invalid item formatting: " + e);
 		    				}
 		    				break;
 		    			case 'G':
 		    				gvh.trace.traceEvent(TAG, "Received launch command", gvh.time());
-		    				int[] args = Common.partsToInts(parts[i].substring(3).split(" "));
+		    				int[] args = Common.partsToInts(part.substring(3).split(" "));
 		    				gvh.plat.sendMainMsg(HandlerMessage.MESSAGE_LAUNCH, args[0], args[1]);
 		    				break;
 		    			case 'A':

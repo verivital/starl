@@ -1,9 +1,0 @@
-<<<<<<< HEAD
-include ':starLib', ':testcontroller'
-=======
-
-include ':starLib', ':ClientLib', ':Mavlink'
->>>>>>> 9015249c5aa150317cef247342e881535087d3e3
-include ':starlTemplate'
-include ':followApp'
-include ':dJISDKLIB'

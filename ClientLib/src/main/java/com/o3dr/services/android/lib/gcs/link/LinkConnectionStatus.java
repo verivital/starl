@@ -12,7 +12,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Conveys information about the link connection state.
- * <p/>
+ * <p>
  * This value is returned in the {@link com.o3dr.android.client.Drone#notifyAttributeUpdated} as the
  * extra value {@link com.o3dr.services.android.lib.gcs.link.LinkEventExtra#EXTRA_CONNECTION_STATUS}
  * when the attribute event is {@link com.o3dr.services.android.lib.gcs.link.LinkEvent#LINK_STATE_UPDATED}

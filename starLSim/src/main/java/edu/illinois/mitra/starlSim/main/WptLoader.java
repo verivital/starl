@@ -20,9 +20,10 @@ public final class WptLoader {
         }else{
 
             try {
-                in = new BufferedReader(new FileReader("waypoints\\" + file));
+            	File f = new File(file);
+                in = new BufferedReader(new FileReader(f));
 
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 System.err.println("File " + file + " not found! No waypoints loaded.");
                 return new PositionList<ItemPosition>();
             }

@@ -40,7 +40,7 @@ public class IdentityLoader {
 			if(line.startsWith("%") || line.trim().isEmpty())
 				continue;
 			
-			String[] components = line.split("[\\s]{0,},[\\s]{0,}");
+			String[] components = line.split("[\\s]*,[\\s]*");
 			if(linesize < 0) {
 				linesize = components.length;
 			} else if(components.length != linesize) {

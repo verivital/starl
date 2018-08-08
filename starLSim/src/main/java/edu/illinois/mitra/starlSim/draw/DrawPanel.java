@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -17,11 +18,12 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Set;
 
+import edu.illinois.mitra.starl.interfaces.AcceptsKeyInput;
 import edu.illinois.mitra.starl.interfaces.AcceptsPointInput;
 import edu.illinois.mitra.starl.interfaces.LogicThread;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 import edu.illinois.mitra.starl.objects.Obstacles;
-import edu.illinois.mitra.starl.objects.Point3d;
+import edu.illinois.mitra.starl.objects.Point3i;
 import edu.illinois.mitra.starlSim.main.SimSettings;
 
 
@@ -40,7 +42,8 @@ public class DrawPanel extends ZoomablePanel
 	private final Color TRACE_COLOR = Color.gray;
 	
 	private LinkedList <Drawer> preDrawers = new LinkedList <Drawer>();
-	private LinkedList <AcceptsPointInput> clickListeners = new LinkedList <AcceptsPointInput>();
+	private LinkedList <AcceptsPointInput> clickListeners = new LinkedList <AcceptsPointInput>();       //List of mouse listeners, use addClickListener()
+	private final LinkedList <AcceptsKeyInput> keyListeners = new LinkedList <AcceptsKeyInput>();           //List of keyboard listeners, use addKeyListener()
 	
 	// wireless interface
 	RoundRectangle2D.Double toggle = new RoundRectangle2D.Double(5,5,20,20,15,15);
@@ -53,7 +56,6 @@ public class DrawPanel extends ZoomablePanel
 	public DrawPanel(Set<String> robotNames, Set<String> blockedWirelessNames, SimSettings settings)
 	{
 		super(settings);
-
 		this.robotNames.addAll(robotNames);
 		Collections.sort(this.robotNames);
 		
@@ -107,9 +109,9 @@ public class DrawPanel extends ZoomablePanel
 					
 					LinkedList <Point> trace = robotTraces.get(rIndex);
 					
-					if (trace.size() == 0 || trace.getLast().x != rd.x || trace.getLast().y != rd.y)
+					if (trace.size() == 0 || trace.getLast().x != rd.getX() || trace.getLast().y != rd.getY())
 					{					
-						trace.add(new Point(rd.x, rd.y));
+						trace.add(new Point(rd.getX(), rd.getY()));
 						
 						if (settings.DRAW_TRACE_LENGTH> 0 && trace.size() > settings.DRAW_TRACE_LENGTH)
 							trace.removeFirst();
@@ -141,28 +143,28 @@ public class DrawPanel extends ZoomablePanel
 	private void drawWorld(Graphics2D g, RobotData rd)
 	{
 		g.setStroke(new BasicStroke(10));
-		g.setColor(rd.c);
+		g.setColor(rd.getColor());
 	
-		ObstacleList list = rd.world;
+		ObstacleList list = rd.getWorld();
 		for(int i = 0; i < list.ObList.size(); i++)
 		{
 			Obstacles currobs = list.ObList.get(i);
-			Point3d nextpoint = currobs.obstacle.firstElement();
-			Point3d curpoint = currobs.obstacle.firstElement();
+			Point3i nextpoint = currobs.obstacle.firstElement();
+			Point3i curpoint = currobs.obstacle.firstElement();
 			int[] xs = new int[currobs.obstacle.size()]; 
 			int[] ys = new int[currobs.obstacle.size()];
 
 			for(int j = 0; j < currobs.obstacle.size() -1 ; j++){
 			curpoint = currobs.obstacle.get(j);
 			nextpoint = currobs.obstacle.get(j+1);
-			g.drawLine(curpoint.x, curpoint.y, nextpoint.x, nextpoint.y);
-			xs[j] = curpoint.x;
-			ys[j] = curpoint.y;
+			g.drawLine(curpoint.getX(), curpoint.getY(), nextpoint.getX(), nextpoint.getY());
+			xs[j] = curpoint.getX();
+			ys[j] = curpoint.getY();
 			}
-			xs[currobs.obstacle.size()-1] = nextpoint.x;
-			ys[currobs.obstacle.size()-1] = nextpoint.y;
+			xs[currobs.obstacle.size()-1] = nextpoint.getX();
+			ys[currobs.obstacle.size()-1] = nextpoint.getY();
 			
-			g.drawLine(nextpoint.x, nextpoint.y, currobs.obstacle.firstElement().x, currobs.obstacle.firstElement().y);
+			g.drawLine(nextpoint.getX(), nextpoint.getY(), currobs.obstacle.firstElement().getX(), currobs.obstacle.firstElement().getY());
 			g.fillPolygon(xs,ys,currobs.obstacle.size());
 		}
 
@@ -228,7 +230,10 @@ public class DrawPanel extends ZoomablePanel
 			drawWireless(g);
 		}
 	}
-	
+
+    /**
+     * Sends point where mouse was clicked to all clickListeners
+     */
 	public void notifyClickListeners()
 	{
 		if (clicked != null)
@@ -239,6 +244,53 @@ public class DrawPanel extends ZoomablePanel
 			clicked = null;
 		}
 	}
+
+    /**
+     * Sends string of most recently typed key to all keyListeners
+     */
+	public void notifyKeyListeners() {
+		synchronized (keyListeners) {
+			for (AcceptsKeyInput k : keyListeners) {
+				if (!keyListeners.isEmpty()) {
+					k.receivedKeyInput(getKeyType());
+				}
+			}
+		}
+	}
+
+    /**
+     * Checks which key was just pressed, then sets Key to a string representing one of the arrow keys or WASD.
+     * @param e - KeyEvent used to determine which key was pressed. Value used in MotionAutomaton classes for user interface.
+     */
+	@Override
+    public void keyPressed(KeyEvent e){
+        if(e.getKeyCode() == KeyEvent.VK_UP){ setKey("forward"); }
+        if(e.getKeyCode() == KeyEvent.VK_DOWN){ setKey("back"); }
+        if(e.getKeyCode() == KeyEvent.VK_LEFT){ setKey("left"); }
+        if(e.getKeyCode() == KeyEvent.VK_RIGHT){ setKey("right"); }
+        if(e.getKeyCode() == KeyEvent.VK_W){ setKey("up"); }
+        if(e.getKeyCode() == KeyEvent.VK_S){ setKey("down"); }
+        if(e.getKeyCode() == KeyEvent.VK_A){ setKey("turnL"); }
+        if(e.getKeyCode() == KeyEvent.VK_D){ setKey("turnR"); }
+
+    }
+
+    /**
+     * On release of the key, sets Key to "stop". Value used in MotionAutomaton classes for user interface.
+     * @param e
+     */
+    @Override
+    public void keyReleased(KeyEvent e){
+        if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_LEFT ||
+                e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_A
+                || e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_D){
+            setKey("stop");
+        }
+
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e){ }
 	
 	protected void mousePressedAt(Point p, MouseEvent e) 
 	{
@@ -316,114 +368,73 @@ public class DrawPanel extends ZoomablePanel
 	private void drawRobot(Graphics2D g, RobotData rd, boolean drawId){
 		g.setStroke(new BasicStroke(this.settings.DRAW_ROBOT_STROKE_SIZE));
 
-		if (rd.c != null)
-			g.setColor(rd.c);
-		else
-			g.setColor(Color.black);
-		int radius = settings.BOT_RADIUS;
-		if (rd.radius != 0)
-			radius = rd.radius;
-		
-		double radians = 2 * Math.PI * rd.degrees / 360.0;
-		
-		Point2D.Double from = new Point2D.Double(rd.x, rd.y);
-		Point2D.Double to = Geometry.projectPoint(from, radius, radians);
-		
-		Line2D.Double l = new Line2D.Double(from, to);
-		
-		g.draw(l);
-		if(rd.name.contains(settings.QUADCOPTER_NAME)){
-			int outerRadius = (int)Math.round((Math.sqrt(2)-1)*rd.radius);
-			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
-			g.drawRect(rd.x-offset/2, rd.y-offset/2, offset, offset);
-			//g.drawOval(rd.x - radius, rd.y - radius, radius*2, radius*2);
-			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("z: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100, rd.x - 55, rd.y + rd.radius + 130);
-		}else if(rd.name.contains(settings.GHOST_NAME)) {
-			int outerRadius = (int)Math.round((Math.sqrt(2)-1)*rd.radius);
-			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
-			g.drawRect(rd.x-offset/2, rd.y-offset/2, offset, offset);
-			//g.drawOval(rd.x - radius, rd.y - radius, radius*2, radius*2);
-			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("z: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100, rd.x - 55, rd.y + rd.radius + 130);
-		}
-		else if(rd.name.contains(settings.MAVIC_NAME)){
-			int outerRadius = (int)Math.round((Math.sqrt(2)-1)*rd.radius);
-			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
-			g.drawRect(rd.x-offset/2, rd.y-offset/2, offset, offset);
-			//g.drawOval(rd.x - radius, rd.y - radius, radius*2, radius*2);
-			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("z: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100 + ", yaw: " + rd.yaw, rd.x - 55, rd.y + rd.radius + 130);
-		}
-		else if(rd.name.contains(settings.PHANTOM_NAME)){
-			int outerRadius = (int)Math.round((Math.sqrt(2)-1)*rd.radius);
-			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
-			g.drawRect(rd.x-offset/2, rd.y-offset/2, offset, offset);
-			//g.drawOval(rd.x - radius, rd.y - radius, radius*2, radius*2);
-			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("z: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100 + ", yaw: " + rd.yaw, rd.x - 55, rd.y + rd.radius + 130);
-		}
-		else if(rd.name.contains(settings.o3DR_NAME)){
-			int outerRadius = (int)Math.round((Math.sqrt(2)-1)*rd.radius);
-			int offset = (int) Math.round(Math.sqrt(2)* outerRadius);
-			g.drawRect(rd.x-offset/2, rd.y-offset/2, offset, offset);
-			//g.drawOval(rd.x - radius, rd.y - radius, radius*2, radius*2);
-			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius - outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius - outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawOval(rd.x - outerRadius + outerRadius, rd.y - outerRadius + outerRadius, outerRadius*2, outerRadius*2);
-			g.drawString("z: " + rd.z + ", pitch: " + Math.round(rd.pitch*100)/100 + ", roll: " + Math.round(rd.roll*100)/100, rd.x - 55, rd.y + rd.radius + 130);
-		}
-		else if(rd.name.contains(settings.IROBOT_NAME)){
-			g.drawOval(rd.x - radius, rd.y - radius, radius*2, radius*2);
-		if(rd.leftbump){
-			int x_1 = (int) (rd.radius*(Math.cos(Math.toRadians(rd.degrees+90))) + rd.x);
-			int y_1 = (int) (rd.radius*(Math.sin(Math.toRadians(rd.degrees+90))) + rd.y);
-			int x_2 = (int) (rd.radius*(Math.cos(Math.toRadians(rd.degrees))) + rd.x);
-			int y_2 = (int) (rd.radius*(Math.sin(Math.toRadians(rd.degrees))) + rd.y);
-			g.drawLine(x_1, y_1, x_2, y_2);
+		g.setColor(rd.getColor() != null ? rd.getColor() : Color.black);
+
+		int radius = rd.isModel() ? rd.getRadius() : settings.BOT_RADIUS;
+
+		double radians = 0;
+		if (rd.isGround()) {
+			radians = Math.toRadians(rd.getDegrees());
+		} else if (rd.isDrone()) {
+			radians = Math.toRadians(rd.getYaw());
 		}
 
-		
-		if(rd.rightbump){
-			int x_1 = (int) (rd.radius*(Math.cos(Math.toRadians(rd.degrees))) + rd.x);
-			int y_1 = (int) (rd.radius*(Math.sin(Math.toRadians(rd.degrees))) + rd.y);
-			int x_2 = (int) (rd.radius*(Math.cos(Math.toRadians(rd.degrees-90))) + rd.x);
-			int y_2 = (int) (rd.radius*(Math.sin(Math.toRadians(rd.degrees-90))) + rd.y);
-			g.drawLine(x_1, y_1, x_2, y_2);
+		Point2D.Double from = new Point2D.Double(rd.getX(), rd.getY());
+		Point2D.Double to = Geometry.projectPoint(from, radius, radians);
+		Line2D.Double l = new Line2D.Double(from, to);
+
+		// Translate the Graphics2D so that (0,0) is the center of the robot
+		g.translate(rd.getX(), rd.getY());
+		if (rd.isDrone()) {
+			// Rotate the Graphics2d so that the positive x-axis is the forward of the robot
+			g.rotate(radians);
+			int outerRadius2 = (int)Math.round((Math.sqrt(2)-1) * radius * 2);
+			int offset = (int)Math.round(outerRadius2 / Math.sqrt(2));
+			g.draw(new Line2D.Double(0, 0, radius, 0));
+			g.drawRect(-offset / 2, -offset / 2, offset, offset);
+
+			g.drawOval(-outerRadius2, -outerRadius2, outerRadius2, outerRadius2);
+			g.drawOval(0, -outerRadius2, outerRadius2, outerRadius2);
+			g.drawOval(-outerRadius2, 0, outerRadius2, outerRadius2);
+			g.drawOval(0, 0, outerRadius2, outerRadius2);
+
+			g.rotate(-radians);
+			g.drawString("z: " + rd.getZ() + ", pitch: " + Math.round(rd.getPitch() *100)/100 + ", roll: " + Math.round(rd.getRoll() *100)/100, -55, radius + 130);
+			g.drawString(rd.getName(), -55, radius + 50);
+			// g.drawString("z: " + rd.getZ() + ", pitch: " + Math.round(rd.getPitch() * Math.PI) + ", roll: " + rd.getRoll(), rd.getX() - 55, rd.getY() + rd.getRadius() + 130);
+		} else if(rd.isGround()) {
+			// Rotate the Graphics2d so that the positive x-axis is the forward of the robot
+			g.rotate(radians);
+			g.draw(new Line2D.Double(0, 0, radius, 0));
+			g.drawOval(-radius, -radius, radius*2, radius*2);
+			if(rd.getLeftbump()){
+				int x_1 = 0;
+				int y_1 = radius;
+				int x_2 = radius;
+				int y_2 = 0;
+				g.drawLine(x_1, y_1, x_2, y_2);
+			}
+			if(rd.getRightbump()){
+				int x_1 = 0;
+				int y_1 = -radius;
+				int x_2 = radius;
+				int y_2 = 0;
+				g.drawLine(x_1, y_1, x_2, y_2);
+			}
+			g.rotate(-radians);
+
+			if (drawId) {
+				// using enum for ground robot type
+				String botType = rd.getGroundType().name().toLowerCase();
+				// write name to the right of the robot
+				g.drawString(rd.getName() + " " + botType, -55, radius + 50);
+			} else {
+				g.drawString(rd.getName(), -55, radius + 50);
+			}
 		}
-		}
+		g.translate(-rd.getX(), -rd.getY());
 			
-		if (drawId)
-		{
-			String botType = "default";
-			if(rd.type == 0){
-				botType =  "goal";
-			}
-			if(rd.type ==1){
-				botType = "discovery";
-			}
-			if(rd.type ==2){
-				botType = "moving obstacle";
-			}
-			// write name to the right of the robot
-			g.drawString(rd.name+" "+ botType , rd.x - 55, rd.y + radius + 50);
-		}
-		else{
-			g.drawString(rd.name+" ", rd.x - 55, rd.y + radius + 50);
-		}
+
 
 	}
 	
@@ -459,4 +470,9 @@ public class DrawPanel extends ZoomablePanel
 	{
 		clickListeners.add(d);
 	}
+
+    public void addKeyListener(AcceptsKeyInput k)
+    {
+        keyListeners.add(k);
+    }
 }

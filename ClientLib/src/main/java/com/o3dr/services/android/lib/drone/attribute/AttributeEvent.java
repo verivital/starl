@@ -19,7 +19,7 @@ public class AttributeEvent {
     /**
      * Signals an autopilot error.
      *
-     * @see {@link com.o3dr.services.android.lib.drone.attribute.AttributeEventExtra#EXTRA_AUTOPILOT_ERROR_ID}
+     * @see com.o3dr.services.android.lib.drone.attribute.AttributeEventExtra#EXTRA_AUTOPILOT_ERROR_ID
      */
     public static final String AUTOPILOT_ERROR = PACKAGE_NAME + ".AUTOPILOT_ERROR";
 
@@ -38,14 +38,14 @@ public class AttributeEvent {
     /**
      * Signals completion of the magnetometer calibration.
      *
-     * @see {@link AttributeEventExtra#EXTRA_CALIBRATION_MAG_RESULT}
+     * @see AttributeEventExtra#EXTRA_CALIBRATION_MAG_RESULT
      */
     public static final String CALIBRATION_MAG_COMPLETED = PACKAGE_NAME + ".CALIBRATION_MAG_COMPLETED";
 
     /**
      * Provides progress updates for the magnetometer calibration.
      *
-     * @see {@link AttributeEventExtra#EXTRA_CALIBRATION_MAG_PROGRESS}
+     * @see AttributeEventExtra#EXTRA_CALIBRATION_MAG_PROGRESS
      */
     public static final String CALIBRATION_MAG_PROGRESS = PACKAGE_NAME + ".CALIBRATION_MAG_PROGRESS";
 
@@ -84,16 +84,16 @@ public class AttributeEvent {
     /**
      * Event to signal the start of parameters refresh from the vehicle.
      *
-     * @see {@link com.o3dr.services.android.lib.drone.property.Parameters}
-     * @see {@link com.o3dr.services.android.lib.drone.property.Parameter}
+     * @see com.o3dr.services.android.lib.drone.property.Parameters
+     * @see com.o3dr.services.android.lib.drone.property.Parameter
      */
     public static final String PARAMETERS_REFRESH_STARTED = PACKAGE_NAME + ".PARAMETERS_REFRESH_STARTED";
 
     /**
      * Event to signal the completion of the parameters refresh from the vehicle.
      *
-     * @see {@link com.o3dr.services.android.lib.drone.property.Parameters}
-     * @see {@link com.o3dr.services.android.lib.drone.property.Parameter}
+     * @see com.o3dr.services.android.lib.drone.property.Parameters
+     * @see com.o3dr.services.android.lib.drone.property.Parameter
      */
     public static final String PARAMETERS_REFRESH_COMPLETED = PACKAGE_NAME + ".PARAMETERS_REFRESH_ENDED";
 
@@ -102,10 +102,10 @@ public class AttributeEvent {
      * fire as many times as the count of the set of parameters being refreshed.
      * Allows listeners to keep track of the parameters refresh progress.
      *
-     * @see {@link AttributeEventExtra#EXTRA_PARAMETER_INDEX}
-     * @see {@link AttributeEventExtra#EXTRA_PARAMETERS_COUNT}
-     * @see {@link AttributeEventExtra#EXTRA_PARAMETER_NAME}
-     * @see {@link AttributeEventExtra#EXTRA_PARAMETER_VALUE}
+     * @see AttributeEventExtra#EXTRA_PARAMETER_INDEX
+     * @see AttributeEventExtra#EXTRA_PARAMETERS_COUNT
+     * @see AttributeEventExtra#EXTRA_PARAMETER_NAME
+     * @see AttributeEventExtra#EXTRA_PARAMETER_VALUE
      */
     public static final String PARAMETER_RECEIVED = PACKAGE_NAME + ".PARAMETERS_RECEIVED";
 
@@ -148,31 +148,31 @@ public class AttributeEvent {
 
     /**
      * Signals updates of the ekf status.
-     * @see {@link com.o3dr.services.android.lib.drone.property.State}
+     * @see com.o3dr.services.android.lib.drone.property.State
      */
     public static final String STATE_EKF_REPORT = PACKAGE_NAME + ".STATE_EKF_REPORT";
 
     /**
      * Signals updates to the ekf position state.
-     * @see {@link com.o3dr.services.android.lib.drone.property.State}
+     * @see com.o3dr.services.android.lib.drone.property.State
      */
     public static final String STATE_EKF_POSITION = PACKAGE_NAME + ".STATE_EKF_POSITION";
 
     /**
      * Signals update of the vehicle mode.
-     * @see {@link com.o3dr.services.android.lib.drone.property.State}
+     * @see com.o3dr.services.android.lib.drone.property.State
      */
     public static final String STATE_VEHICLE_MODE = PACKAGE_NAME + ".STATE_VEHICLE_MODE";
 
     /**
      * Signals vehicle vibration updates.
-     * @see {@link com.o3dr.services.android.lib.drone.property.State}
+     * @see com.o3dr.services.android.lib.drone.property.State
      */
     public static final String STATE_VEHICLE_VIBRATION = PACKAGE_NAME + ".STATE_VEHICLE_VIBRATION";
 
     /**
      * Signals vehicle UID updates.
-     * @see {@link com.o3dr.services.android.lib.drone.property.State}
+     * @see com.o3dr.services.android.lib.drone.property.State
      */
     public static final String STATE_VEHICLE_UID = PACKAGE_NAME + ".STATE_VEHICLE_UID";
 
@@ -201,9 +201,9 @@ public class AttributeEvent {
     /**
      * Signals the gimbal orientation was updated.
      *
-     * @see {@link AttributeEventExtra#EXTRA_GIMBAL_ORIENTATION_PITCH}
-     * @see {@link AttributeEventExtra#EXTRA_GIMBAL_ORIENTATION_ROLL}
-     * @see {@link AttributeEventExtra#EXTRA_GIMBAL_ORIENTATION_YAW}
+     * @see AttributeEventExtra#EXTRA_GIMBAL_ORIENTATION_PITCH
+     * @see AttributeEventExtra#EXTRA_GIMBAL_ORIENTATION_ROLL
+     * @see AttributeEventExtra#EXTRA_GIMBAL_ORIENTATION_YAW
      */
     public static final String GIMBAL_ORIENTATION_UPDATED = PACKAGE_NAME + ".GIMBAL_ORIENTATION_UPDATED";
 

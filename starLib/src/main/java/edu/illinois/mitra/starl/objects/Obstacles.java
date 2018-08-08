@@ -4,8 +4,6 @@ import java.util.*;
 
 import edu.illinois.mitra.starl.motion.RRTNode;
 
-import android.graphics.Path;
-
 /**
  * The obstacle is defined here
  * Each obstacle is a polygon, the list of points should construct a closed shape
@@ -14,7 +12,7 @@ import android.graphics.Path;
  * @version 2.0
  */
 public class Obstacles {
-    public Vector<Point3d> obstacle;
+    public Vector<Point3i> obstacle;
     public int height;
     public long timeFrame;
     public boolean hidden;
@@ -24,17 +22,17 @@ public class Obstacles {
     //once zero, it will be removed from the obsList
 
     public Obstacles() {
-        obstacle = new Vector<Point3d>(4, 3);
+        obstacle = new Vector<Point3i>(4, 3);
     }
 
-    public Obstacles(Vector<Point3d> obstacle1) {
+    public Obstacles(Vector<Point3i> obstacle1) {
         obstacle = obstacle1;
     }
 
     public Obstacles(Obstacles original) {
-        obstacle = new Vector<Point3d>(4, 3);
+        obstacle = new Vector<Point3i>(4, 3);
         for (int i = 0; i < original.obstacle.size(); i++) {
-            add(original.obstacle.get(i).x, original.obstacle.get(i).y);
+            add(original.obstacle.get(i).getX(), original.obstacle.get(i).getY());
         }
         grided = original.grided;
         timeFrame = original.timeFrame;
@@ -44,28 +42,31 @@ public class Obstacles {
 
     //method for adding unknown obstacles
     public Obstacles(int x, int y) {
-        obstacle = new Vector<Point3d>(4, 3);
-        add(x, y, 0);
-        grided = false;
-        timeFrame = -1;
-        height = -1;
+        this(new Point3i(x, y));
+    }
+    public Obstacles(int x, int y, int z) {
+        this(new Point3i(x, y, z));
     }
 
-    public Obstacles(int x, int y, int z) {
-        obstacle = new Vector<Point3d>(4, 3);
-        add(x, y, z);
+
+    public Obstacles(Point3i point) {
+        obstacle = new Vector<Point3i>(4, 3);
+        add(point);
         grided = false;
         timeFrame = -1;
         height = -1;
     }
 
     public void add(int x, int y) {
-        add(x, y, 0);
+        add(new Point3i(x, y, 0));
     }
 
     public void add(int x, int y, int z) {
-        Point3d temp = new Point3d(x, y, z);
-        obstacle.add(temp);
+        add(new Point3i(x, y, z));
+    }
+
+    public void add(Point3i point) {
+        obstacle.add(point);
     }
 
     /**
@@ -74,8 +75,8 @@ public class Obstacles {
      *
      * @return
      */
-    public Vector<Point3d> getObstacleVector() {
-        return (Vector<Point3d>) this.obstacle.clone();
+    public Vector<Point3i> getObstacleVector() {
+        return (Vector<Point3i>) this.obstacle.clone();
     }
 
     /**
@@ -87,11 +88,11 @@ public class Obstacles {
      * @return
      */
     public boolean checkCross(ItemPosition destination, ItemPosition current) {
-        double x1, x2, x3, x4, y1, y2, y3, y4;
-        x1 = destination.x;
-        y1 = destination.y;
-        x2 = current.x;
-        y2 = current.y;
+        int x1, x2, x3, x4, y1, y2, y3, y4;
+        x1 = destination.getX();
+        y1 = destination.getY();
+        x2 = current.getX();
+        y2 = current.getY();
         for (int i = 0; i < obstacle.size(); i++) {
             for (int j = i + 1; j < obstacle.size() && obstacle.elementAt(i) != null; j++) {
                 x3 = obstacle.elementAt(i).getX();
@@ -110,22 +111,22 @@ public class Obstacles {
     //line intersection calculation method to replace java.awt.geom.Line2D.intersectsLine() since
     //the java.awt library is not part of android (also this one is supposedly 25% faster)
     //source: http://www.java-gaming.org/index.php?topic=22590.0
-    private static boolean linesIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+    private static boolean linesIntersect(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
         // Return false if either of the lines have zero length
         if (x1 == x2 && y1 == y2 ||
                 x3 == x4 && y3 == y4) {
             return false;
         }
         // Fastest method, based on Franklin Antonio's "Faster Line Segment Intersection" topic "in Graphics Gems III" book (http://www.graphicsgems.org/)
-        double ax = x2 - x1;
-        double ay = y2 - y1;
-        double bx = x3 - x4;
-        double by = y3 - y4;
-        double cx = x1 - x3;
-        double cy = y1 - y3;
+        int ax = x2 - x1;
+        int ay = y2 - y1;
+        int bx = x3 - x4;
+        int by = y3 - y4;
+        int cx = x1 - x3;
+        int cy = y1 - y3;
 
-        double alphaNumerator = by * cx - bx * cy;
-        double commonDenominator = ay * bx - ax * by;
+        int alphaNumerator = by * cx - bx * cy;
+        int commonDenominator = ay * bx - ax * by;
         if (commonDenominator > 0) {
             if (alphaNumerator < 0 || alphaNumerator > commonDenominator) {
                 return false;
@@ -135,7 +136,7 @@ public class Obstacles {
                 return false;
             }
         }
-        double betaNumerator = ax * cy - ay * cx;
+        int betaNumerator = ax * cy - ay * cx;
         if (commonDenominator > 0) {
             if (betaNumerator < 0 || betaNumerator > commonDenominator) {
                 return false;
@@ -149,8 +150,8 @@ public class Obstacles {
             // This code wasn't in Franklin Antonio's method. It was added by Keith Woodward.
             // The lines are parallel.
             // Check if they're collinear.
-            double y3LessY1 = y3 - y1;
-            double collinearityTestForP3 = x1 * (y2 - y3) + x2 * (y3LessY1) + x3 * (y1 - y2);   // see http://mathworld.wolfram.com/Collinear.html
+            int y3LessY1 = y3 - y1;
+            int collinearityTestForP3 = x1 * (y2 - y3) + x2 * (y3LessY1) + x3 * (y1 - y2);   // see http://mathworld.wolfram.com/Collinear.html
             // If p3 is collinear with p1 and p2 then p4 will also be collinear, since p1-p2 is parallel with p3-p4
             if (collinearityTestForP3 == 0) {
                 // The lines are collinear. Now check if they overlap.
@@ -184,33 +185,32 @@ public class Obstacles {
         if (obstacle.size() == 0)
             return true;
 
-        Point3d nextpoint = obstacle.firstElement();
-        Point3d curpoint = obstacle.firstElement();
         int[] x = new int[obstacle.size()];
         int[] y = new int[obstacle.size()];
 
         for (int j = 0; j < obstacle.size(); j++) {
-            curpoint = obstacle.get(j);
+            Point3i curpoint = obstacle.get(j);
+            Point3i nextpoint;
             if (j == obstacle.size() - 1) {
                 nextpoint = obstacle.firstElement();
             } else {
                 nextpoint = obstacle.get(j + 1);
             }
-            double x1 = curpoint.x;
-            double y1 = curpoint.y;
-            double x2 = nextpoint.x;
-            double y2 = nextpoint.y;
-            x[j] = curpoint.x;
-            y[j] = curpoint.y;
-            double px = destination.x;
-            double py = destination.y;
+            int x1 = curpoint.getX();
+            int y1 = curpoint.getY();
+            int x2 = nextpoint.getX();
+            int y2 = nextpoint.getY();
+            x[j] = curpoint.getX();
+            y[j] = curpoint.getY();
+            int px = destination.getX();
+            int py = destination.getY();
             if (pointToLineSeg(px, py, x1, y1, x2, y2) < radius) {
                 return false;
             }
 
         }
         Polygon obspoly = new Polygon(x, y, obstacle.size());
-        return !obspoly.contains(destination.x, destination.y);
+        return !obspoly.contains(destination.getX(), destination.getY());
     }
 
     /**
@@ -221,40 +221,39 @@ public class Obstacles {
      * @return
      */
     public boolean validItemPos(ItemPosition destination) {
-        Point3d curpoint = obstacle.firstElement();
+        Point3i curpoint = obstacle.firstElement();
         int[] x = new int[obstacle.size()];
         int[] y = new int[obstacle.size()];
 
         for (int j = 0; j < obstacle.size(); j++) {
             curpoint = obstacle.get(j);
-            x[j] = curpoint.x;
-            y[j] = curpoint.y;
+            x[j] = curpoint.getX();
+            y[j] = curpoint.getY();
 
         }
         Polygon obspoly = new Polygon(x, y, obstacle.size());
-        return !obspoly.contains(destination.x, destination.y);
+        return !obspoly.contains(destination.getX(), destination.getY());
     }
 
     public double findMinDist(RRTNode destNode, RRTNode currentNode) {
-        Point3d nextpoint = obstacle.firstElement();
-        Point3d curpoint = obstacle.firstElement();
         double minDist = Double.MAX_VALUE;
-        double cx1 = destNode.position.x;
-        double cy1 = destNode.position.y;
-        double cx2 = currentNode.position.x;
-        double cy2 = currentNode.position.y;
+        int cx1 = destNode.position.getX();
+        int cy1 = destNode.position.getY();
+        int cx2 = currentNode.position.getX();
+        int cy2 = currentNode.position.getY();
 
         for (int j = 0; j < obstacle.size(); j++) {
-            curpoint = obstacle.get(j);
+            Point3i curpoint = obstacle.get(j);
+            Point3i nextpoint;
             if (j == obstacle.size() - 1) {
                 nextpoint = obstacle.firstElement();
             } else {
                 nextpoint = obstacle.get(j + 1);
             }
-            double sx1 = curpoint.x;
-            double sy1 = curpoint.y;
-            double sx2 = nextpoint.x;
-            double sy2 = nextpoint.y;
+            int sx1 = curpoint.getX();
+            int sy1 = curpoint.getY();
+            int sx2 = nextpoint.getX();
+            int sy2 = nextpoint.getY();
 
             double dist1 = shortestDistance(cx1, cy1, sx1, sy1, sx2, sy2);//segment.ptSegDist(current.x1, current.y1);
             double dist2 = shortestDistance(cx2, cy2, sx1, sy1, sx2, sy2);//segment.ptSegDist(current.x2, current.y2);
@@ -275,15 +274,15 @@ public class Obstacles {
 
     //returns the shortest distance between a point to a line segment
     //source: https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment?page=1&tab=votes#tab-top
-    private static double pointToLineSeg(double px, double py, double x1, double y1, double x2, double y2) {
-        double A = px - x1;
-        double B = py - y1;
-        double C = x2 - x1;
-        double D = y2 - y1;
+    private static double pointToLineSeg(int px, int py, int x1, int y1, int x2, int y2) {
+        int A = px - x1;
+        int B = py - y1;
+        int C = x2 - x1;
+        int D = y2 - y1;
 
-        double dot = A * C + B * D;
-        double len_sq = C * C + D * D;
-        double param = -1;
+        int dot = A * C + B * D;
+        int len_sq = C * C + D * D;
+        double param = -1.0;
         if (len_sq != 0) {
             param = dot / len_sq;
         }
@@ -302,42 +301,57 @@ public class Obstacles {
 
         double dx = px - xx;
         double dy = px - yy;
-        return Math.sqrt(dx * dx + dy * dy);
+        return Math.hypot(dx, dy);
     }
 
-    private static double shortestDistance(double x3,double y3, double x1,double y1,double x2,double y2)
+    private static double shortestDistance(int x3, int y3, int x1, int y1, int x2, int y2)
     {
-        double px=x2-x1;
-        double py=y2-y1;
-        double temp=(px*px)+(py*py);
-        double u=((x3 - x1) * px + (y3 - y1) * py) / (temp);
-        if(u>1){
-            u=1;
-        }
-        else if(u<0){
-            u=0;
+        int px = x2 - x1;
+        int py = y2 - y1;
+        int temp = px * px + py * py;
+        double u = ((x3 - x1) * px + (y3 - y1) * py) / temp;
+        if (u > 1) {
+            u = 1;
+        } else if (u < 0) {
+            u = 0;
         }
         double x = x1 + u * px;
         double y = y1 + u * py;
 
         double dx = x - x3;
         double dy = y - y3;
-        return Math.sqrt(dx*dx + dy*dy);
+        return Math.hypot(dx, dy);
 
     }
 
-    public Point3d getClosestPointOnSegment(int sx1, int sy1, int sx2, int sy2, int px, int py) {
-        double xDelta = sx2 - sx1;
-        double yDelta = sy2 - sy1;
+    public Point3i getClosestPointOnSegment(Point3i s1, Point3i s2, Point3i p) {
+        assert(s1 != null && s2 != null && p != null);
+        Vector3i delta = s2.subtract(s1);
+        double u = ((p.getX() - s1.getX()) * delta.getX() + (p.getY() - s1.getY()) * delta.getY()) / delta.magnitudeSq();
+
+        final Point3i closestPoint;
+        if (u < 0) {
+            closestPoint = s1;
+        } else if (u > 1) {
+            closestPoint = s2;
+        } else {
+            closestPoint = s1.add(delta.scale(u));
+        }
+        return closestPoint;
+    }
+
+    public Point3i getClosestPointOnSegment(int sx1, int sy1, int sx2, int sy2, int px, int py) {
+        int xDelta = sx2 - sx1;
+        int yDelta = sy2 - sy1;
         double u = ((px - sx1) * xDelta + (py - sy1) * yDelta) / (xDelta * xDelta + yDelta * yDelta);
 
-        final Point3d closestPoint;
+        final Point3i closestPoint;
         if (u < 0) {
-            closestPoint = new Point3d(sx1, sy1);
+            closestPoint = new Point3i(sx1, sy1);
         } else if (u > 1) {
-            closestPoint = new Point3d(sx2, sy2);
+            closestPoint = new Point3i(sx2, sy2);
         } else {
-            closestPoint = new Point3d((int) Math.round(sx1 + u * xDelta), (int) Math.round(sy1 + u * yDelta));
+            closestPoint = new Point3i((int) Math.round(sx1 + u * xDelta), (int) Math.round(sy1 + u * yDelta));
         }
 
         return closestPoint;
@@ -355,10 +369,10 @@ public class Obstacles {
         //System.out.println(obstacle);
         switch (obstacle.size()) {
             case 1:
-                Point3d leftBottom1 = new Point3d(obstacle.firstElement().x - ((obstacle.firstElement().x) % a), obstacle.firstElement().y - ((obstacle.firstElement().y) % a));
-                Point3d rightBottom1 = new Point3d((leftBottom1.x + a), leftBottom1.y);
-                Point3d rightTop1 = new Point3d((leftBottom1.x + a), (leftBottom1.y + a));
-                Point3d leftTop1 = new Point3d((leftBottom1.x), (leftBottom1.y + a));
+                Point3i leftBottom1 = new Point3i(obstacle.firstElement().getX() - ((obstacle.firstElement().getX()) % a), obstacle.firstElement().getY() - ((obstacle.firstElement().getY()) % a));
+                Point3i rightBottom1 = new Point3i((leftBottom1.getX() + a), leftBottom1.getY());
+                Point3i rightTop1 = new Point3i((leftBottom1.getX() + a), (leftBottom1.getY() + a));
+                Point3i leftTop1 = new Point3i((leftBottom1.getX()), (leftBottom1.getY() + a));
                 obstacle.removeAllElements();
                 obstacle.add(leftBottom1);
                 obstacle.add(rightBottom1);
@@ -366,19 +380,19 @@ public class Obstacles {
                 obstacle.add(leftTop1);
                 break;
             case 2:
-                int min_x = Math.min(obstacle.firstElement().x, obstacle.get(1).x);
+                int min_x = Math.min(obstacle.firstElement().getX(), obstacle.get(1).getX());
                 min_x = min_x - (min_x % a);
-                int max_x = Math.max(obstacle.firstElement().x, obstacle.get(1).x);
+                int max_x = Math.max(obstacle.firstElement().getX(), obstacle.get(1).getX());
                 max_x = max_x - (max_x % a) + a;
-                int min_y = Math.min(obstacle.firstElement().y, obstacle.get(1).y);
+                int min_y = Math.min(obstacle.firstElement().getY(), obstacle.get(1).getY());
                 min_y = min_y - (min_y % a);
-                int max_y = Math.max(obstacle.firstElement().y, obstacle.get(1).y);
+                int max_y = Math.max(obstacle.firstElement().getY(), obstacle.get(1).getY());
                 max_y = max_y - (max_y % a) + a;
 
-                Point3d leftBottom2 = new Point3d(min_x, min_y);
-                Point3d rightBottom2 = new Point3d(max_x, min_y);
-                Point3d rightTop2 = new Point3d(max_x, max_y);
-                Point3d leftTop2 = new Point3d(min_x, max_y);
+                Point3i leftBottom2 = new Point3i(min_x, min_y);
+                Point3i rightBottom2 = new Point3i(max_x, min_y);
+                Point3i rightTop2 = new Point3i(max_x, max_y);
+                Point3i leftTop2 = new Point3i(min_x, max_y);
                 obstacle.removeAllElements();
                 obstacle.add(leftBottom2);
                 obstacle.add(rightBottom2);
@@ -386,30 +400,30 @@ public class Obstacles {
                 obstacle.add(leftTop2);
                 break;
             case 4:
-                int min_x3 = Math.min(obstacle.firstElement().x, obstacle.get(1).x);
-                min_x3 = Math.min(min_x3, obstacle.get(2).x);
-                min_x3 = Math.min(min_x3, obstacle.get(3).x);
+                int min_x3 = Math.min(obstacle.firstElement().getX(), obstacle.get(1).getX());
+                min_x3 = Math.min(min_x3, obstacle.get(2).getX());
+                min_x3 = Math.min(min_x3, obstacle.get(3).getX());
                 min_x3 = min_x3 - (min_x3 % a);
 
-                int max_x3 = Math.max(obstacle.firstElement().x, obstacle.get(1).x);
-                max_x3 = Math.max(max_x3, obstacle.get(2).x);
-                max_x3 = Math.max(max_x3, obstacle.get(3).x);
+                int max_x3 = Math.max(obstacle.firstElement().getX(), obstacle.get(1).getX());
+                max_x3 = Math.max(max_x3, obstacle.get(2).getX());
+                max_x3 = Math.max(max_x3, obstacle.get(3).getX());
                 max_x3 = max_x3 - (max_x3 % a) + a;
 
-                int min_y3 = Math.min(obstacle.firstElement().y, obstacle.get(1).y);
-                min_y3 = Math.min(min_y3, obstacle.get(2).y);
-                min_y3 = Math.min(min_y3, obstacle.get(3).y);
+                int min_y3 = Math.min(obstacle.firstElement().getY(), obstacle.get(1).getY());
+                min_y3 = Math.min(min_y3, obstacle.get(2).getY());
+                min_y3 = Math.min(min_y3, obstacle.get(3).getY());
                 min_y3 = min_y3 - (min_y3 % a);
 
-                int max_y3 = Math.max(obstacle.firstElement().y, obstacle.get(1).y);
-                max_y3 = Math.max(max_y3, obstacle.get(2).y);
-                max_y3 = Math.max(max_y3, obstacle.get(3).y);
+                int max_y3 = Math.max(obstacle.firstElement().getY(), obstacle.get(1).getY());
+                max_y3 = Math.max(max_y3, obstacle.get(2).getY());
+                max_y3 = Math.max(max_y3, obstacle.get(3).getY());
                 max_y3 = max_y3 - (max_y3 % a) + a;
 
-                Point3d leftBottom3 = new Point3d(min_x3, min_y3);
-                Point3d rightBottom3 = new Point3d(max_x3, min_y3);
-                Point3d rightTop3 = new Point3d(max_x3, max_y3);
-                Point3d leftTop3 = new Point3d(min_x3, max_y3);
+                Point3i leftBottom3 = new Point3i(min_x3, min_y3);
+                Point3i rightBottom3 = new Point3i(max_x3, min_y3);
+                Point3i rightTop3 = new Point3i(max_x3, max_y3);
+                Point3i leftTop3 = new Point3i(min_x3, max_y3);
                 obstacle.removeAllElements();
                 obstacle.add(leftBottom3);
                 obstacle.add(rightBottom3);

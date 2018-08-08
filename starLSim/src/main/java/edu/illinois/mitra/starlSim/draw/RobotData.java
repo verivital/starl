@@ -2,95 +2,135 @@ package edu.illinois.mitra.starlSim.draw;
 
 import java.awt.Color;
 
+import edu.illinois.mitra.starl.models.Model;
+import edu.illinois.mitra.starl.models.Model_Drone;
+import edu.illinois.mitra.starl.models.Model_Ground;
+import edu.illinois.mitra.starl.objects.ItemPosition;
 import edu.illinois.mitra.starl.objects.ObstacleList;
 
 public class RobotData
 {
-	// TODO: make this class more general for any models
-	public String name;
-	public int x;
-	public int y;
-	public int z = 0;
-	public double degrees;
-	public double yaw;
-	public double pitch;
-	public double roll;
-	public long time;
+	private ItemPosition item;
+	private Color color;
+	private ObstacleList world;
 
-	// optional
-	public int radius;
-	public Color c;
-	public ObstacleList world;
-	public int type;
-	public boolean leftbump;
-	public boolean rightbump;
-	
-	public RobotData(String name, int x, int y, double degrees)
-	{
-		this.name = name;
-		this.x = x;
-		this.y = y;
-		this.degrees = degrees;
+	public RobotData(ItemPosition item) {
+		this(item, null);
 	}
-	
-	public RobotData(String name, int x, int y, double degrees, Color color) {
-		this(name, x, y, degrees);
-		this.c = color;
+
+	public RobotData(ItemPosition item, Color color) {
+		this(item, color, null);
 	}
-	
-	public RobotData(String name, int x, int y, double degrees, Color color, ObstacleList world) {
-		this(name, x, y, degrees, color);
-		this.world = world;
-		
+
+	public RobotData(ItemPosition item, Color color, ObstacleList world) {
+		if (item == null) {
+			throw new IllegalArgumentException("Null item parameter not supported.");
+		}
+		this.item = item;
+		this.color = color != null ? color : Color.black;
+		this.world = world != null ? world : new ObstacleList();
 	}
-	
-	public RobotData(String name, int x, int y, double degrees, Color color, ObstacleList world, boolean leftbump, boolean rightbump) {
-		this(name, x, y, degrees, color);
-		this.world = world;
-		this.leftbump = leftbump;
-		this.rightbump = rightbump;
+
+	public String getName() {
+		return item.getName();
 	}
-	
-	public RobotData(String name, int x, int y, double degrees, long t) {
-		this(name, x, y, degrees);
-		this.time = t;
+
+	public boolean isModel() {
+		return item instanceof Model;
 	}
-	
-	public RobotData(String name, int x, int y, int z, double yaw, double pitch, double roll, long t) {
-		this.name = name;
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.yaw = yaw;
-		this.pitch = pitch;
-		this.roll = roll;
-		this.time = t;
+
+	public String getTypename() {
+		if (isModel()) {
+			return ((Model) item).getTypeName();
+		}
+		throw new IllegalArgumentException("Cannot get typename for a non-model item.");
 	}
-	
-	public RobotData(String name, int x, int y, int z, double yaw, double pitch, double roll) {
-		this.name = name;
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.yaw = yaw;
-		this.pitch = pitch;
-		this.roll = roll;
+
+	public int getX() {
+		return item.getX();
 	}
-	
-	public RobotData(String name, int x, int y, double degrees, long t, Color color) {
-		this(name, x, y, degrees, t);
-		this.c = color;
+
+	public int getY() {
+		return item.getY();
 	}
-	
-	public RobotData(String name, int x, int y, double degrees, long t, Color color, ObstacleList world) {
-		this(name, x, y, degrees, t, color);
-		this.world = world;
+
+	public int getZ() {
+		return item.getZ();
 	}
-	
-	public RobotData(String name, int x, int y, double degrees, long t, Color color, ObstacleList world, boolean leftbump, boolean rightbump) {
-		this(name, x, y, degrees, t, color);
-		this.world = world;
-		this.leftbump = leftbump;
-		this.rightbump = rightbump;
+
+	public boolean isGround() {
+		return item instanceof Model_Ground;
+	}
+
+	public double getDegrees() {
+		if (isGround()) {
+			return ((Model_Ground) item).angle;
+		}
+		throw new IllegalArgumentException("Cannot get degrees for a non-ground item.");
+	}
+
+	public boolean isDrone() {
+		return item instanceof Model_Drone;
+	}
+
+	public double getYaw() {
+		if (isDrone()) {
+			return ((Model_Drone) item).getYaw();
+		}
+		throw new IllegalArgumentException("Cannot get yaw for a non-drone item.");
+	}
+
+	public double getPitch() {
+		if (isDrone()) {
+			return ((Model_Drone) item).getPitch();
+		}
+		throw new IllegalArgumentException("Cannot get pitch for a non-drone item.");
+	}
+
+	public double getRoll() {
+		if (isDrone()) {
+			return ((Model_Drone) item).getRoll();
+		}
+		throw new IllegalArgumentException("Cannot get roll for a non-drone item.");
+	}
+
+	public long getTime() {
+		return item.receivedTime;
+	}
+
+	public int getRadius() {
+		if (isModel()) {
+			return ((Model) item).radius();
+		}
+		throw new IllegalArgumentException("Cannot get radius for a non-model item.");
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public ObstacleList getWorld() {
+		return world;
+	}
+
+	public Model_Ground.Type getGroundType() {
+		if (isGround()) {
+			return ((Model_Ground) item).type;
+		}
+		throw new IllegalArgumentException("Cannot get type for a non-ground item.");
+	}
+
+	public boolean getLeftbump() {
+		if (isGround()) {
+			return ((Model_Ground) item).leftBump;
+		}
+		throw new IllegalArgumentException("Cannot get leftBump for a non-ground item.");
+	}
+
+	public boolean getRightbump() {
+		if (isGround()) {
+			return ((Model_Ground) item).rightBump;
+		}
+		throw new IllegalArgumentException("Cannot get rightBump for a non-ground item.");
 	}
 }

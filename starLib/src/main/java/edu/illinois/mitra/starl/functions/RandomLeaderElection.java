@@ -36,6 +36,7 @@ public class RandomLeaderElection implements LeaderElection, MessageListener {
 	};
 
 	private String leader;
+	private int leaderID;
 	private long startTime;
 	private int candidates;
 	private Stage stage;
@@ -47,12 +48,19 @@ public class RandomLeaderElection implements LeaderElection, MessageListener {
 	}
 
 	@Override
+	public int getLeaderID(){
+		return leaderID;
+	}
+
+
+	@Override
 	public String getLeader() {
 		switch(stage) {
 		case WAIT_FOR_BALLOTS:
 			// If we've received all of the ballots, elect a leader and announce it
 			if(ballots.size() == candidates) {
 				leader = ballots.first().candidate;
+				leaderID = ballots.first().idNum;
 				stage = Stage.DONE;
 				announceLeader();
 				gvh.log.d(TAG, "All ballots received, leader is " + leader);
@@ -105,9 +113,9 @@ public class RandomLeaderElection implements LeaderElection, MessageListener {
 
 		int myNumber = rand.nextInt(1000);
 		gvh.log.i(TAG, "My number is " + myNumber);
-		RobotMessage myBallot = new RobotMessage("ALL", gvh.id.getName(), Common.MSG_RANDLEADERELECT, new MessageContents(myNumber));
+		RobotMessage myBallot = new RobotMessage("ALL", gvh.id.getName(), Common.MSG_RANDLEADERELECT, new MessageContents(Integer.toString(myNumber), Integer.toString(gvh.id.getIdNumber())));
 		gvh.comms.addOutgoingMessage(myBallot);
-		ballots.add(new Ballot(gvh.id.getName(), myNumber));
+		ballots.add(new Ballot(gvh.id.getName(), myNumber, gvh.id.getIdNumber()));
 	}
 
 	private volatile String announcedLeader = null;
@@ -123,7 +131,7 @@ public class RandomLeaderElection implements LeaderElection, MessageListener {
 			if(!receivedFrom.contains(from)) {
 				gvh.log.i(TAG, "Received ballot from " + m.getFrom() + " with contents " + m.getContents(0));
 				receivedFrom.add(from);
-				ballots.add(new Ballot(from, Integer.parseInt(m.getContents(0))));
+				ballots.add(new Ballot(from, Integer.parseInt(m.getContents(0)),Integer.parseInt(m.getContents(1))));
 			}
 			break;
 		case Common.MSG_RANDLEADERELECT_ANNOUNCE:
@@ -155,11 +163,13 @@ public class RandomLeaderElection implements LeaderElection, MessageListener {
 	 */
 	private class Ballot implements Comparable<Ballot> {
 		public String candidate;
+		public int idNum;
 		public int value;
 
-		public Ballot(String candidate, int value) {
+		public Ballot(String candidate, int value, int idNum) {
 			this.candidate = candidate;
 			this.value = value;
+			this.idNum = idNum;
 		}
 
 		public String toString() {

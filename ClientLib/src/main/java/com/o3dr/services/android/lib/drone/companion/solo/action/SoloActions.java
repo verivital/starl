@@ -16,7 +16,7 @@ public class SoloActions {
     /**
      * TLV message object to send to the sololink companion computer.
      *
-     * @see {@link com.o3dr.services.android.lib.drone.companion.solo.tlv.TLVPacket}
+     * @see com.o3dr.services.android.lib.drone.companion.solo.tlv.TLVPacket
      */
     public static final String EXTRA_MESSAGE_DATA = "extra_message_data";
 

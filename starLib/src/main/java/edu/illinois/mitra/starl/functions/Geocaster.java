@@ -24,14 +24,14 @@ public class Geocaster implements MessageListener {
 		gvh.comms.addMsgListener(this, Common.MSG_GEOCAST);
 	}
 	
-	// Send a message with ID = MID and contents = msgcontents to all robots contained within the rectangle defined by x, y, width, and height
+	// Send a message with ID = MID and contents = msgcontents to all robots contained within the rectangle defined by getX, getY, width, and height
 	
 	/**
 	 * Send a geocast message to all agents within a rectangular area 
 	 * @param msgcontents the contents of the message to send
 	 * @param MID the ID of the message to send
-	 * @param x x origin of target rectangle
-	 * @param y y origin of target rectangle
+	 * @param x getX origin of target rectangle
+	 * @param y getY origin of target rectangle
 	 * @param width target rectangle width
 	 * @param height target rectangle height
 	 */
@@ -47,8 +47,8 @@ public class Geocaster implements MessageListener {
 	 * Send a geocast message to all agents within a circular area
 	 * @param msgcontents the contents of the message to send
 	 * @param MID the ID of the message to send
-	 * @param x the x center of the target circle
-	 * @param y the y center of the target circle
+	 * @param x the getX center of the target circle
+	 * @param y the getY center of the target circle
 	 * @param radius the radius of the target circle
 	 */
 	public void sendGeocast(MessageContents msgcontents, int MID, int x, int y, int radius) {
@@ -73,7 +73,7 @@ public class Geocaster implements MessageListener {
 			
 			ItemPosition mypos = gvh.gps.getMyPosition();
 			
-			if(Common.inRange(mypos.x, minX, maxX) && Common.inRange(mypos.y, minY, maxY)) {
+			if(Common.inRange(mypos.getX(), minX, maxX) && Common.inRange(mypos.getY(), minY, maxY)) {
 				int MID = Integer.parseInt(contents.get(5));
 				MessageContents receiveContents = new MessageContents();
 				receiveContents.append(contents.subList(6, contents.size()));
